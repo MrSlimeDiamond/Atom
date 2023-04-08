@@ -1,0 +1,6 @@
+node_modules/
+module_configs/
+config.json
+portal2/renders
+portal2/sar*
+portal2/demo.dem
