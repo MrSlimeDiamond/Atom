@@ -32,7 +32,15 @@ let modules = [
     name: "pinnerino",
     description: "pin messages with reactions",
     moduleLocation: "./modules/pinnerino.js",
-    configLocation: "./module_configs/pinnerino.js",
+    configLocation: "./module_configs/pinnerino.json",
+    enabledGuilds: [],
+    scope: "guild"
+  },
+  {
+    name: "moderation",
+    description: "Moderation commands for moderating things",
+    moduleLocation: "./modules/moderation.js",
+    configLocation: "./module_configs/moderation.json",
     enabledGuilds: [],
     scope: "guild"
   }
