@@ -70,7 +70,7 @@ client.on("messageCreate", async (message) => {
     }
 
     // Atom Config command thing
-    args = message.split(" ").shift()
+    args = message.content.split(" ").shift()
 
     if (args == null || args.length == 0) {
       message.reply("My options are: config, stop")
