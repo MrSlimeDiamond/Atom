@@ -21,7 +21,7 @@ module.exports = {
                     .setTitle("Module is not enabled")
                     .setDescription("This module is not enabled for this server. Please ask a bot admin if you want it enabled.")
 
-                    interaction.reply(embed)
+                    interaction.reply({ embeds: [embed] })
                     return
                 }
 
