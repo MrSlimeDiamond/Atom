@@ -31,6 +31,11 @@ async function loggerModule(client) {
       config.guilds[newMsg.guild.id].logChannel
     );
 
+
+    if (!oldMsg || !newMsg || oldMsg == null || newMsg == null) {
+      return
+    }
+
     const embed = new EmbedBuilder()
     .setColor(0x0076ff)
     .setAuthor({ name: newMsg.author.username, iconURL: newMsg.author.avatarURL() })
