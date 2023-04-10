@@ -4,6 +4,7 @@ const path = require("node:path");
 const {
   Client,
   GatewayIntentBits,
+  Partials
 } = require("discord.js");
 const client = new Client({
   intents: [
@@ -15,12 +16,8 @@ const client = new Client({
     GatewayIntentBits.GuildMessageReactions
   ],
   partials: [
-    "USER",
-    "GUILD_MEMBER",
-    "CHANNEL",
-    "MESSAGE",
-    "REACTION",
-    "GUILD_MESSAGE_REACTIONS"
+    Partials.Message,
+    Partials.Reaction
   ]
 });
 const logger = require("./logger");
