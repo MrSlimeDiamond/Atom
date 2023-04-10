@@ -4,10 +4,10 @@ const path = require("node:path");
 const {
   Client,
   GatewayIntentBits,
-  EmbedBuilder
 } = require("discord.js");
 const client = new Client({
   intents: [
+    GatewayIntentBits.Guilds,
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
@@ -58,76 +58,6 @@ client.on("interactionCreate", async (interaction) => {
 
   commandHandler.handle(interaction);
 });
-
-client.on("messageCreate", async (message) => {
-  if (message.content.startsWith("!a-admin")) {
-
-    if (!config.bot.admins.includes(message.author.id)) {
-      const embed = new Discord.EmbedBuilder()
-      .setColor(0xff0000)
-      .setTitle("Permission Denied")
-      .setDescription("You do not have permission to run this command")
-      message.reply(embed)
-
-      return
-    }
-
-    // Atom Config command thing
-    args = message.split(" ").shift()
-
-    if (args == null || args.length == 0) {
-      message.reply("My options are: config, stop")
-    }
-
-    // !a-admin config
-    // TODO
-    /*
-    if (args[0] == "config") {
-      args.shift()
-      if (args[0] == null) {
-        message.reply("My options are: module, global")
-        return
-      }
-      if (args[0] == "module") {
-        if (args[1] == null) {
-          message.reply("You need to provide a module to change the config for")
-          return
-        }
-      }
-      // !a-config global
-      if (args[1] == "global") {
-        args.shift()
-
-        value = args[0]
-        
-      }
-    }
-    */
-
-    // !a-admin stop
-    if (args[0] == "stop") {
-      logger.info("STOPPING BOT")
-      message.reply("Stopping bot...")
-      process.exit()
-    }
-  }
-
-  if (message.content.startsWith("!fetch")) {
-    let msgs = 0
-    await message.channel.messages.fetch({ cache: true })
-    .then(async messages => {
-      for (const message of messages) {
-        msgs++
-      }
-    })
-    const embed = new EmbedBuilder()
-    .setColor(0x4feb34)
-    .setTitle("Cached " + msgs + " messages")
-    .setDescription(msgs + " messages were successfully cached from <#" + message.channel.id + ">")
-
-    message.reply({ embeds: [embed] })
-  }
-})
 
 client.login(config.bot.token);
 
