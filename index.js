@@ -64,7 +64,8 @@ client.on("messageCreate", async (message) => {
     }
 
     // Atom Config command thing
-    args = message.content.split(" ").shift();
+    args = message.content.split(" ")
+    args.shift()
 
     if (args == null || args.length == 0) {
       message.reply("My options are: config, stop");
@@ -97,8 +98,9 @@ client.on("messageCreate", async (message) => {
 
     // !a-admin stop
     if (args[0] == "stop") {
-      logger.info("STOPPING BOT");
-      message.reply("Stopping bot...");
+      log.info("Bot admin requested stop")
+      await message.reply("Stopping bot...");
+      client.destroy()
       process.exit();
     }
   }
