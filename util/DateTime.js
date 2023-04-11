@@ -4,44 +4,44 @@
   Allows inputs in default: milliseconds. Other options are: s=seconds m=minutes h=hours d=days M=months Y=Years
   See bottom of file for full example.
 */
-function DateTime(input, t = "ms") {
-  if (t === "s") input *= 1000;
-  if (t === "m") input *= 60000;
-  if (t === "h") input *= 3600000;
-  if (t === "d") input *= 86400000;
-  if (t === "M") input *= 2592000000;
-  if (t === "Y") input *= 31536000000;
-  const data = {},
-    units = [
-      { t: "ms", m: "1000" },
-      { t: "seconds", m: 60 },
-      { t: "minutes", m: 60 },
-      { t: "hours", m: 24 },
-      { t: "days", m: 30 },
-      { t: "months", m: 12 },
-      { t: "years", m: 10 },
-    ];
+function DateTime(input, t = 'ms') {
+    if (t === 's') input *= 1000
+    if (t === 'm') input *= 60000
+    if (t === 'h') input *= 3600000
+    if (t === 'd') input *= 86400000
+    if (t === 'M') input *= 2592000000
+    if (t === 'Y') input *= 31536000000
+    const data = {},
+        units = [
+            { t: 'ms', m: '1000' },
+            { t: 'seconds', m: 60 },
+            { t: 'minutes', m: 60 },
+            { t: 'hours', m: 24 },
+            { t: 'days', m: 30 },
+            { t: 'months', m: 12 },
+            { t: 'years', m: 10 },
+        ]
 
-  units.forEach(
-    (unit) => (input = (input - (data[unit.t] = input % unit.m)) / unit.m)
-  );
-  data.h = () => {
-    return (
-      units
-        .reverse()
-        .filter((unit) => data[unit.t])
-        .map(
-          (unit) =>
-            data[unit.t] +
-            " " +
-            (data[unit.t] === 1 ? unit.t.slice(0, -1) : unit.t)
+    units.forEach(
+        unit => (input = (input - (data[unit.t] = input % unit.m)) / unit.m)
+    )
+    data.h = () => {
+        return (
+            units
+                .reverse()
+                .filter(unit => data[unit.t])
+                .map(
+                    unit =>
+                        data[unit.t] +
+                        ' ' +
+                        (data[unit.t] === 1 ? unit.t.slice(0, -1) : unit.t)
+                )
+                .join(', ') + '.'
         )
-        .join(", ") + "."
-    );
-  };
-  return data;
+    }
+    return data
 }
-module.exports = DateTime;
+module.exports = DateTime
 
 /*
   const DateTime = require('./path-to-file.js');
