@@ -30,7 +30,7 @@ async function pinnerinoModule(client) {
       }
     }
     //console.log(config.guilds[message.guildId].reactions)
-    console.log(reaction._emoji.id, reaction._emoji.name)
+    //console.log(reaction._emoji.id, reaction._emoji.name)
     if (!config.guilds[message.guildId].reactions.includes(reaction._emoji.name)) return
     //console.log(reaction._emoji.name)
     //console.log(message.reactions.cache)
