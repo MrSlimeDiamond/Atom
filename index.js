@@ -32,6 +32,7 @@ moduleHandler.registerModule(client, "reachi_skyblock");
 moduleHandler.registerModule(client, "portal2");
 moduleHandler.registerModule(client, "irc");
 moduleHandler.registerModule(client, "pinnerino");
+moduleHandler.registerModule(client, "moderation")
 
 moduleHandler.enableModule("826198598348701796", "logger");
 moduleHandler.enableModule("1092297646602993704", "logger");
@@ -39,6 +40,7 @@ moduleHandler.enableModule("826198598348701796", "reachi_skyblock");
 moduleHandler.enableModule("1092297646602993704", "pinnerino");
 moduleHandler.enableModule("696218632618901504", "pinnerino");
 moduleHandler.enableModule("1004897099017637979", "pinnerino");
+moduleHandler.enableModule("826198598348701796", "moderation")
 
 client.on("ready", () => {
   commandHandler.registerDefaultCommands(client);
