@@ -20,15 +20,15 @@ class ModuleHandler {
           moduleFile.module(client);
         } else {
           // global module
-          moduleFile.onRegister()
+          moduleFile.onRegister();
         }
-        
+
         log.info("Registered module: " + moduleName);
-        return true
+        return true;
       }
     }
     log.error("Could not register module " + moduleName + "! does it exist?");
-    return false
+    return false;
   }
   /**
    *
@@ -43,14 +43,14 @@ class ModuleHandler {
         modules[i].enabledGuilds.push(guildid);
         if (modules[i].scope == "global") {
           const moduleFile = require(modules[i].moduleLocation);
-          moduleFile.onEnable()
+          moduleFile.onEnable();
         }
         log.info("Enabled module " + moduleName + " for guild " + guildid);
-        return true
+        return true;
       }
     }
     log.error("Could not enable module " + moduleName + "! does it exist?");
-    return false
+    return false;
   }
 
   /**
@@ -67,14 +67,14 @@ class ModuleHandler {
         modules[i].enabledGuilds.splice(index, 1);
         if (modules[i].scope == "global") {
           const moduleFile = require(modules[i].moduleLocation);
-          moduleFile.onDisable()
+          moduleFile.onDisable();
         }
         log.info("Disabled module " + moduleName + " for guild " + guildid);
-        return true
+        return true;
       }
     }
     log.error("Could not disable module " + moduleName + "! does it exist?");
-    return false
+    return false;
   }
 
   registerModuleCommands(guildid, moduleName) {

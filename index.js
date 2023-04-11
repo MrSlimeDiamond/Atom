@@ -5,7 +5,7 @@ const {
   Client,
   GatewayIntentBits,
   EmbedBuilder,
-  Partials
+  Partials,
 } = require("discord.js");
 const client = new Client({
   intents: [
@@ -13,12 +13,9 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.GuildMessageReactions
+    GatewayIntentBits.GuildMessageReactions,
   ],
-  partials: [
-    Partials.Message,
-    Partials.Reaction
-  ]
+  partials: [Partials.Message, Partials.Reaction],
 });
 const logger = require("./logger");
 const log = new logger("Bot");
@@ -33,15 +30,15 @@ const commandHandler = new CommandHandler();
 moduleHandler.registerModule(client, "logger");
 moduleHandler.registerModule(client, "reachi_skyblock");
 moduleHandler.registerModule(client, "portal2");
-moduleHandler.registerModule(client, "irc")
-moduleHandler.registerModule(client, "pinnerino")
+moduleHandler.registerModule(client, "irc");
+moduleHandler.registerModule(client, "pinnerino");
 
 moduleHandler.enableModule("826198598348701796", "logger");
-moduleHandler.enableModule("1092297646602993704", "logger")
+moduleHandler.enableModule("1092297646602993704", "logger");
 moduleHandler.enableModule("826198598348701796", "reachi_skyblock");
-moduleHandler.enableModule("1092297646602993704", "pinnerino")
-moduleHandler.enableModule("696218632618901504", "pinnerino")
-moduleHandler.enableModule("1004897099017637979", "pinnerino")
+moduleHandler.enableModule("1092297646602993704", "pinnerino");
+moduleHandler.enableModule("696218632618901504", "pinnerino");
+moduleHandler.enableModule("1004897099017637979", "pinnerino");
 
 client.on("ready", () => {
   commandHandler.registerDefaultCommands(client);
@@ -56,22 +53,21 @@ client.on("interactionCreate", async (interaction) => {
 
 client.on("messageCreate", async (message) => {
   if (message.content.startsWith("!a-admin")) {
-
     if (!config.bot.admins.includes(message.author.id)) {
       const embed = new Discord.EmbedBuilder()
-      .setColor(0xff0000)
-      .setTitle("Permission Denied")
-      .setDescription("You do not have permission to run this command")
-      message.reply(embed)
+        .setColor(0xff0000)
+        .setTitle("Permission Denied")
+        .setDescription("You do not have permission to run this command");
+      message.reply(embed);
 
-      return
+      return;
     }
 
     // Atom Config command thing
-    args = message.content.split(" ").shift()
+    args = message.content.split(" ").shift();
 
     if (args == null || args.length == 0) {
-      message.reply("My options are: config, stop")
+      message.reply("My options are: config, stop");
     }
 
     // !a-admin config
@@ -101,32 +97,37 @@ client.on("messageCreate", async (message) => {
 
     // !a-admin stop
     if (args[0] == "stop") {
-      logger.info("STOPPING BOT")
-      message.reply("Stopping bot...")
-      process.exit()
+      logger.info("STOPPING BOT");
+      message.reply("Stopping bot...");
+      process.exit();
     }
   }
 
   if (message.content.startsWith("!fetch")) {
-    let msgs = 0
-    await message.channel.messages.fetch({ cache: true })
-    .then(async messages => {
-      for (const message of messages) {
-        msgs++
-      }
-    })
+    let msgs = 0;
+    await message.channel.messages
+      .fetch({ cache: true })
+      .then(async (messages) => {
+        for (const message of messages) {
+          msgs++;
+        }
+      });
     const embed = new EmbedBuilder()
-    .setColor(0x4feb34)
-    .setTitle("Cached " + msgs + " messages")
-    .setDescription(msgs + " messages were successfully cached from <#" + message.channel.id + ">")
+      .setColor(0x4feb34)
+      .setTitle("Cached " + msgs + " messages")
+      .setDescription(
+        msgs +
+          " messages were successfully cached from <#" +
+          message.channel.id +
+          ">"
+      );
 
-    message.reply({ embeds: [embed] })
+    message.reply({ embeds: [embed] });
   }
-})
+});
 
 client.login(config.bot.token);
 
 module.exports.moduleHandler = moduleHandler;
 module.exports.client = client;
 module.exports.__dirname = __dirname;
-

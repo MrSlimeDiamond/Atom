@@ -1,7 +1,11 @@
-const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require("discord.js");
+const {
+  SlashCommandBuilder,
+  PermissionFlagsBits,
+  EmbedBuilder,
+} = require("discord.js");
 const bot = require("../index");
 const config = require("../config.json");
-const modules = require("../modules")
+const modules = require("../modules");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -28,20 +32,27 @@ module.exports = {
         return
       }
       */
-      module = bot.moduleHandler.enableModule(interaction.guildId, moduleToEnable);
+      module = bot.moduleHandler.enableModule(
+        interaction.guildId,
+        moduleToEnable
+      );
       if (module) {
         const embed = new EmbedBuilder()
-        .setColor(0x4feb34)
-        .setTitle("Module enabled")
-        .setDescription("Module " + moduleToEnable + " was successfully enabled for this guild");
-        interaction.reply({ embeds: [embed] })
+          .setColor(0x4feb34)
+          .setTitle("Module enabled")
+          .setDescription(
+            "Module " +
+              moduleToEnable +
+              " was successfully enabled for this guild"
+          );
+        interaction.reply({ embeds: [embed] });
       } else {
         const embed = new EmbedBuilder()
-        .setColor(0xff0000)
-        .setTitle("Module does not exist")
-        .setDescription("Module " + moduleToEnable + " does not exist");
+          .setColor(0xff0000)
+          .setTitle("Module does not exist")
+          .setDescription("Module " + moduleToEnable + " does not exist");
 
-        interaction.reply({ embeds: [embed] })
+        interaction.reply({ embeds: [embed] });
       }
     } else {
       const embed = new EmbedBuilder()

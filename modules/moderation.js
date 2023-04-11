@@ -1,5 +1,5 @@
 async function moderationModule(client) {
-    // nothing lmao
+  // nothing lmao
 }
 
-module.exports.module = moderationModule
+module.exports.module = moderationModule;

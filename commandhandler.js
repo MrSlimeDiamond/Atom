@@ -49,9 +49,7 @@ class CommandHandler {
     const command = interaction.client.commands.get(interaction.commandName);
 
     if (!command) {
-      log.error(
-        `No command matching ${interaction.commandName} was found.`
-      );
+      log.error(`No command matching ${interaction.commandName} was found.`);
       return;
     }
 
@@ -60,21 +58,21 @@ class CommandHandler {
     } catch (error) {
       console.error(error);
       try {
-      if (interaction.replied || interaction.deferred) {
-        await interaction.followUp({
-          content: "There was an error while executing this command!",
-          ephemeral: true,
-        });
-      } else {
-        await interaction.reply({
-          content: "There was an error while executing this command!",
-          ephemeral: true,
-        });
+        if (interaction.replied || interaction.deferred) {
+          await interaction.followUp({
+            content: "There was an error while executing this command!",
+            ephemeral: true,
+          });
+        } else {
+          await interaction.reply({
+            content: "There was an error while executing this command!",
+            ephemeral: true,
+          });
+        }
+      } catch (error) {
+        // bruh ssomething really broke
+        console.error(error);
       }
-    } catch(error) {
-      // bruh ssomething really broke
-      console.error(error)
-    }
     }
   }
 }

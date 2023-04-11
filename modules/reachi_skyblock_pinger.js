@@ -57,4 +57,4 @@ async function reachiPingModule(client) {
   });
 }
 
-module.exports.module = reachiPingModule
+module.exports.module = reachiPingModule;
