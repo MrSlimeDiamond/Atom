@@ -34,7 +34,7 @@ class CommandHandler {
       try {
         log.info("Started refreshing application (/) commands.");
 
-        await rest.put(Routes.applicationCommands("1078475641516740608"), {
+        await rest.put(Routes.applicationCommands(client.user.id), {
           body: commands,
         });
 
@@ -49,7 +49,7 @@ class CommandHandler {
     const command = interaction.client.commands.get(interaction.commandName);
 
     if (!command) {
-      console.error(
+      log.error(
         `No command matching ${interaction.commandName} was found.`
       );
       return;
@@ -59,6 +59,7 @@ class CommandHandler {
       await command.execute(interaction);
     } catch (error) {
       console.error(error);
+      try {
       if (interaction.replied || interaction.deferred) {
         await interaction.followUp({
           content: "There was an error while executing this command!",
@@ -70,6 +71,10 @@ class CommandHandler {
           ephemeral: true,
         });
       }
+    } catch(error) {
+      // bruh ssomething really broke
+      console.error(error)
+    }
     }
   }
 }

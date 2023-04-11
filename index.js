@@ -43,10 +43,8 @@ moduleHandler.enableModule("1092297646602993704", "pinnerino")
 moduleHandler.enableModule("696218632618901504", "pinnerino")
 moduleHandler.enableModule("1004897099017637979", "pinnerino")
 
-
-commandHandler.registerDefaultCommands(client);
-
 client.on("ready", () => {
+  commandHandler.registerDefaultCommands(client);
   log.info(`Logged in as ${client.user.tag}!`);
 });
 
