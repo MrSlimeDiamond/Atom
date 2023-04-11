@@ -5,7 +5,7 @@ async function loggerModule(client) {
   client.on("messageDelete", async (message) => {
     if (!modules[0].enabledGuilds.includes(message.guildId)) return;
     // prevent weird shit from happening
-    if (message.author.id == "1078475641516740608") return
+    if (message.author.id == client.user.id || message.author.id == null) return
     
     const channel = client.channels.cache.get(
       config.guilds[message.guildId].logChannel
@@ -14,7 +14,7 @@ async function loggerModule(client) {
     const embed = new EmbedBuilder()
       .setColor(0x0076ff)
       .setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() })
-      .setTitle("Message Deleted")
+      .setTitle("Message Deleted [<#" + message.channel.id + ">]")
       .setDescription(message.content)
       .setTimestamp()
 
@@ -39,14 +39,18 @@ async function loggerModule(client) {
     const embed = new EmbedBuilder()
     .setColor(0x0076ff)
     .setAuthor({ name: newMsg.author.username, iconURL: newMsg.author.avatarURL() })
-    .setTitle("Message Edited")
+    .setTitle("Message Edited [<#" + oldMsg.channel.id + ">]")
     .addFields(
       { name: "Original Message", value: oldMsg.content },
       { name: "New Message", value: newMsg.content }
     )
     .setTimestamp()
 
-  channel.send({ embeds: [embed] });
+    const jumpEmbed = new EmbedBuilder()
+    .setColor(0xff0000)
+    .setAuthor({ name: "Jump", url: newMsg.url })
+
+  channel.send({ embeds: [embed, jumpEmbed] });
 
 
   })
