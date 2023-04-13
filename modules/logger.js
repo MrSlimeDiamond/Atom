@@ -4,6 +4,7 @@ const config = require('../config.json')
 async function loggerModule(client) {
     client.on('messageDelete', async message => {
         if (!modules[0].enabledGuilds.includes(message.guildId)) return
+        if (!message.content) return
         // prevent weird shit from happening
         if (message.author.id == client.user.id || message.author.id == null)
             return
