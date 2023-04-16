@@ -65,7 +65,7 @@ class PinnerinoModule {
 
             async function pinMsg() {
                 // Prevent re-pinning already pinned messages
-                query = await connection.query(
+                let query = await connection.query(
                     `SELECT * FROM ${config.database.database}.${config.database.table} WHERE OriginalMsg=${message.id}`
                 )
                 if (!query == undefined || !query.length == 0) {
@@ -90,6 +90,8 @@ class PinnerinoModule {
                         name: 'Jump [#' + message.channel.name + ']',
                         url: message.url,
                     })
+
+                let msg
 
                 if (message.embeds.length != 0) {
                     // Embed, prob from bot
