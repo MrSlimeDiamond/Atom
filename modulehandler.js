@@ -93,7 +93,7 @@ class ModuleHandler {
 
         // Already disabled
         // TODO: return some error thingy
-        if (!module.enabledGuilds.includes(guildid)) return false
+        if (!module.enabledGuilds.includes(guildid) && module.scope != 'global') return false
 
         module.onDisable()
         if (module.scope == 'global') return true

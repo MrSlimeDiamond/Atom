@@ -22,6 +22,8 @@ async function onEnable() {
 }
 
 async function onDisable() {
+    log.info("Disabling module")
+    log.info("Disconnecting bot")
     client.disconnect('Module disabled')
     isDisabled = true
 }

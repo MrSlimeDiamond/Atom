@@ -42,7 +42,7 @@ client.on('interactionCreate', async interaction => {
 })
 
 client.on('messageCreate', async message => {
-    if (message.content.startsWith('!a-admin')) {
+    if (message.content.startsWith(config.bot.prefix + 'admin')) {
         if (!config.bot.admins.includes(message.author.id)) {
             const embed = new Discord.EmbedBuilder()
                 .setColor(0xff0000)
@@ -209,7 +209,7 @@ client.on('messageCreate', async message => {
         }
     }
 
-    if (message.content.startsWith('!fetch')) {
+    if (message.content.startsWith(config.bot.prefix + 'fetch')) {
         let msgs = 0
         await message.channel.messages
             .fetch({ cache: true })

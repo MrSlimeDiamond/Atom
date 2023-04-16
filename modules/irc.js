@@ -10,15 +10,15 @@ class IRCModule {
         this.scope = 'global'
     }
 
-    onRegister() {
+    async onRegister() {
         irc.onRegister()
     }
 
-    onEnable() {
+    async onEnable() {
         irc.onEnable()
     }
 
-    onDisable() {
+    async onDisable() {
         irc.onDisable()
     }
 }
