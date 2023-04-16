@@ -55,7 +55,7 @@ class PinnerinoModule {
                     return
                 }
                 if (
-                    message.reactions.cache.get(emoji).count ==
+                    message.reactions.cache.get(emoji).count >=
                     config.guilds[message.guildId].reactionCount
                 ) {
                     pinMsg()
