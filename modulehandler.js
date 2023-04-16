@@ -73,7 +73,7 @@ class ModuleHandler {
             module => module.name == moduleName
         )
         module.onEnable()
-        if (!module.scope == 'global') module.enabledGuilds.push(guildid)
+        if (!module.scope == 'global' || !module.scope) module.enabledGuilds.push(guildid)
         return true
     }
 
