@@ -113,27 +113,26 @@ client.on('messageCreate', async message => {
                 const moduleName = args[0]
 
                 if (moduleName == 'list') {
+                    let modulesList
+                    let modules = []
 
-                  let modulesList
-                  let modules = []
+                    client.modules.forEach(module => {
+                        modules.push(module.name)
+                    })
 
-                  client.modules.forEach(module => {
-                    modules.push(module.name)
-                  })
+                    if (modules.length == 0) {
+                        modulesList = 'No modules registered'
+                    } else {
+                        modulesList = modules.join(', ')
+                    }
 
-                  if (modules.length == 0) {
-                    modulesList = "No modules registered"
-                  } else {
-                    modulesList = modules.join(", ")
-                  }
+                    const embed = new EmbedBuilder()
+                        .setColor(0x4feb34)
+                        .setTitle('Admin / Module List')
+                        .setDescription(modulesList)
 
-                  const embed = new EmbedBuilder()
-                  .setColor(0x4feb34)
-                  .setTitle('Admin / Module List')
-                  .setDescription(modulesList)
-
-                  await message.reply({ embeds: [embed] })
-                  return
+                    await message.reply({ embeds: [embed] })
+                    return
                 }
 
                 if (moduleHandler.moduleExists(moduleName)) {

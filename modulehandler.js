@@ -72,8 +72,14 @@ class ModuleHandler {
         const module = this.client.modules.find(
             module => module.name == moduleName
         )
-        module.onEnable()
-        if (!module.scope == 'global' || !module.scope) module.enabledGuilds.push(guildid)
+        try {
+            module.onEnable()
+        } catch (error) {
+            log.error(error)
+            return false
+        }
+        if (!module.scope == 'global' || !module.scope)
+            module.enabledGuilds.push(guildid)
         return true
     }
 
@@ -93,9 +99,15 @@ class ModuleHandler {
 
         // Already disabled
         // TODO: return some error thingy
-        if (!module.enabledGuilds.includes(guildid) && module.scope != 'global') return false
+        if (!module.enabledGuilds.includes(guildid) && module.scope != 'global')
+            return false
 
-        module.onDisable()
+        try {
+            module.onDisable()
+        } catch (error) {
+            log.error(error)
+            return false
+        }
         if (module.scope == 'global') return true
         const index = module.enabledGuilds.indexOf(guildid)
         module.enabledGuilds.splice(index, 1)

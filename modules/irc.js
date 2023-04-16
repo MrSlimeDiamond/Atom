@@ -1,4 +1,4 @@
-const irc = require("./irc/irc")
+const irc = require('./irc/irc')
 
 class IRCModule {
     constructor(client) {
