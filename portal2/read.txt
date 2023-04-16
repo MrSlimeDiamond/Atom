@@ -1,9 +1,0 @@
-how to set up portal 2 demo render module
-
-set up p2common for this portal2 directory (https://youtu.be/FmJ1OcKc7Ag)
-
-add crosshair to Portal 2/portal2 (it doesnt work in p2common for some reason)
-
-configure config.cfg
-
-you are READY AND SET!!!

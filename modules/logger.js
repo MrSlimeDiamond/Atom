@@ -1,64 +1,87 @@
 const { EmbedBuilder } = require('@discordjs/builders')
 const modules = require('../modules')
-const config = require('../config.json')
-async function loggerModule(client) {
-    client.on('messageDelete', async message => {
-        if (!modules[0].enabledGuilds.includes(message.guildId)) return
-        if (!message.content) return
-        // prevent weird shit from happening
-        if (message.author.id == client.user.id || message.author.id == null)
-            return
+const Discord = require('discord.js')
+const ROOT = require('../index').__dirname
+const path = require('node:path')
 
-        const channel = client.channels.cache.get(
-            config.guilds[message.guildId].logChannel
-        )
+class LoggerModule {
+    constructor(client) {
+        this.client = client
 
-        const embed = new EmbedBuilder()
-            .setColor(0x0076ff)
-            .setAuthor({
-                name: message.author.username,
-                iconURL: message.author.avatarURL(),
-            })
-            .setTitle('Message Deleted [<#' + message.channel.id + '>]')
-            .setDescription(message.content)
-            .setTimestamp()
+        this.name = 'logger'
+        this.description = 'Logs actions on Discord servers'
+        this.configLocation = path.join(ROOT, 'module_configs/logger.json')
+        this.enabledGuilds = []
+    }
 
-        channel.send({ embeds: [embed] })
-    })
+    onRegister() {
+        const config = require(this.configLocation)
 
-    client.on('messageUpdate', (oldMsg, newMsg) => {
-        if (!modules[0].enabledGuilds.includes(newMsg.guildId)) return
-
-        // Sometimes it can be weird
-        if (oldMsg.content == newMsg.content) return
-
-        const channel = client.channels.cache.get(
-            config.guilds[newMsg.guild.id].logChannel
-        )
-
-        if (!oldMsg || !newMsg || oldMsg == null || newMsg == null) {
-            return
-        }
-
-        const embed = new EmbedBuilder()
-            .setColor(0x0076ff)
-            .setAuthor({
-                name: newMsg.author.username,
-                iconURL: newMsg.author.avatarURL(),
-            })
-            .setTitle('Message Edited [<#' + oldMsg.channel.id + '>]')
-            .addFields(
-                { name: 'Original Message', value: oldMsg.content },
-                { name: 'New Message', value: newMsg.content }
+        this.client.on('messageDelete', async message => {
+            if (!this.enabledGuilds.includes(message.guildId)) return
+            if (!message.content) return
+            // prevent weird shit from happening
+            if (
+                message.author.id == this.client.user.id ||
+                message.author.id == null
             )
-            .setTimestamp()
+                return
 
-        const jumpEmbed = new EmbedBuilder()
-            .setColor(0xff0000)
-            .setAuthor({ name: 'Jump', url: newMsg.url })
+            const channel = this.client.channels.cache.get(
+                config[message.guildId].logChannel
+            )
 
-        channel.send({ embeds: [embed, jumpEmbed] })
-    })
+            const embed = new EmbedBuilder()
+                .setColor(0x0076ff)
+                .setAuthor({
+                    name: message.author.username,
+                    iconURL: message.author.avatarURL(),
+                })
+                .setTitle('Message Deleted [<#' + message.channel.id + '>]')
+                .setDescription(message.content)
+                .setTimestamp()
+
+            channel.send({ embeds: [embed] })
+        })
+
+        this.client.on('messageUpdate', (oldMsg, newMsg) => {
+            if (!this.enabledGuilds.includes(newMsg.guildId)) return
+
+            // Sometimes it can be weird
+            if (oldMsg.content == newMsg.content) return
+
+            const channel = this.client.channels.cache.get(
+                config[newMsg.guild.id].logChannel
+            )
+
+            if (!oldMsg || !newMsg || oldMsg == null || newMsg == null) {
+                return
+            }
+
+            const embed = new EmbedBuilder()
+                .setColor(0x0076ff)
+                .setAuthor({
+                    name: newMsg.author.username,
+                    iconURL: newMsg.author.avatarURL(),
+                })
+                .setTitle('Message Edited [<#' + oldMsg.channel.id + '>]')
+                .addFields(
+                    { name: 'Original Message', value: oldMsg.content },
+                    { name: 'New Message', value: newMsg.content }
+                )
+                .setTimestamp()
+
+            const jumpEmbed = new EmbedBuilder()
+                .setColor(0xff0000)
+                .setAuthor({ name: 'Jump', url: newMsg.url })
+
+            channel.send({ embeds: [embed, jumpEmbed] })
+        })
+    }
+
+    onEnable() {}
+
+    onDisable() {}
 }
 
-module.exports.module = loggerModule
+module.exports = LoggerModule

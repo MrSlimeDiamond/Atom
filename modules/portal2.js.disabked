@@ -10,22 +10,32 @@ const log = new logger('Portal 2 Module')
 const bot = require('../index')
 const path = require('node:path')
 
-let queue = []
-let rendering = false
+class Portal2Module {
 
-async function addQueue(url, message) {
-    queue.push([url, message])
+    constructor(client) {
+        this.client = client
+
+        this.name = 'portal2'
+        this.description = 'Portal 2 rendering module'
+        this.enabledGuilds = []
+
+        this.queue = []
+        this.rendering = false
+    }
+
+async addQueue(url, message) {
+    this.queue.push([url, message])
 }
 
-async function renderNext() {
-    if (queue.length == 0 || rendering) {
+async renderNext() {
+    if (this.queue.length == 0 || this.rendering) {
         // the queue is empty, don't do anything
         return
     } else {
-        rendering = true
-        const url = queue[0][0]
-        const message = queue[0][1]
-        queue.shift()
+        this.rendering = true
+        const url = this.queue[0][0]
+        const message = this.queue[0][1]
+        this.queue.shift()
 
         axios({
             method: 'get',
@@ -106,15 +116,15 @@ async function renderNext() {
                             videoURL
                     )
 
-                    rendering = false
+                    this.rendering = false
                 }
             )
         })
     }
 }
 
-async function portal2Module(client) {
-    client.on('ready', ready => {
+async onRegister() {
+    this.client.on('ready', ready => {
         ;(function () {
             renderNext()
             setTimeout(arguments.callee, 60)
@@ -168,7 +178,7 @@ async function portal2Module(client) {
                 .setTitle('Render queued!')
                 .setDescription(
                     'Render was successfully queued at position ' +
-                        queue.length +
+                        this.queue.length +
                         ' . This can take a while. You will be notified when it is finished.'
                 )
 
@@ -177,4 +187,9 @@ async function portal2Module(client) {
     })
 }
 
-module.exports.module = portal2Module
+onEnable() {}
+
+onDisable() {}
+}
+
+module.exports = Portal2Module

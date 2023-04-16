@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const modules = require('../modules')
+const moduleHandler = require('../index').moduleHandler
 
 module.exports = {
     data: new Discord.SlashCommandBuilder()
@@ -23,7 +24,9 @@ module.exports = {
         ),
     async execute(interaction) {
         guildId = await interaction.guildId
-        if (!modules[5].enabledGuilds.includes(guildId)) {
+        const enabledGuilds = await moduleHandler.getEnabledGuilds('moderation')
+
+        if (!enabledGuilds.includes(guildId)) {
             const embed = new Discord.EmbedBuilder()
                 .setColor(0xff0000)
                 .setTitle('Module is not enabled')

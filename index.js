@@ -15,7 +15,7 @@ const client = new Client({
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessageReactions,
     ],
-    partials: [Partials.Message, Partials.Reaction],
+    partials: [Partials.Message, Partials.Reaction, Partials.Guilds],
 })
 const logger = require('./logger')
 const log = new logger('Bot')
@@ -23,27 +23,15 @@ const log = new logger('Bot')
 log.info('Starting bot')
 
 const ModuleHandler = require('./modulehandler')
-const moduleHandler = new ModuleHandler()
+const moduleHandler = new ModuleHandler(client)
 const CommandHandler = require('./commandhandler')
 const commandHandler = new CommandHandler()
 
-moduleHandler.registerModule(client, 'logger')
-moduleHandler.registerModule(client, 'reachi_skyblock')
-moduleHandler.registerModule(client, 'portal2')
-moduleHandler.registerModule(client, 'irc')
-moduleHandler.registerModule(client, 'pinnerino')
-moduleHandler.registerModule(client, 'moderation')
-
-moduleHandler.enableModule('826198598348701796', 'logger')
-moduleHandler.enableModule('1092297646602993704', 'logger')
-moduleHandler.enableModule('826198598348701796', 'reachi_skyblock')
-moduleHandler.enableModule('1092297646602993704', 'pinnerino')
-moduleHandler.enableModule('696218632618901504', 'pinnerino')
-moduleHandler.enableModule('1004897099017637979', 'pinnerino')
-moduleHandler.enableModule('826198598348701796', 'moderation')
-
-client.on('ready', () => {
-    commandHandler.registerDefaultCommands(client)
+client.on('ready', async () => {
+    module.exports.client = client
+    await commandHandler.registerDefaultCommands(client)
+    await moduleHandler.registerModules()
+    await moduleHandler.enablePersistentModules()
     log.info(`Logged in as ${client.user.tag}!`)
 })
 
@@ -62,7 +50,7 @@ client.on('messageCreate', async message => {
                 .setDescription(
                     'You do not have permission to run this command'
                 )
-            message.reply(embed)
+            message.reply({ embeds: [embed] })
 
             return
         }
@@ -72,7 +60,8 @@ client.on('messageCreate', async message => {
         args.shift()
 
         if (args == null || args.length == 0) {
-            message.reply('My options are: config, stop')
+            await message.reply('My options are: stop, module')
+            return
         }
 
         // !a-admin config
@@ -107,6 +96,117 @@ client.on('messageCreate', async message => {
             client.destroy()
             process.exit()
         }
+
+        if (args[0] == 'module') {
+            if (args[1] == null || !args[1]) {
+                const embed = new EmbedBuilder()
+                    .setColor(0xff0000)
+                    .setTitle('Admin / Incorrect Usage')
+                    .setDescription(
+                        'Usage: !a-admin module <module name> <thing to do with it>'
+                    )
+
+                await message.reply({ embeds: [embed] })
+                return
+            } else {
+                args.shift()
+                const moduleName = args[0]
+
+                if (moduleName == 'list') {
+
+                  let modulesList
+                  let modules = []
+
+                  client.modules.forEach(module => {
+                    modules.push(module.name)
+                  })
+
+                  if (modules.length == 0) {
+                    modulesList = "No modules registered"
+                  } else {
+                    modulesList = modules.join(", ")
+                  }
+
+                  const embed = new EmbedBuilder()
+                  .setColor(0x4feb34)
+                  .setTitle('Admin / Module List')
+                  .setDescription(modulesList)
+
+                  await message.reply({ embeds: [embed] })
+                  return
+                }
+
+                if (moduleHandler.moduleExists(moduleName)) {
+                    if (args[1] == null || !args[1]) {
+                        const embed = new EmbedBuilder()
+                            .setColor(0xff0000)
+                            .setTitle('Admin / Incorrect Usage')
+                            .setDescription(
+                                'Available options: enable, disable, config'
+                            )
+
+                        await message.reply({ embeds: [embed] })
+                        return
+                    }
+
+                    if (args[1] == 'enable') {
+                        moduleHandler.enableModule(message.guildId, moduleName)
+                        const embed = new EmbedBuilder()
+                            .setColor(0x4feb34)
+                            .setTitle('Admin / Module Enabled')
+                            .setDescription(
+                                'Module has been successfully enabled.'
+                            )
+
+                        await message.reply({ embeds: [embed] })
+                        return
+                    } else if (args[1] == 'disable') {
+                        moduleHandler.disableModule(message.guildId, moduleName)
+                        const embed = new EmbedBuilder()
+                            .setColor(0x4feb34)
+                            .setTitle('Admin / Module Disabled')
+                            .setDescription(
+                                'Module has been successfully disabled.'
+                            )
+
+                        await message.reply({ embeds: [embed] })
+                        return
+                    } else if (args[1] == 'config') {
+                        // TODO
+                    } else if (args[1] == 'info') {
+                        const module = client.modules.find(
+                            module => module.name == moduleName
+                        )
+
+                        let enabledGuilds
+                        if (module.enabledGuilds.length == 0) {
+                            enabledGuilds = 'None'
+                        } else {
+                            enabledGuilds = module.enabledGuilds.join(', ')
+                        }
+
+                        const embed = new EmbedBuilder()
+                            .setColor(0x4feb34)
+                            .setTitle('Name: ' + module.name)
+                            .setDescription(module.description)
+                            .addFields({
+                                name: 'Enabled Guilds',
+                                value: enabledGuilds,
+                            })
+
+                        message.reply({ embeds: [embed] })
+                    }
+                } else {
+                    const embed = new EmbedBuilder()
+                        .setColor(0xff0000)
+                        .setTitle('Admin / Incorrect Usage')
+                        .setDescription('That module does not exist.')
+
+                    await message.reply({ embeds: [embed] })
+                    return
+                }
+            }
+        }
     }
 
     if (message.content.startsWith('!fetch')) {
@@ -135,5 +235,4 @@ client.on('messageCreate', async message => {
 client.login(config.bot.token)
 
 module.exports.moduleHandler = moduleHandler
-module.exports.client = client
 module.exports.__dirname = __dirname
