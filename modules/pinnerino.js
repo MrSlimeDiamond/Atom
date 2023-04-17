@@ -39,28 +39,29 @@ class PinnerinoModule {
                     return
                 }
             }
-            //console.log(config.guilds[message.guildId].reactions)
-            //console.log(reaction._emoji.id, reaction._emoji.name)
-            if (
-                !config.guilds[message.guildId].reactions.includes(
-                    reaction._emoji.name
-                )
-            )
-                return
-            //console.log(reaction._emoji.name)
-            //console.log(message.reactions.cache)
 
-            for (const emoji of config.guilds[message.guildId].reactions) {
-                if (message.reactions.cache.get(emoji) == null) {
-                    return
-                }
-                if (
-                    message.reactions.cache.get(emoji).count >=
-                    config.guilds[message.guildId].reactionCount
-                ) {
-                    pinMsg()
-                    break
-                }
+            if (!config.guilds[message.guildId].reaction == reaction._emoji.name) return
+            if (config.guilds[message.guildId].blacklist.includes(message.channel.id)) return
+
+            const emojiRegex = /\p{Emoji}/u
+            const _emoji = reaction._emoji.name
+            let emoji
+
+            if (emojiRegex.test(_emoji)) {
+                // It's an emoji
+                emoji = reaction._emoji.name
+            } else {
+                // Custom emoji
+                emoji = reaction._emoji.id
+            }
+
+            if (!message.reactions.cache.get(emoji)) return
+
+            if (
+                message.reactions.cache.get(emoji).count >=
+                config.guilds[message.guildId].reactionCount
+            ) {
+                pinMsg()
             }
 
             async function pinMsg() {
@@ -72,12 +73,8 @@ class PinnerinoModule {
                     return
                 }
 
-                // Don't pin messages in the pinnerino channel
-                if (
-                    message.channel.id ==
-                    config.guilds[message.guildId].channelID
-                )
-                    return
+                // Don't pin messages that are blacklisted
+                if (config.guilds[message.guildId].blacklist.includes(message.channel.id)) return
 
                 const webhookClient = new Discord.WebhookClient({
                     id: config.guilds[message.guildId].webhook.id,
@@ -94,7 +91,6 @@ class PinnerinoModule {
                 let msg
 
                 if (message.embeds.length != 0) {
-                    // Embed, prob from bot
 
                     if (message.attachments.first() != null) {
                         msg = await webhookClient.send({
