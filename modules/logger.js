@@ -77,6 +77,44 @@ class LoggerModule {
 
             channel.send({ embeds: [embed, jumpEmbed] })
         })
+
+        this.client.on('guildMemberAdd', member => {
+            if (!this.enabledGuilds.includes(member.guild.id)) return
+
+            const embed = new EmbedBuilder()
+                .setColor(0x4feb34)
+                .setAuthor({
+                    name: member.user.tag,
+                    iconURL: member.user.avatarURL(),
+                })
+                .setTitle(member.user.username + ' joined the server!')
+                .setTimestamp()
+
+            const channel = this.client.channels.cache.get(
+                config[member.guild.id].logChannel
+            )
+
+            channel.send({ embeds: [embed] })
+        })
+
+        this.client.on('guildMemberRemove', member => {
+            if (!this.enabledGuilds.includes(member.guild.id)) return
+
+            const embed = new EmbedBuilder()
+                .setColor(0xff0000)
+                .setAuthor({
+                    name: member.user.tag,
+                    iconURL: member.user.avatarURL(),
+                })
+                .setTitle(member.user.username + ' left the server!')
+                .setTimestamp()
+
+            const channel = this.client.channels.cache.get(
+                config[member.guild.id].logChannel
+            )
+
+            channel.send({ embeds: [embed] })
+        })
     }
 
     onEnable() {}
