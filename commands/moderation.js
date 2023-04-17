@@ -19,26 +19,24 @@ module.exports = {
                         .setRequired(true)
                 )
         )
-        .addSubcommand(subcommand => 
+        .addSubcommand(subcommand =>
             subcommand
-            .setName('ban')
-            .setDescription('Ban a member from the server')
-            .addUserOption(option =>
-                option
-                    .setName('user')
-                    .setDescription('User to ban')
-                    .setRequired(true)
+                .setName('ban')
+                .setDescription('Ban a member from the server')
+                .addUserOption(option =>
+                    option
+                        .setName('user')
+                        .setDescription('User to ban')
+                        .setRequired(true)
                 )
-            .addStringOption(option => 
-                option
-                .setName('reason')
-                .setDescription("The reason for banning the user")
-                .setRequired(false)
+                .addStringOption(option =>
+                    option
+                        .setName('reason')
+                        .setDescription('The reason for banning the user')
+                        .setRequired(false)
                 )
-            )
-        .setDefaultMemberPermissions(
-            Discord.PermissionFlagsBits.ManageMessages
-        ),
+        )
+        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator),
     async execute(interaction) {
         guildId = await interaction.guildId
         const enabledGuilds = await moduleHandler.getEnabledGuilds('moderation')
@@ -94,45 +92,71 @@ module.exports = {
                 reason = reason_
             }
 
+            if (!member.bannable) {
+                const embed = new Discord.EmbedBuilder()
+                    .setColor(0xff0000)
+                    .setAuthor({ name: 'Moderation / Ban' })
+                    .setTitle('Failed to ban user')
+                    .setDescription(
+                        'Bot does not have permission to ban this user.'
+                    )
+
+                await interaction.reply({ embeds: [embed], ephemeral: true })
+                return
+            }
+
             const embed = new Discord.EmbedBuilder()
-            .setColor(0xff0000)
-            .setAuthor({ name: "Banned from " + interaction.guild.name })
-            .setDescription(reason)
-            .setTimestamp()
+                .setColor(0xff0000)
+                .setAuthor({ name: 'Banned from ' + interaction.guild.name })
+                .setDescription(reason)
+                .setTimestamp()
 
             const logEmbed = new Discord.EmbedBuilder()
-            .setColor(0x4feb34)
-            .setAuthor({ name: interaction.member.user.tag, iconURL: interaction.member.user.avatarURL() })
-            .setTitle(member.user.tag + " was banned")
-            .setDescription(reason)
-            .setTimestamp()
+                .setColor(0x4feb34)
+                .setAuthor({
+                    name: interaction.member.user.tag,
+                    iconURL: interaction.member.user.avatarURL(),
+                })
+                .setTitle(member.user.tag + ' was banned')
+                .setDescription(reason)
+                .setTimestamp()
 
             interaction.reply({ embeds: [logEmbed] })
 
             member.createDM()
-            await member.send({ embeds: [embed] })
-            .catch(error => {
+            await member.send({ embeds: [embed] }).catch(error => {
                 const embed = new Discord.EmbedBuilder()
-                .setColor(0xff0000)
-                .setAuthor({ name: "Member not accepting DMs" })
-                .setDescription("This member is not accepting DMs")
+                    .setColor(0xff0000)
+                    .setAuthor({ name: 'Member not accepting DMs' })
+                    .setDescription('This member is not accepting DMs')
 
                 interaction.followUp({ embeds: [embed] })
             })
-            
+
             const enabledGuilds = await moduleHandler.getEnabledGuilds('logger')
             if (!moduleHandler.moduleExists('logger')) {
-                await member.ban({ reason: reason + " banned by " + interaction.member.user.tag})
+                await member.ban({
+                    reason:
+                        reason + ' banned by ' + interaction.member.user.tag,
+                })
                 return
             }
-            if (!enabledGuilds || !enabledGuilds.includes(interaction.guildId)) {
-                await member.ban({ reason: reason + " banned by " + interaction.member.user.tag})
+            if (
+                !enabledGuilds ||
+                !enabledGuilds.includes(interaction.guildId)
+            ) {
+                await member.ban({
+                    reason:
+                        reason + ' banned by ' + interaction.member.user.tag,
+                })
                 return
             }
 
             const client = require('../index').client
 
-            const loggerModule = await client.modules.find(mod => mod.name == 'logger')
+            const loggerModule = await client.modules.find(
+                mod => mod.name == 'logger'
+            )
             const loggerConfig = require(loggerModule.configLocation)
 
             const channel = client.channels.cache.get(
@@ -142,7 +166,9 @@ module.exports = {
             channel.send({ embeds: [logEmbed] })
 
             // Banning the user should be the last thing we do so that we can DM them first
-            await member.ban({ reason: reason + " banned by " + interaction.member.user.tag})
+            await member.ban({
+                reason: reason + ' banned by ' + interaction.member.user.tag,
+            })
         }
     },
 }
