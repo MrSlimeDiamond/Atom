@@ -44,7 +44,7 @@ client.on('interactionCreate', async interaction => {
 client.on('messageCreate', async message => {
     if (message.content.startsWith(config.bot.prefix + 'admin')) {
         if (!config.bot.admins.includes(message.author.id)) {
-            const embed = new Discord.EmbedBuilder()
+            const embed = new EmbedBuilder()
                 .setColor(0xff0000)
                 .setTitle('Permission Denied')
                 .setDescription(
