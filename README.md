@@ -1,8 +1,11 @@
 # Atom
+
 Atom is a Discord bot
 
 ## Configuration
+
 Basic configuration looks like
+
 ```json
 {
     "bot": {
@@ -12,17 +15,49 @@ Basic configuration looks like
     }
 }
 ```
+
 ## Modules
+
 The idea of modules is that you can allow certian guilds to do certian things, but not allow other guilds to do other things.
 
+### modules.json
+Modules have to be enabled manually, on a per-guild basis (unless they are global modules)
+
+#### Example configuration
+```json
+{
+    "12345678900987654321": ["logger", "moderation"],
+    "09876543211234567890": ["pinnerino"],
+}
+
+```
+
+
+### Logger
+
+Logger logs certian actions (join/leave/message delete/message edit) in a specified log channel
+
+#### Example Configuration
+```json
+{
+    "12345678900987654321": {
+        "logChannel": "12345678900987654321"
+    },
+}
+```
+
 ### Pinnerino
+
 Pinnerino allows you to put messages with a certian amount of reacions into a channel
+
 #### Mysql creation statement
+
 ```sql
 CREATE TABLE pinnerino (OriginalMsg varchar(256), WebhookMessageID varchar(256));
 ```
 
-#### Example module configuration
+#### Example Configuration
+
 ```json
     "database": {
         "host": "127.0.0.1",
@@ -43,3 +78,13 @@ CREATE TABLE pinnerino (OriginalMsg varchar(256), WebhookMessageID varchar(256))
         }
     }
 ```
+
+### Moderation
+Moderation has some commands for moderating, currently:
+* /moderation purge \<amount>
+    * amount: The amount of messages to delete
+* /moderation ban \<user> [reason]
+    * user: The user to ban
+    * reason: the reason for banning the user
+    
+The moderation module requires no configuration
