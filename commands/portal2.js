@@ -114,6 +114,7 @@ module.exports = {
                         }
                     )
                     .setThumbnail(data.userData.avatar)
+                    .setFooter({ text: 'board.portal2.sr', iconURL: 'https://media.discordapp.net/attachments/730456562337972248/752241849049022525/p2sr-png.png' })
 
                 interaction.editReply({ embeds: [embed] })
             }
