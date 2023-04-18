@@ -58,7 +58,8 @@ class LoggerModule {
                 return
             }
 
-            const embed = new EmbedBuilder()
+            try {
+                const embed = new EmbedBuilder()
                 .setColor(newMsg.member.displayColor)
                 .setAuthor({
                     name: newMsg.author.username,
@@ -75,7 +76,11 @@ class LoggerModule {
                 .setColor(0xff0000)
                 .setAuthor({ name: 'Jump', url: newMsg.url })
 
-            channel.send({ embeds: [embed, jumpEmbed] })
+                channel.send({ embeds: [embed, jumpEmbed] })
+            } catch(error) {
+                // some stupid dumb weird discord thing just ignore it idk why it happens
+                return
+            }
         })
 
         this.client.on('guildMemberAdd', member => {
