@@ -4,6 +4,7 @@ const modules = require('../modules')
 const config = require('../module_configs/pinnerino.json')
 const Logger = require('../logger')
 const logger = new Logger('Pinnerino Module')
+const WebhookBuilder = require('../util/WebhookBuilder')
 
 class PinnerinoModule {
     constructor(client) {
@@ -15,16 +16,6 @@ class PinnerinoModule {
     }
 
     async onRegister() {
-        let pool = mariadb.createPool({
-            host: config.database.host,
-            user: config.database.username,
-            password: config.database.password,
-        })
-
-        const connection = await pool.getConnection()
-
-        //connection.query(`USE ${config.database.database}`)
-
         this.client.on('messageReactionAdd', async reaction => {
             const message = reaction.message
             if (!this.enabledGuilds.includes(message.guildId)) return
@@ -40,8 +31,16 @@ class PinnerinoModule {
                 }
             }
 
-            if (!config.guilds[message.guildId].reaction == reaction._emoji.name) return
-            if (config.guilds[message.guildId].blacklist.includes(message.channel.id)) return
+            if (
+                !config.guilds[message.guildId].reaction == reaction._emoji.name
+            )
+                return
+            if (
+                config.guilds[message.guildId].blacklist.includes(
+                    message.channel.id
+                )
+            )
+                return
 
             const emojiRegex = /\p{Emoji}/u
             const _emoji = reaction._emoji.name
@@ -65,6 +64,14 @@ class PinnerinoModule {
             }
 
             async function pinMsg() {
+                let pool = mariadb.createPool({
+                    host: config.database.host,
+                    user: config.database.username,
+                    password: config.database.password,
+                })
+
+                const connection = await pool.getConnection()
+
                 // Prevent re-pinning already pinned messages
                 let query = await connection.query(
                     `SELECT * FROM ${config.database.database}.${config.database.table} WHERE OriginalMsg=${message.id}`
@@ -74,70 +81,46 @@ class PinnerinoModule {
                 }
 
                 // Don't pin messages that are blacklisted
-                if (config.guilds[message.guildId].blacklist.includes(message.channel.id)) return
+                if (
+                    config.guilds[message.guildId].blacklist.includes(
+                        message.channel.id
+                    )
+                )
+                    return
 
-                const webhookClient = new Discord.WebhookClient({
-                    id: config.guilds[message.guildId].webhook.id,
-                    token: config.guilds[message.guildId].webhook.token,
-                })
+                const webhook = new WebhookBuilder(
+                    config.guilds[message.guildId].webhook.id,
+                    config.guilds[message.guildId].webhook.token
+                )
+                    .setUsername(message.author.username)
+                    .setAvatar(message.author.displayAvatarURL())
+                    .setMessage(message.content)
 
-                const embed = new Discord.EmbedBuilder()
-                    .setColor(0xff0000)
-                    .setAuthor({
-                        name: 'Jump [#' + message.channel.name + ']',
-                        url: message.url,
-                    })
+                if (message.attachments) {
+                    // TODO: multiple attachments
+                    webhook.addFile(message.attachments.first())
+                }
 
-                let msg
-
-                if (message.embeds.length != 0) {
-
-                    if (message.attachments.first() != null) {
-                        msg = await webhookClient.send({
-                            content: message.content,
-                            username: message.author.username,
-                            avatarURL: message.author.displayAvatarURL(),
-                            files: [message.attachments.first()],
-                            embeds: [message.embeds[0], embed],
-                        })
-                    } else {
-                        msg = await webhookClient.send({
-                            content: message.content,
-                            username: message.author.username,
-                            avatarURL: message.author.displayAvatarURL(),
-                            embeds: [message.embeds[0], embed],
-                        })
+                if (message.embeds) {
+                    for (const embed of message.embeds) {
+                        webhook.addEmbed(embed)
                     }
-
-                    await connection.query(
-                        `INSERT INTO ${config.database.database}.${config.database.table}  (OriginalMsg, WebhookMessageID) VALUES (${message.id}, ${msg.id});`
-                    )
-
-                    return
                 }
 
-                if (message.attachments.first() != null) {
-                    msg = await webhookClient.send({
-                        content: message.content,
-                        username: message.author.username,
-                        avatarURL: message.author.displayAvatarURL(),
-                        files: [message.attachments.first()],
-                        embeds: [embed],
-                    })
-                } else {
-                    msg = await webhookClient.send({
-                        content: message.content,
-                        username: message.author.username,
-                        avatarURL: message.author.displayAvatarURL(),
-                        embeds: [embed],
-                    })
+                const jumpEmbed = new Discord.EmbedBuilder()
+                    .setColor(0xff0000)
+                    .setDescription('[Jump](' + message.url + ')')
 
-                    await connection.query(
-                        `INSERT INTO ${config.database.database}.${config.database.table}  (OriginalMsg, WebhookMessageID) VALUES (${message.id}, ${msg.id});`
-                    )
+                webhook.addEmbed(jumpEmbed)
 
-                    return
-                }
+                let msg = await webhook.send()
+
+                await connection.query(
+                    `INSERT INTO ${config.database.database}.${config.database.table}  (OriginalMsg, WebhookMessageID) VALUES (${message.id}, ${msg.id});`
+                )
+
+                connection.close()
+                return
             }
         })
     }
