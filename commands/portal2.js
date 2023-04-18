@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
 const P2Data = require('../util/P2Data')
 const p2data = new P2Data()
+const ColorThief = require('colorthief')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -68,7 +69,6 @@ module.exports = {
                 let OverallRank = data.points.global.playerRank || 'Unranked'
 
                 const embed = new EmbedBuilder()
-                    .setColor(0x4feb34)
                     .setAuthor({
                         name: displayName,
                         iconURL: data.userData.avatar,
@@ -115,6 +115,14 @@ module.exports = {
                     )
                     .setThumbnail(data.userData.avatar)
                     .setFooter({ text: 'board.portal2.sr', iconURL: 'https://media.discordapp.net/attachments/730456562337972248/752241849049022525/p2sr-png.png' })
+                    .setColor(0xffffff) // Backup, in case something weird goes wrong
+
+                    await ColorThief.getColor(data.userData.avatar)
+                        .then(color => {
+                            embed.setColor(color)
+                        }).catch(error => {
+                            embed.setColor(0xffffff)
+                        })
 
                 interaction.editReply({ embeds: [embed] })
             }
