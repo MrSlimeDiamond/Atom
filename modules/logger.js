@@ -32,7 +32,7 @@ class LoggerModule {
             )
 
             const embed = new EmbedBuilder()
-                .setColor(0x0076ff)
+                .setColor(message.member.displayColor)
                 .setAuthor({
                     name: message.author.username,
                     iconURL: message.author.avatarURL(),
@@ -59,7 +59,7 @@ class LoggerModule {
             }
 
             const embed = new EmbedBuilder()
-                .setColor(0x0076ff)
+                .setColor(newMsg.member.displayColor)
                 .setAuthor({
                     name: newMsg.author.username,
                     iconURL: newMsg.author.avatarURL(),
