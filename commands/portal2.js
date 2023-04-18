@@ -20,7 +20,7 @@ module.exports = {
         ),
     async execute(interaction) {
         if (interaction.options.getSubcommand() == 'cm') {
-            interaction.deferReply()
+            await interaction.deferReply()
             const axios = require('axios')
             let username = interaction.options.getString('username')
 
