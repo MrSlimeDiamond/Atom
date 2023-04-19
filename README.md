@@ -21,28 +21,29 @@ Basic configuration looks like
 The idea of modules is that you can allow certian guilds to do certian things, but not allow other guilds to do other things.
 
 ### modules.json
+
 Modules have to be enabled manually, on a per-guild basis (unless they are global modules)
 
 #### Example configuration
+
 ```json
 {
     "12345678900987654321": ["logger", "moderation"],
-    "09876543211234567890": ["pinnerino"],
+    "09876543211234567890": ["pinnerino"]
 }
-
 ```
-
 
 ### Logger
 
 Logger logs certian actions (join/leave/message delete/message edit) in a specified log channel
 
 #### Example Configuration
+
 ```json
 {
     "12345678900987654321": {
         "logChannel": "12345678900987654321"
-    },
+    }
 }
 ```
 
@@ -74,17 +75,22 @@ CREATE TABLE pinnerino (OriginalMsg varchar(256), WebhookMessageID varchar(256))
                 "token": "token goes here"
             },
             "blacklist": ["123456789"],
+            // For normal emojis
             "reaction": "📌"
+            // For custom emojis (the numbers being the reaction ID)
+            "reaction": "12345678900987654321"
         }
     }
 ```
 
 ### Moderation
+
 Moderation has some commands for moderating, currently:
-* /moderation purge \<amount>
-    * amount: The amount of messages to delete
-* /moderation ban \<user> [reason]
-    * user: The user to ban
-    * reason: the reason for banning the user
-    
+
+-   /moderation purge \<amount>
+    -   amount: The amount of messages to delete
+-   /moderation ban \<user> [reason]
+    -   user: The user to ban
+    -   reason: the reason for banning the user
+
 The moderation module requires no configuration
