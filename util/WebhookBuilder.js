@@ -6,8 +6,8 @@ class WebhookBuilder {
         this.username = null
         this.avatar = null
         this.message = null
-        this.embeds = []
-        this.files = []
+        this.embeds = null
+        this.files = null
     }
 
     /**
@@ -42,6 +42,7 @@ class WebhookBuilder {
      * @param embed - Embed to send
      */
     addEmbed(embed) {
+        if (!this.embeds) this.embeds = []
         this.embeds.push(embed)
         return this
     }
@@ -51,6 +52,7 @@ class WebhookBuilder {
      * @param file - File to send
      */
     addFile(file) {
+        if (!this.files) this.files = []
         this.files.push(file)
         return this
     }
@@ -61,7 +63,7 @@ class WebhookBuilder {
      */
     async send() {
         return this.webhookClient.send({
-            username: this.username,
+            username: this.username || 'Webhook',
             avatarURL: this.avatar,
             content: this.message,
             files: this.files,

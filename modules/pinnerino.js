@@ -31,27 +31,18 @@ class PinnerinoModule {
                 }
             }
 
-            if (
-                !config.guilds[message.guildId].reaction == reaction._emoji.name
-            )
+            let emoji = reaction._emoji.id || reaction._emoji.name
+
+            if (config.guilds[message.guildId].reaction != emoji) {
                 return
+            }
+
             if (
                 config.guilds[message.guildId].blacklist.includes(
                     message.channel.id
                 )
-            )
+            ) {
                 return
-
-            const emojiRegex = /\p{Emoji}/u
-            const _emoji = reaction._emoji.name
-            let emoji
-
-            if (emojiRegex.test(_emoji)) {
-                // It's an emoji
-                emoji = reaction._emoji.name
-            } else {
-                // Custom emoji
-                emoji = reaction._emoji.id
             }
 
             if (!message.reactions.cache.get(emoji)) return
@@ -61,6 +52,8 @@ class PinnerinoModule {
                 config.guilds[message.guildId].reactionCount
             ) {
                 pinMsg()
+            } else {
+                return
             }
 
             async function pinMsg() {
@@ -96,7 +89,7 @@ class PinnerinoModule {
                     .setAvatar(message.author.displayAvatarURL())
                     .setMessage(message.content)
 
-                if (message.attachments) {
+                if (message.attachments.size != 0) {
                     // TODO: multiple attachments
                     webhook.addFile(message.attachments.first())
                 }
