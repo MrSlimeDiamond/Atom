@@ -9,13 +9,14 @@ public class MinecraftUtils {
     public static Optional<String> getPlayerUUID(String username) throws IOException {
         Optional<JSONObject> json =  HTTPUtil.getJsonDataFromURL("https://api.mojang.com/users/profiles/minecraft/" + username);
 
-        json.map(jsonObject -> {
-            if (jsonObject.isNull("id")) {
+        System.out.println(json);
+        if (json.isPresent()) {
+            if (json.get().isNull("id")) {
                 return Optional.empty();
             } else {
-                return jsonObject.getString("id");
+                return Optional.of(json.get().getString("id"));
             }
-        });
+        }
         return Optional.empty();
     }
 }
