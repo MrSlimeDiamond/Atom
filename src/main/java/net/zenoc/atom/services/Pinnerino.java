@@ -11,14 +11,18 @@ import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.FileUpload;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.zenoc.atom.Atom;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class Pinnerino extends ListenerAdapter implements Service {
     private static Logger log = LoggerFactory.getLogger(Pinnerino.class);
@@ -53,24 +57,7 @@ public class Pinnerino extends ListenerAdapter implements Service {
                     .findAny().orElseGet(() -> this.createPinWebhook(channel));
 
             WebhookClientBuilder client = new WebhookClientBuilder(webhook.getUrl()).setAllowedMentions(AllowedMentions.none());
-            WebhookMessageBuilder builder = new WebhookMessageBuilder()
-                    .setUsername(message.getMember().getEffectiveName())
-                    .setAvatarUrl(message.getMember().getEffectiveAvatarUrl())
-                    .setContent(message.getContentRaw())
-                    .setAllowedMentions(AllowedMentions.none());
-
-            message.getAttachments().forEach(attachment -> {
-                try {
-                    builder.addFile(attachment.getFileName(), attachment.downloadToFile().get());
-                } catch (InterruptedException | ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-
-            message.getEmbeds().forEach(embed -> {
-                WebhookEmbedBuilder webhookEmbedBuilder = WebhookEmbedBuilder.fromJDA(embed);
-                builder.addEmbeds(webhookEmbedBuilder.build());
-            });
+            WebhookMessageBuilder builder = fromMessage(message, true);
             WebhookEmbed jumpEmbed = new WebhookEmbedBuilder()
                     .setColor(0xff0000)
                     .setDescription(emoji.getEmoji().getFormatted() + count + " - [Jump](" + message.getJumpUrl() + ")")
@@ -90,24 +77,7 @@ public class Pinnerino extends ListenerAdapter implements Service {
                     .findAny().orElseGet(() -> this.createPinWebhook(pinChannel));
 
             WebhookClientBuilder client = new WebhookClientBuilder(webhook.getUrl()).setAllowedMentions(AllowedMentions.none());
-            WebhookMessageBuilder builder = new WebhookMessageBuilder()
-                    .setUsername(message.getMember().getEffectiveName())
-                    .setAvatarUrl(message.getMember().getEffectiveAvatarUrl())
-                    .setContent(message.getContentRaw())
-                    .setAllowedMentions(AllowedMentions.none());
-
-            message.getAttachments().forEach(attachment -> {
-                try {
-                    builder.addFile(attachment.getFileName(), attachment.downloadToFile().get());
-                } catch (InterruptedException | ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-
-            message.getEmbeds().forEach(embed -> {
-                WebhookEmbedBuilder webhookEmbedBuilder = WebhookEmbedBuilder.fromJDA(embed);
-                builder.addEmbeds(webhookEmbedBuilder.build());
-            });
+            WebhookMessageBuilder builder = fromMessage(message, false);
             WebhookEmbed jumpEmbed = new WebhookEmbedBuilder()
                     .setColor(0xff0000)
                     .setDescription(emoji.getEmoji().getFormatted() + count + " - [Jump](" + message.getJumpUrl() + ")")
@@ -120,6 +90,25 @@ public class Pinnerino extends ListenerAdapter implements Service {
 
     private Webhook createPinWebhook(TextChannel channel) {
         return channel.createWebhook("Atom Pinnerino").complete();
+    }
+
+    public static WebhookMessageBuilder fromMessage(Message message, Boolean attachments) {
+        WebhookMessageBuilder builder = new WebhookMessageBuilder();
+        builder.setUsername(message.getAuthor().getName());
+        builder.setAvatarUrl(message.getAuthor().getEffectiveAvatarUrl());
+        builder.setContent(message.getContentRaw());
+        builder.setAllowedMentions(AllowedMentions.none());
+        message.getEmbeds().forEach(embed -> builder.addEmbeds(WebhookEmbedBuilder.fromJDA(embed).build()));
+        if (attachments) {
+            message.getAttachments().forEach(attachment -> {
+                try {
+                    builder.addFile(attachment.getFileName(), attachment.downloadToFile().get());
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+        return builder;
     }
 
 }
