@@ -28,12 +28,12 @@ public class Atom {
 
         services.add(database = new AtomDatabase());
         services.add(discordBot = new DiscordBot());
-//        services.add(new DiscordLoggerService());
-//        services.add(new API());
+        services.add(new DiscordLoggerService());
+        services.add(new API());
         services.add(new MessageCacheService());
-//        services.add(new Pinnerino());
-//        services.add(irc = new IRC());
-//        services.add(new ChatBridgeService());
+        services.add(new Pinnerino());
+        services.add(irc = new IRC());
+        services.add(new ChatBridgeService());
         services.add(new ReactionRoleService());
 
         try {
