@@ -26,8 +26,8 @@ public class ReactionRolesCommand {
             slashCommand = false
     )
     public void reactionRolesCommand(CommandEvent event) throws SQLException {
-        if (event.getCommandArgs().length == 0) {
-            event.replyEmbeds(EmbedUtil.expandedErrorEmbed("reactionroles <add|remove|modify>"));
+        if (event.getCommandArgs() == null) {
+            return;
         } else {
             if (event.getCommandArgs()[0].equals("add")) {
                 // reactionroles add <message id> <emoji> <role>
