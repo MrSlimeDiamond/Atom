@@ -36,7 +36,7 @@ public class Pinnerino extends ListenerAdapter implements Service {
                     Atom.database.getServerPinnerinoEmoji(event.getGuild()).ifPresent(pinEmoji -> {
                         if (emoji.getEmoji().equals(pinEmoji)) {
                             if (Atom.database.isMessagePinnerinoed(message.getIdLong())) {
-                                this.updatePin(message.getChannel().asTextChannel(), message, emoji.getCount(), emoji);
+                                updatePin(message.getChannel().asTextChannel(), message, emoji.getCount(), emoji);
                             } else {
                                 pinMessage(message, emoji.getCount(), emoji);
                             }

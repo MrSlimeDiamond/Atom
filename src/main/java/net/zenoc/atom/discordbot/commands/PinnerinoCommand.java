@@ -78,7 +78,11 @@ public class PinnerinoCommand {
                     Atom.database.setServerPinnerinoEmoji(event.getGuild().getIdLong(), id);
                 } else {
                     // Unicode emoji
-                    String unicode = "U+" + Integer.toHexString(event.getCommandArgs()[2].toCharArray()[0] | 0x10000).substring(1);
+                    String unicode = EmojiParser.parseToHtmlHexadecimal(event.getCommandArgs()[2])
+                            .replace("&", "U")
+                            .replace("#", "+")
+                            .replace(";", "")
+                            .replaceFirst("x", "");
                     Atom.database.setServerPinnerinoEmoji(event.getGuild().getIdLong(), unicode);
                 }
                 event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Set server pinnerino emoji"));

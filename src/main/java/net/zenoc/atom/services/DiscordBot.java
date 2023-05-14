@@ -45,6 +45,7 @@ public class DiscordBot implements Service {
         commandHandler.registerCommand(new BridgeCommand());
         commandHandler.registerCommand(new PortalCommands());
         commandHandler.registerCommand(new MCOCommands());
+        commandHandler.registerCommand(new ReactionRolesCommand());
 
         jda.addEventListener(commandHandler);
         //IRC.client.getEventManager().registerEventListener(new IRCCommand());

@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.data.DataObject;
+import net.dv8tion.jda.api.utils.data.SerializableData;
 import net.zenoc.atom.Atom;
 import net.zenoc.atom.discordbot.CachedMessage;
 import net.zenoc.atom.util.NumberUtils;
@@ -97,6 +98,13 @@ public class AtomDatabase implements Service {
     private PreparedStatement isMCOUserInDatabaseUUID;
 
     private PreparedStatement getPinnerino;
+
+    private PreparedStatement insertReactionRole;
+    private PreparedStatement messageHasReactionRoles;
+    private PreparedStatement getReactionRole;
+    private PreparedStatement removeReactionRole;
+    private PreparedStatement getReactionRoleEmoji;
+    private PreparedStatement removeAllReactionRoles;
     @Override
     public void startService() throws Exception {
         openConnection();
@@ -187,6 +195,13 @@ public class AtomDatabase implements Service {
 
         isMCOUserInDatabaseUsername = conn.prepareStatement("SELECT * FROM minecraftonline_users WHERE MinecraftName = ?");
         isMCOUserInDatabaseUUID = conn.prepareStatement("SELECT * FROM minecraftonline_users UUID MinecraftName = ?");
+
+        insertReactionRole = conn.prepareStatement("INSERT INTO reaction_roles (MessageID, Emoji, RoleID) VALUES (?, ?, ?)");
+        messageHasReactionRoles = conn.prepareStatement("SELECT * FROM reaction_roles WHERE MessageID = ?");
+        getReactionRole = conn.prepareStatement("SELECT RoleID FROM reaction_roles WHERE MessageID = ? AND Emoji = ?");
+        removeReactionRole = conn.prepareStatement("DELETE FROM reaction_roles WHERE MessageID = ? AND RoleID = ?");
+        getReactionRoleEmoji = conn.prepareStatement("SELECT Emoji FROM reaction_roles WHERE MessageID = ? AND RoleID = ?");
+        removeAllReactionRoles = conn.prepareStatement("DELETE FROM reaction_roles WHERE MessageID = ?");
     }
     public AtomDatabase() {}
 
@@ -583,10 +598,8 @@ public class AtomDatabase implements Service {
             if (emoji == null) return Optional.empty();
             DataObject data;
             if (NumberUtils.isNumeric(emoji)) {
-                // Unicode
                 data = guild.retrieveEmojiById(emoji).complete().toData();
             } else {
-                // Custom
                 data = Emoji.fromUnicode(emoji).toData();
             }
             return Optional.of(Emoji.fromData(data));
@@ -653,5 +666,80 @@ public class AtomDatabase implements Service {
         setMCOLastseenByUUID.setString(2, uuid);
         setMCOLastseenByUUID.setTimestamp(1, Timestamp.from(date.toInstant()));
         setMCOLastseenByUUID.execute();
+    }
+
+    public void insertReactionRole(long messageID, String emoji, long roleID) throws SQLException {
+        insertReactionRole.setLong(1, messageID);
+        insertReactionRole.setString(2, emoji);
+        insertReactionRole.setLong(3, roleID);
+        insertReactionRole.execute();
+    }
+
+    public boolean messageHasReactionRoles(long messageID) {
+        try {
+            messageHasReactionRoles.setLong(1, messageID);
+            ResultSet resultSet = messageHasReactionRoles.executeQuery();
+            return resultSet.next();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Optional<Role> getReactionRole(long messageID, EmojiUnion emoji) {
+        try {
+            SerializableData data = emoji.toData();
+            String emojiID;
+            if (data.toData().isNull("id")) {
+                // Unicode emoji
+                emojiID = emoji.asUnicode().getAsCodepoints();
+            } else {
+                // Custom emoji
+                emojiID = emoji.asCustom().getId();
+            }
+            getReactionRole.setLong(1, messageID);
+            getReactionRole.setString(2, emojiID);
+            ResultSet resultSet = getReactionRole.executeQuery();
+            if (resultSet.next()) {
+                String roleID = resultSet.getString("RoleID");
+                Role role = DiscordBot.jda.getRoleById(roleID);
+                if (role == null) {
+                    return Optional.empty();
+                }
+                return Optional.of(role);
+            }
+            return Optional.empty();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void removeReactionRole(long messageID, long roleID) throws SQLException {
+        removeReactionRole.setLong(1, messageID);
+        removeReactionRole.setLong(2, roleID);
+        removeReactionRole.execute();
+    }
+
+    public Optional<Emoji> getReactionRoleEmoji(Guild guild, long messageID, long roleID) throws SQLException {
+        getReactionRoleEmoji.setLong(1, messageID);
+        getReactionRoleEmoji.setLong(2, roleID);
+        ResultSet resultSet = getReactionRoleEmoji.executeQuery();
+        if (resultSet.next()) {
+            DataObject data;
+            String emoji = resultSet.getString("EmojiID");
+
+            if (NumberUtils.isNumeric(emoji)) {
+                data = guild.retrieveEmojiById(emoji).complete().toData();
+            } else {
+                data = Emoji.fromUnicode(emoji).toData();
+            }
+
+            return Optional.of(Emoji.fromData(data));
+        }
+        return Optional.empty();
+    }
+
+    public void removeAllReactionRoles(long messageID) throws SQLException {
+        removeAllReactionRoles.setLong(1, messageID);
+        removeAllReactionRoles.execute();
     }
 }
