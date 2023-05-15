@@ -48,7 +48,6 @@ public class CommandHandler {
             if (mcobotParser.isChatMessage()) {
                 // Try to parse the command from an ingame chat message
                 commandName.set(args[1].split(" ")[0]);
-                System.out.println(Arrays.toString(args));
             } else {
                 commandName.set(args[1].split(" ")[0].replace("#", ""));
             }

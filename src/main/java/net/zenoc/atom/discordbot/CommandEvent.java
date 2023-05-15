@@ -311,7 +311,6 @@ public class CommandEvent {
 
     public String getSubcommandName() {
         if (isSlashCommand()) {
-            System.out.println(slashEvent.getSubcommandName());
             return slashEvent.getSubcommandName();
         } else {
             for (Subcommand subcommand : command.getCommand().subcommands()) {

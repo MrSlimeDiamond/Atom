@@ -47,7 +47,6 @@ public class ReactionRolesCommand {
                 if (EmojiParser.extractEmojis(event.getCommandArgs()[2]).size() == 0) {
                     // Custom emoji
                     emoji = event.getCommandArgs()[2].split(":")[2].replace(">", "");
-                    System.out.println(emoji);
                     String name = event.getCommandArgs()[2].split(":")[1];
                     reaction = Emoji.fromCustom(name, Long.parseLong(emoji), false);
                 } else {

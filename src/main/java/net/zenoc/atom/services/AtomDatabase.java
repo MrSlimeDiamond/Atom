@@ -383,7 +383,6 @@ public class AtomDatabase implements Service {
             ResultSet resultSet = getPinnerino.executeQuery();
             if (resultSet.next()) {
                 long pinMessageID = resultSet.getLong("PinnerinoMessageID");
-                System.out.println(pinMessageID);
                 AtomicReference<TextChannel> channel = new AtomicReference<>();
                 this.getServerPinnerinoChannel(guild).ifPresent(channel::set);
                 return Optional.of(channel.get().retrieveMessageById(pinMessageID));
