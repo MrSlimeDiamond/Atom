@@ -5,11 +5,13 @@ import club.minnced.discord.webhook.send.AllowedMentions;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
-import com.vdurmont.emoji.Emoji;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -66,6 +68,25 @@ public class Pinnerino extends ListenerAdapter implements Service {
                     }
                 });
             });
+        }
+    }
+
+    public void onMessageUpdate(MessageUpdateEvent event) {
+        if (Atom.database.isMessagePinnerinoed(event.getMessageIdLong())) {
+            Message message = event.getChannel().retrieveMessageById(event.getMessageIdLong()).complete();
+            message.getReactions().forEach(emoji -> {
+                Atom.database.getServerPinnerinoEmoji(event.getGuild()).ifPresent(pinEmoji -> {
+                    if (emoji.getEmoji().equals(pinEmoji)) {
+                        updatePin(event.getChannel().asTextChannel(), message, emoji.getCount(), emoji);
+                    }
+                });
+            });
+        }
+    }
+
+    public void onMessageDelete(MessageDeleteEvent event) {
+        if (Atom.database.isMessagePinnerinoed(event.getMessageIdLong())) {
+            Atom.database.getPinnerino(event.getGuild(), event.getMessageIdLong()).ifPresent(pin -> pin.queue(message -> message.delete().queue()));
         }
     }
 
