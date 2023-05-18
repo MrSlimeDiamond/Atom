@@ -46,6 +46,7 @@ public class AtomDatabase implements Service {
     private PreparedStatement getServerLogChannel;
 
     private PreparedStatement insertGuild;
+    private PreparedStatement isGuildInDatabase;
 
     private PreparedStatement insertMessage;
     private PreparedStatement getMessage;
@@ -131,6 +132,7 @@ public class AtomDatabase implements Service {
         getServerLogChannel = conn.prepareStatement("SELECT LogChannel FROM guilds WHERE GuildID = ?");
 
         insertGuild = conn.prepareStatement("INSERT INTO guilds (GuildID) VALUES (?)");
+        isGuildInDatabase = conn.prepareStatement("SELECT * FROM guilds WHERE GuildID = ?");
 
         insertMessage = conn.prepareStatement("INSERT INTO messages (MessageID, GuildID, AuthorID, MessageContent) VALUES (?, ?, ?, ?)");
         getMessage = conn.prepareStatement("SELECT * FROM messages WHERE MessageID = ?");
@@ -740,5 +742,15 @@ public class AtomDatabase implements Service {
     public void removeAllReactionRoles(long messageID) throws SQLException {
         removeAllReactionRoles.setLong(1, messageID);
         removeAllReactionRoles.execute();
+    }
+
+    public boolean isGuildInDatabase(Guild guild) {
+        try {
+            isGuildInDatabase.setLong(1, guild.getIdLong());
+            ResultSet resultSet = isGuildInDatabase.executeQuery();
+            return resultSet.next();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

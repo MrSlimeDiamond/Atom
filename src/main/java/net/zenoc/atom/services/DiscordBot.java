@@ -2,6 +2,7 @@ package net.zenoc.atom.services;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -48,7 +49,12 @@ public class DiscordBot implements Service {
         commandHandler.registerCommand(new ReactionRolesCommand());
 
         jda.addEventListener(commandHandler);
-        //IRC.client.getEventManager().registerEventListener(new IRCCommand());
+
+        jda.getGuilds().forEach(guild -> {
+            if (!Atom.database.isGuildInDatabase(guild)) {
+                log.warn("Guild with name " + guild.getName() + " is not in the database!!!");
+            }
+        });
     }
 
     @Override
