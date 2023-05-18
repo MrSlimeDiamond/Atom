@@ -35,8 +35,8 @@ public class DiscordLoggerService extends ListenerAdapter implements Service {
             Atom.database.getMessage(event.getMessageIdLong()).ifPresentOrElse(cachedMessage -> {
                 EmbedBuilder builder = new EmbedBuilder()
                         .setAuthor(cachedMessage.getUser().getAsTag(), null, cachedMessage.getUser().getAvatarUrl())
-                        .setTitle("Message Deleted")
-                        .setDescription(cachedMessage.getMessageContent());
+                        .setDescription("Message Deleted in <#" + event.getChannel().getId() + ">")
+                        .addField("Content", cachedMessage.getMessageContent(), false);
                 Guild guild = cachedMessage.getGuild();
                 guild.retrieveMember(cachedMessage.getUser()).queue(member -> {
                     builder.setColor(member.getColor());
@@ -44,8 +44,8 @@ public class DiscordLoggerService extends ListenerAdapter implements Service {
                 channel.sendMessageEmbeds(builder.build()).queue();
             }, () -> {
                 MessageEmbed embed = new EmbedBuilder()
-                        .setTitle("Message deleted")
-                        .setDescription("*Unable to get content information*")
+                        .setDescription("Message Deleted in <#" + event.getChannel().getId() + ">")
+                        .addField("Content", "*Unable to get content information*", false)
                         .build();
                 channel.sendMessageEmbeds(embed).queue();
             });
