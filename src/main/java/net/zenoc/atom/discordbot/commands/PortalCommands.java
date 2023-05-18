@@ -36,7 +36,8 @@ public class PortalCommands {
                                     )
                             }
                     )
-            }
+            },
+            whitelistedGuilds = {696218632618901504L, 1004897099017637979L}
     )
     public void portalCommand(CommandEvent event) {
         if (!event.isSubCommand()) {

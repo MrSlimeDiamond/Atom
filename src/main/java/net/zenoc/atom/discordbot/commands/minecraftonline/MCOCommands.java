@@ -35,7 +35,7 @@ public class MCOCommands {
             aliases = {"minecraftonline"},
             usage = "mco <firstseen|lastseen|playtime> [username]",
             description = "Commands for MinecraftOnline",
-            whitelistedGuilds = {696218632618901504L, 288050647998136323L},
+            whitelistedGuilds = {696218632618901504L, 288050647998136323L, 972936631558488094L},
             subcommands = {
                     @Subcommand(
                             name = "firstseen",
@@ -119,7 +119,7 @@ public class MCOCommands {
             description = "Get the first join date of a user",
             usage = "mco firstseen [username]",
             slashCommand = false,
-            whitelistedGuilds = {696218632618901504L, 288050647998136323L}/*,
+            whitelistedGuilds = {696218632618901504L, 288050647998136323L, 972936631558488094L}/*,
             options = {
                     @Option(
                             name = "player",
@@ -180,7 +180,7 @@ public class MCOCommands {
             description = "Get the first join date of a user",
             usage = "mco firstseen [username]",
             slashCommand = false,
-            whitelistedGuilds = {696218632618901504L, 288050647998136323L}/*,
+            whitelistedGuilds = {696218632618901504L, 288050647998136323L, 972936631558488094L}/*,
             options = {
                     @Option(
                             name = "player",
@@ -240,7 +240,7 @@ public class MCOCommands {
             description = "Get playtime data for a user",
             usage = "mco playtime [username]",
             slashCommand = false,
-            whitelistedGuilds = {696218632618901504L, 288050647998136323L}
+            whitelistedGuilds = {696218632618901504L, 288050647998136323L, 972936631558488094L}
     )
     public void playtimeCommand(CommandEvent event) throws Exception {
         String username;
