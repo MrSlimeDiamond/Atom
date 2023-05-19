@@ -54,7 +54,7 @@ public class IRCCommand {
         if (!event.isSubCommand()) {
             event.replyEmbeds(EmbedUtil.genericIncorrectUsageEmbed("irc <names|whois>"));
         }
-        if (Atom.database.isChannelBridged(event.getChannel().getIdLong()) && !Objects.equals(event.getSubcommandName(), "whois")) {
+        if (Atom.database.isChannelBridged(event.getChannel().getIdLong()) && event.getSubcommandName() != "whois") {
             if (event.getSubcommandName().equals("names")) {
                 IRC.client.getChannel(Atom.database.getIRCBridgeChannel(event.getChannel().getIdLong())).ifPresent(channel -> {
                     StringBuilder stringBuilder = new StringBuilder();
