@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.reference.TwitchReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +29,6 @@ public class TwitchNotifier implements Service {
 
     private static final Logger log = LoggerFactory.getLogger(TwitchNotifier.class);
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    String API_TOKEN = "2ba2nezninfo0twz2coertacwzcgfn";
 
     TwitchClient client;
 
@@ -49,7 +49,7 @@ public class TwitchNotifier implements Service {
         Thread.currentThread().setName("Twitch Refresh Thread");
         log.info("Streams are being refreshed for " + guild.getName());
         Atom.database.getServerStreamers(guild).ifPresent(streamers -> {
-            StreamList streams = client.getHelix().getStreams(API_TOKEN, null, null, null, null, null, null, streamers).execute();
+            StreamList streams = client.getHelix().getStreams(TwitchReference.API_TOKEN, null, null, null, null, null, null, streamers).execute();
             MessageCreateBuilder builder = new MessageCreateBuilder();
             StringJoiner joiner = new StringJoiner(", ");
             streams.getStreams().forEach(stream -> {
@@ -58,7 +58,7 @@ public class TwitchNotifier implements Service {
                         .setTitle("Watch - twitch.tv/" + stream.getUserLogin(), "https://twitch.tv/" + stream.getUserLogin())
                         .setFooter(stream.getGameName());
 
-                User user = client.getHelix().getUsers(API_TOKEN, Arrays.asList(stream.getUserId()), null).execute().getUsers().get(0);
+                User user = client.getHelix().getUsers(TwitchReference.API_TOKEN, Arrays.asList(stream.getUserId()), null).execute().getUsers().get(0);
                 embedBuilder.setAuthor(user.getDisplayName(), "https://twitch.tv/" + user.getLogin(), user.getProfileImageUrl());
                 builder.addEmbeds(embedBuilder.build());
                 joiner.add("**" + user.getDisplayName() + "**");

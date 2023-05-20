@@ -15,6 +15,7 @@ public class Config {
         File botConfig = new File("./config/discordbot.cfg");
         File dbConfig = new File("./config/database.cfg");
         File ircConfig = new File("./config/irc.cfg");
+        File twitchConfig = new File("./config/twitch.cfg");
         Files.createDirectories(Paths.get("config/")); // Generate config directory, does nothing if it doesn't exist
         if (!botConfig.exists()) {
             log.info("Generating discord bot config");
@@ -64,6 +65,16 @@ public class Config {
             } catch(IOException e) {
                 e.printStackTrace();
             }
+        } if (!twitchConfig.exists()) {
+            try (OutputStream output = Files.newOutputStream(Paths.get("./config/twitch.cfg"))) {
+                prop = new Properties();
+
+                prop.setProperty("token", "AUTH_TOKEN_GOES_HERE");
+
+                prop.store(output, null);
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -83,5 +94,9 @@ public class Config {
 
     public Properties irc() throws IOException {
         return getPropertiesFile("irc");
+    }
+
+    public Properties twitch() throws IOException {
+        return getPropertiesFile("twitch");
     }
 }
