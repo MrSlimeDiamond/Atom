@@ -1,11 +1,14 @@
 /*
 Requires MariaDB
-Creation statements:
+Creation statements: not all of them lmao
 
-create table guilds (GuildID BIGINT, LogChannel BIGINT, PinnerinoChannel BIGINT, PinnerinoEmoji varchar(256), PinnerinoThreshold INT)
+create table guilds (GuildID BIGINT, LogChannel BIGINT, PinnerinoChannel BIGINT, PinnerinoEmoji varchar(256), PinnerinoThreshold INT, StreamsChannel BIGINT)
 create table messages (MessageID BIGINT, GuildID BIGINT, AuthorID BIGINT, MessageContent LONGTEXT)
 create table pinnerino_blacklist (ChannelID BIGINT)
 create table irc_channels (ChannelName TINYTEXT, DiscordChannel BIGINT, Pipe BOOLEAN, AutoJoin BOOLEAN, BridgeIcon TINYTEXT);
+
+
+alter table guilds add StreamsChannel BIGINT
  */
 
 package net.zenoc.atom.services;
@@ -25,6 +28,7 @@ import net.zenoc.atom.discordbot.CachedMessage;
 import net.zenoc.atom.util.NumberUtils;
 import net.zenoc.atom.reference.DBReference;
 import net.zenoc.atom.reference.IRCReference;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +110,12 @@ public class AtomDatabase implements Service {
     private PreparedStatement removeReactionRole;
     private PreparedStatement getReactionRoleEmoji;
     private PreparedStatement removeAllReactionRoles;
+
+    private PreparedStatement setServerStreamsChannel;
+    private PreparedStatement getServerStreamsChannel;
+    private PreparedStatement getServerStreamers;
+    private PreparedStatement insertServerStreamer;
+    private PreparedStatement deleteServerStreamer;
     @Override
     public void startService() throws Exception {
         openConnection();
@@ -204,6 +214,12 @@ public class AtomDatabase implements Service {
         removeReactionRole = conn.prepareStatement("DELETE FROM reaction_roles WHERE MessageID = ? AND RoleID = ?");
         getReactionRoleEmoji = conn.prepareStatement("SELECT Emoji FROM reaction_roles WHERE MessageID = ? AND RoleID = ?");
         removeAllReactionRoles = conn.prepareStatement("DELETE FROM reaction_roles WHERE MessageID = ?");
+
+        setServerStreamsChannel = conn.prepareStatement("UPDATE guilds SET StreamsChannel = ? WHERE GuildID = ?");
+        getServerStreamsChannel = conn.prepareStatement("SELECT StreamsChannel FROM guilds WHERE GuildID = ?");
+        getServerStreamers = conn.prepareStatement("SELECT * FROM streamers WHERE GuildID = ?");
+        insertServerStreamer = conn.prepareStatement("INSERT INTO streamers (GuildID, Login) VALUES (?, ?)");
+        deleteServerStreamer = conn.prepareStatement("DELETE FROM streamers WHERE GuildID = ? AND Login = ?");
     }
     public AtomDatabase() {}
 
@@ -752,5 +768,57 @@ public class AtomDatabase implements Service {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setServerStreamsChannel(Guild guild, @Nullable TextChannel channel) throws SQLException {
+        if (channel == null) {
+            setServerStreamsChannel.setNull(1, Types.BIGINT);
+        }
+        setServerStreamsChannel.setLong(2, guild.getIdLong());
+        setServerStreamsChannel.setLong(1, channel.getIdLong());
+        setServerStreamsChannel.execute();
+    }
+
+    public Optional<TextChannel> getServerStreamsChannel(Guild guild) {
+        try {
+            getServerStreamsChannel.setLong(1, guild.getIdLong());
+            ResultSet resultSet = getServerStreamsChannel.executeQuery();
+            if (resultSet.next()) {
+                return Optional.ofNullable(guild.getTextChannelById(resultSet.getLong("StreamsChannel")));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ArrayList<String>> getServerStreamers(Guild guild) {
+        ArrayList<String> logins = new ArrayList<>();
+        try {
+            getServerStreamers.setLong(1, guild.getIdLong());
+            ResultSet resultSet = getServerStreamers.executeQuery();
+            while (resultSet.next()) {
+                logins.add(resultSet.getString("Login"));
+            }
+            if (logins.size() == 0) {
+                return Optional.empty();
+            } else {
+                return Optional.of(logins);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void insertServerStreamer(Guild guild, String login) throws SQLException {
+        insertServerStreamer.setLong(1, guild.getIdLong());
+        insertServerStreamer.setString(2, login);
+        insertServerStreamer.execute();
+    }
+
+    public void deleteServerStreamer(Guild guild, String login) throws SQLException {
+        deleteServerStreamer.setLong(1, guild.getIdLong());
+        deleteServerStreamer.setString(2, login);
+        deleteServerStreamer.execute();
     }
 }
