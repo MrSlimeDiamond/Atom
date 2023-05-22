@@ -9,6 +9,7 @@ import net.zenoc.atom.discordbot.CommandEvent;
 import net.zenoc.atom.discordbot.annotations.Command;
 import net.zenoc.atom.discordbot.annotations.Option;
 import net.zenoc.atom.discordbot.annotations.Subcommand;
+import net.zenoc.atom.reference.IRCReference;
 import net.zenoc.atom.util.DateUtil;
 import net.zenoc.atom.util.EmbedUtil;
 import net.zenoc.atom.services.IRC;
@@ -95,6 +96,10 @@ public class IRCCommand {
     @Handler
     public void whoisEvent(WhoisEvent event) {
         if (commandEvent == null) return;
+        if (!event.getWhoisData().getServer().isPresent()) {
+            commandEvent.replyEmbeds(EmbedUtil.expandedErrorEmbed("This user is not on " + IRCReference.host));
+            return;
+        }
 
         EmbedBuilder builder = new EmbedBuilder()
                 .setAuthor(event.getWhoisData().getNick())
