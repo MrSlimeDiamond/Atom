@@ -46,7 +46,7 @@ public class MemeVoteService extends ListenerAdapter implements Service {
                         EmbedBuilder builder = new EmbedBuilder()
                                 .setColor(Color.YELLOW)
                                 .setAuthor(msg.getAuthor().getAsTag(), null, msg.getAuthor().getEffectiveAvatarUrl())
-                                .setDescription(msg.getContentRaw());
+                                .setDescription("[Jump](" + msg.getJumpUrl() + ")\n\n" + msg.getContentRaw());
                         msg.getAttachments().stream().findFirst().ifPresent(attachment -> builder.setImage(attachment.getUrl()));
                         dm.sendMessageEmbeds(builder.build()).queue();
                     });
