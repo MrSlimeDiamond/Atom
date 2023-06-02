@@ -36,6 +36,7 @@ public class Atom {
         services.add(new ChatBridgeService());
         services.add(new ReactionRoleService());
         services.add(new TwitchNotifier());
+        services.add(new MemeVoteService());
 
         try {
             config = new Config();

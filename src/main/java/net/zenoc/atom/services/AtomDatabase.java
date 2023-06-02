@@ -116,6 +116,9 @@ public class AtomDatabase implements Service {
     private PreparedStatement getServerStreamers;
     private PreparedStatement insertServerStreamer;
     private PreparedStatement deleteServerStreamer;
+
+    private PreparedStatement getServerMemesChannel;
+    private PreparedStatement setServerMemesChannel;
     @Override
     public void startService() throws Exception {
         openConnection();
@@ -220,6 +223,9 @@ public class AtomDatabase implements Service {
         getServerStreamers = conn.prepareStatement("SELECT * FROM streamers WHERE GuildID = ?");
         insertServerStreamer = conn.prepareStatement("INSERT INTO streamers (GuildID, Login) VALUES (?, ?)");
         deleteServerStreamer = conn.prepareStatement("DELETE FROM streamers WHERE GuildID = ? AND Login = ?");
+
+        getServerMemesChannel = conn.prepareStatement("SELECT MemesChannel FROM guilds WHERE GuildID = ?");
+        setServerMemesChannel = conn.prepareStatement("UPDATE guilds SET MemesChannel = ? WHERE GuildID = ?");
     }
     public AtomDatabase() {}
 
@@ -820,5 +826,25 @@ public class AtomDatabase implements Service {
         deleteServerStreamer.setLong(1, guild.getIdLong());
         deleteServerStreamer.setString(2, login);
         deleteServerStreamer.execute();
+    }
+
+    public Optional<TextChannel> getServerMemesChannel(Guild guild) {
+        try {
+            getServerMemesChannel.setLong(1, guild.getIdLong());
+            ResultSet resultSet = getServerMemesChannel.executeQuery();
+            if (resultSet.next()) {
+                return Optional.ofNullable(DiscordBot.jda.getTextChannelById(resultSet.getLong("MemesChannel")));
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setServerMemesChannel(long channelID, Guild guild) throws SQLException {
+        setServerMemesChannel.setLong(1, channelID);
+        setServerMemesChannel.setLong(2, guild.getIdLong());
+        setServerMemesChannel.execute();
     }
 }

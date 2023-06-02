@@ -324,4 +324,8 @@ public class CommandEvent {
         }
     }
 
+    public void sendUsage() {
+        this.replyEmbeds(EmbedUtil.genericIncorrectUsageEmbed(command.getCommand().usage()));
+    }
+
 }

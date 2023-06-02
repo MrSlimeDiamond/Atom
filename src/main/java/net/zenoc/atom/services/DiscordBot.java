@@ -48,6 +48,7 @@ public class DiscordBot implements Service {
         commandHandler.registerCommand(new MCOCommands());
         commandHandler.registerCommand(new ReactionRolesCommand());
         commandHandler.registerCommand(new StreamsCommand());
+        commandHandler.registerCommand(new MemesCommand());
 
         jda.addEventListener(commandHandler);
 
