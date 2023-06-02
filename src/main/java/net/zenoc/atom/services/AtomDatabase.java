@@ -19,7 +19,6 @@ import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
-import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.api.utils.data.SerializableData;
@@ -29,7 +28,6 @@ import net.zenoc.atom.util.NumberUtils;
 import net.zenoc.atom.reference.DBReference;
 import net.zenoc.atom.reference.IRCReference;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -844,6 +842,12 @@ public class AtomDatabase implements Service {
 
     public void setServerMemesChannel(long channelID, Guild guild) throws SQLException {
         setServerMemesChannel.setLong(1, channelID);
+        setServerMemesChannel.setLong(2, guild.getIdLong());
+        setServerMemesChannel.execute();
+    }
+
+    public void unsetServerMemesChannel(Guild guild) throws SQLException {
+        setServerMemesChannel.setNull(1, Types.BIGINT);
         setServerMemesChannel.setLong(2, guild.getIdLong());
         setServerMemesChannel.execute();
     }

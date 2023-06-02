@@ -19,6 +19,11 @@ public class MemesCommand {
                 GuildChannel channel = event.getMessage().getMentions().getChannels().get(0);
                 Atom.database.setServerMemesChannel(channel.getIdLong(), event.getGuild());
                 event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Set server memes channel"));
+            } else if (args[1].equalsIgnoreCase("unset")) {
+                Atom.database.unsetServerMemesChannel(event.getGuild());
+                event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Unset server memes channel"));
+            } else {
+                event.sendUsage();
             }
         } else {
             event.sendUsage();
