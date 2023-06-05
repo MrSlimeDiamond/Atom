@@ -2,11 +2,13 @@ package net.zenoc.atom.util;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.HTTP;
 import org.mariadb.jdbc.util.StringUtils;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MinecraftOnlineAPI {
     public static Optional<Date> getPlayerFirstseenByName(String username) throws IOException {
@@ -63,5 +65,11 @@ public class MinecraftOnlineAPI {
             }
         }
         return Optional.empty();
+    }
+
+    public static Optional<Integer> getBanCount() throws IOException {
+        AtomicReference<String> temp = new AtomicReference<>();
+        HTTPUtil.getDataFromURL("http://minecraftonline.com/cgi-bin/getbancount.sh").ifPresent(bans -> temp.set(bans.strip()));
+        return Optional.of(Integer.parseInt(temp.get()));
     }
 }

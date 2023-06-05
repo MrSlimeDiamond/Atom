@@ -4,14 +4,11 @@ import net.engio.mbassy.listener.Handler;
 import net.zenoc.atom.Atom;
 import net.zenoc.atom.discordbot.commands.IRCCommand;
 import net.zenoc.atom.ircbot.MCOEventHandler;
-import net.zenoc.atom.ircbot.commands.minecraftonline.MCOFirstseen;
+import net.zenoc.atom.ircbot.commands.minecraftonline.*;
 import net.zenoc.atom.ircbot.CommandHandler;
 import net.zenoc.atom.ircbot.commands.BridgeCommand;
 import net.zenoc.atom.ircbot.commands.ChannelCommand;
 import net.zenoc.atom.ircbot.commands.PingCommand;
-import net.zenoc.atom.ircbot.commands.minecraftonline.MCOLastseen;
-import net.zenoc.atom.ircbot.commands.minecraftonline.MCOPlaytime;
-import net.zenoc.atom.ircbot.commands.minecraftonline.RefreshLastseen;
 import net.zenoc.atom.reference.IRCReference;
 import org.kitteh.irc.client.library.Client;
 import org.kitteh.irc.client.library.feature.auth.NickServ;
@@ -41,6 +38,7 @@ public class IRC implements Service {
         commandHandler.registerCommand(new MCOLastseen());
         commandHandler.registerCommand(new MCOPlaytime());
         commandHandler.registerCommand(new RefreshLastseen());
+        commandHandler.registerCommand(new BansCommand());
 
         client.getEventManager().registerEventListener(new IRCCommand());
         client.getEventManager().registerEventListener(new MCOEventHandler());

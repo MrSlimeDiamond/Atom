@@ -82,11 +82,20 @@ public class MCOCommands {
                                     )
                             }
                     ),
+                    @Subcommand(
+                            name = "bans",
+                            usage = "mco bans",
+                            description = "Get the amount of bans on MCO"
+                    )
             }
     )
     public void minecraftonlineCommands(CommandEvent event) throws Exception {
         event.deferReply();
         if (event.isSubCommand()) {
+            if (event.getSubcommandName().equals("bans")) {
+                bansCommand(event);
+                return;
+            }
             String username;
             String givenName = event.getStringOption("player");
             if (givenName == null) {
@@ -261,6 +270,29 @@ public class MCOCommands {
             long hours = playtime / 3600;
 
             this.sendPlaytimeResponse(correctname.get(), hours, event);
+        });
+    }
+
+    @Command(
+            name = "bans",
+            usage = "mco bans",
+            aliases = {"bancount"},
+            description = "Get the amount of bans on MCO",
+            slashCommand = false,
+            whitelistedGuilds = {696218632618901504L, 288050647998136323L, 972936631558488094L}
+    )
+    public void bansCommand(CommandEvent event) throws IOException {
+        MinecraftOnlineAPI.getBanCount().ifPresentOrElse(bans -> {
+            EmbedBuilder builder = new EmbedBuilder()
+                    .setColor(0x00BEBE)
+                    .setTitle("MinecraftOnline ban count")
+                    .setThumbnail(EmbedReference.mcoBanhammer)
+                    .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon);
+            builder.setDescription(bans + " players have been banished from Freedonia!");
+
+            event.replyEmbeds(builder.build());
+        }, () -> {
+            event.replyEmbeds(EmbedUtil.expandedErrorEmbed("MinecraftOnlineAPI::getBanCount Optional was not present! What the fuck happened? Tell an admin!"));
         });
     }
 
