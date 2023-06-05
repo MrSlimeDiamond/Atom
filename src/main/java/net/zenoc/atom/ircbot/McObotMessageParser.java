@@ -55,7 +55,7 @@ public class McObotMessageParser {
     public boolean isCommandMessage() {
         if (!isChatMessage()) return false;
         Pattern command = Pattern.compile("\\(MCS\\) <.*> " + IRCReference.prefix);
-        Matcher commandMather = command.matcher(message);
-        return commandMather.find();
+        Matcher commandMatcher = command.matcher(message);
+        return commandMatcher.find();
     }
 }
