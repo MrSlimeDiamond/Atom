@@ -123,7 +123,7 @@ public class CommandHandler extends ListenerAdapter {
                 String name = cmd.getCommand().name();
                 //log.debug(name);
                 ArrayList<String> aliases = new ArrayList<>(Arrays.asList(cmd.getCommand().aliases()));
-                if (name.equals(commandName.get()) || aliases.contains(commandName.get())) {
+                if (name.equalsIgnoreCase(commandName.get()) || aliases.contains(commandName.get())) {
                     log.debug("Executing command");
                     try {
                         executeCommand(cmd, event, null);

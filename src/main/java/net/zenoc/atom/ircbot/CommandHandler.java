@@ -56,9 +56,9 @@ public class CommandHandler {
 
             commands.forEach(command -> {
                 log.debug(command.getCommand().name());
-                boolean correctCommand = command.getCommand().name().equals(commandName.get());
+                boolean correctCommand = command.getCommand().name().equalsIgnoreCase(commandName.get());
                 for (String commandAlias : command.getCommand().aliases()) {
-                    if (commandAlias.equals(commandName.get())) {
+                    if (commandAlias.equalsIgnoreCase(commandName.get())) {
                         correctCommand = true;
                         break;
                     }
@@ -67,7 +67,7 @@ public class CommandHandler {
                     boolean shouldExecute = false;
                     if (command.getCommand().whitelistedChannels().length > 1) {
                         for (String whitelistedChannel : command.getCommand().whitelistedChannels()) {
-                            if (!whitelistedChannel.equals(event.getChannel().getName())) continue;
+                            if (!whitelistedChannel.equalsIgnoreCase(event.getChannel().getName())) continue;
                             shouldExecute = true;
                             break;
                         }
