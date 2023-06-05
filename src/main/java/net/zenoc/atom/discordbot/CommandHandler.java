@@ -169,16 +169,19 @@ public class CommandHandler extends ListenerAdapter {
                 return;
             }
             if (!msgEvent.isFromGuild() && command.getCommand().whitelistedGuilds().length > 1) return;
+            boolean go = false;
+            if (command.getCommand().whitelistedGuilds().length == 0) go = true;
             for (long guildID : command.getCommand().whitelistedGuilds()) {
                 Guild guild = jda.getGuildById(guildID);
                 if (guild == null) {
                     continue;
                 }
-                if (guild.equals(commandEvent.getGuild())) {
+                if (guild.getId().equals(commandEvent.getGuild().getId())) {
+                    go = true;
                     break;
                 }
-                return;
             }
+            if (!go) return;
         } else {
             commandEvent.setSlashEvent(interaction);
             if (!Atom.database.isDiscordAdminByID(interaction.getUser().getIdLong()) && command.getCommand().adminOnly()) {
