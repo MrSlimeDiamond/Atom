@@ -101,7 +101,7 @@ public class CommandEvent {
     public void reply(String content) {
         if (getInteraction() == null) {
             // Non slash command
-            getMessage().reply(content).queue();
+            getMessage().getChannel().sendMessage(content).queue();
         } else {
             // Slash command
             if (deferred) {
@@ -118,7 +118,7 @@ public class CommandEvent {
         Collections.addAll(embeds, other);
         if (getInteraction() == null) {
             // Non slash command
-            getMessage().replyEmbeds(embeds).queue();
+            getMessage().getChannel().sendMessageEmbeds(embeds).queue();
         } else {
             // Slash command
             if (deferred) {

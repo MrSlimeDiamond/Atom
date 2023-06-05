@@ -128,10 +128,10 @@ public class CommandHandler extends ListenerAdapter {
                     try {
                         executeCommand(cmd, event, null);
                     } catch(SQLException e) {
-                        event.getMessage().replyEmbeds(EmbedUtil.expandedErrorEmbed("SQLException occured! Is the database down?")).queue();
+                        event.getChannel().sendMessageEmbeds(EmbedUtil.expandedErrorEmbed("SQLException occured! Is the database down?")).queue();
                         throw new RuntimeException(e);
                     } catch (Exception e) {
-                        event.getMessage().replyEmbeds(EmbedUtil.genericErrorEmbed()).queue();
+                        event.getChannel().sendMessageEmbeds(EmbedUtil.genericErrorEmbed()).queue();
                         throw new RuntimeException(e);
                     }
                 }
@@ -165,7 +165,7 @@ public class CommandHandler extends ListenerAdapter {
         if (msgEvent != null) {
             commandEvent.setMsgEvent(msgEvent);
             if (!Atom.database.isDiscordAdminByID(msgEvent.getAuthor().getIdLong()) && command.getCommand().adminOnly()) {
-                msgEvent.getMessage().replyEmbeds(EmbedUtil.genericPermissionDeniedError()).queue();
+                msgEvent.getChannel().sendMessageEmbeds(EmbedUtil.genericPermissionDeniedError()).queue();
                 return;
             }
             if (!msgEvent.isFromGuild() && command.getCommand().whitelistedGuilds().length > 1) return;
