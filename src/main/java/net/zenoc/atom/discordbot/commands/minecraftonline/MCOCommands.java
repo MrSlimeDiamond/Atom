@@ -178,7 +178,7 @@ public class MCOCommands {
             name = "lastseen",
             aliases = {"ls", "lj", "lastjoin"},
             description = "Get the first join date of a user",
-            usage = "mco firstseen [username]",
+            usage = "mco lastseen [username]",
             slashCommand = false,
             whitelistedGuilds = {696218632618901504L, 288050647998136323L, 972936631558488094L}/*,
             options = {
@@ -237,6 +237,7 @@ public class MCOCommands {
 
     @Command(
             name = "playtime",
+            aliases = { "pt", "timeplayed", "tp" },
             description = "Get playtime data for a user",
             usage = "mco playtime [username]",
             slashCommand = false,
