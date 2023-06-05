@@ -98,8 +98,8 @@ public class CommandHandler {
         log.debug("Invoking!");
 
         // new thread for commands for more fast
-        new Thread(
-                () -> {
+        new Thread(() -> {
+                    Thread.currentThread().setName("Discord Command Executor");
                     try {
                         method.invoke(command.getCaller(), commandEvent);
                     } catch (Exception e) {

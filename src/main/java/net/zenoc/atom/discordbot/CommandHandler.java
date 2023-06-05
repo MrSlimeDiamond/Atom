@@ -17,6 +17,7 @@ import net.zenoc.atom.util.EmbedUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -194,7 +195,14 @@ public class CommandHandler extends ListenerAdapter {
 
         log.debug("Invoking");
 
-        method.invoke(command.getCaller(), commandEvent);
+        new Thread(() -> {
+            Thread.currentThread().setName("Discord Command Executor");
+            try {
+                method.invoke(command.getCaller(), commandEvent);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
     }
 
     public ArrayList<AtomCommand> getCommands() {
