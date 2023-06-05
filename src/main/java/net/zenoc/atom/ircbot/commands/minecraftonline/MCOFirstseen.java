@@ -37,6 +37,10 @@ public class MCOFirstseen {
         AtomicReference<String> correctname = new AtomicReference<>();
         MinecraftOnlineAPI.getCorrectUsername(username).ifPresentOrElse(correctname::set, () -> event.reply("Could not find that player!"));
 
+        if (correctname.get() == null) {
+            return;
+        }
+
         Optional<Date> mcoFirstseen = Atom.database.getMCOFirstseenByName(correctname.get());
         if (mcoFirstseen.isPresent()) {
             // in database

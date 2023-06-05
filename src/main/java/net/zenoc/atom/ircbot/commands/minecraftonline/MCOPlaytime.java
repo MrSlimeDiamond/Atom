@@ -18,6 +18,11 @@ public class MCOPlaytime {
         String username = event.getDesiredCommandUsername();
         AtomicReference<String> correctname = new AtomicReference<>();
         MinecraftOnlineAPI.getCorrectUsername(username).ifPresentOrElse(correctname::set, () -> event.reply("Could not find that player!"));
+
+        if (correctname.get() == null) {
+            return;
+        }
+
         MinecraftOnlineAPI.getPlayerPlaytime(correctname.get()).ifPresent(playtime -> {
             long hours = playtime / 3600;
 

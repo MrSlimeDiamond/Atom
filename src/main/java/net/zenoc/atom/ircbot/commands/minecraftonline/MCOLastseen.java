@@ -30,6 +30,10 @@ public class MCOLastseen {
         AtomicReference<String> correctname = new AtomicReference<>();
         MinecraftOnlineAPI.getCorrectUsername(username).ifPresentOrElse(correctname::set, () -> event.reply("Could not find that player!"));
 
+        if (correctname.get() == null) {
+            return;
+        }
+
         Optional<Date> mcoLastseen = Atom.database.getMCOLastseenByName(correctname.get());
         if (mcoLastseen.isPresent()) {
             // in database

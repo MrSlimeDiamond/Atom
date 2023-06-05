@@ -20,6 +20,11 @@ public class RefreshLastseen {
         String username = event.getDesiredCommandUsername();
         AtomicReference<String> correctname = new AtomicReference<>();
         MinecraftOnlineAPI.getCorrectUsername(username).ifPresentOrElse(correctname::set, () -> event.reply("Could not find that player!"));
+
+        if (correctname.get() == null) {
+            return;
+        }
+
         MinecraftOnlineAPI.getPlayerLastseenByName(correctname.get()).ifPresent(lastseen -> {
             try {
                 MinecraftUtils.getPlayerUUID(correctname.get()).ifPresent(uuid -> {
