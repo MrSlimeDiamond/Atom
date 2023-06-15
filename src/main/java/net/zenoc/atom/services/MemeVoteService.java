@@ -40,17 +40,19 @@ public class MemeVoteService extends ListenerAdapter implements Service {
         if (!event.isFromGuild()) return;
         if (event.getUser().isBot()) return;
         Atom.database.getServerMemesChannel(event.getGuild()).ifPresent(channel -> {
-            if (event.getReaction().getEmoji().asUnicode().getName().equals("❤️")) {
-                event.getUser().openPrivateChannel().queue(dm -> {
-                    event.getChannel().retrieveMessageById(event.getMessageId()).queue(msg -> {
-                        EmbedBuilder builder = new EmbedBuilder()
-                                .setColor(Color.YELLOW)
-                                .setAuthor(msg.getAuthor().getAsTag(), null, msg.getAuthor().getEffectiveAvatarUrl())
-                                .setDescription("[Jump](" + msg.getJumpUrl() + ")\n\n" + msg.getContentRaw());
-                        msg.getAttachments().stream().findFirst().ifPresent(attachment -> builder.setImage(attachment.getUrl()));
-                        dm.sendMessageEmbeds(builder.build()).queue();
+            if (event.getChannel().getId() == channel.getId()) {
+                if (event.getReaction().getEmoji().asUnicode().getName().equals("❤️")) {
+                    event.getUser().openPrivateChannel().queue(dm -> {
+                        event.getChannel().retrieveMessageById(event.getMessageId()).queue(msg -> {
+                            EmbedBuilder builder = new EmbedBuilder()
+                                    .setColor(Color.YELLOW)
+                                    .setAuthor(msg.getAuthor().getAsTag(), null, msg.getAuthor().getEffectiveAvatarUrl())
+                                    .setDescription("[Jump](" + msg.getJumpUrl() + ")\n\n" + msg.getContentRaw());
+                            msg.getAttachments().stream().findFirst().ifPresent(attachment -> builder.setImage(attachment.getUrl()));
+                            dm.sendMessageEmbeds(builder.build()).queue();
+                        });
                     });
-                });
+                }
             }
         });
     }
