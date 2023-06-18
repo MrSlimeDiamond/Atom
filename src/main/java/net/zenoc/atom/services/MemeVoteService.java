@@ -40,7 +40,7 @@ public class MemeVoteService extends ListenerAdapter implements Service {
         if (!event.isFromGuild()) return;
         if (event.getUser().isBot()) return;
         Atom.database.getServerMemesChannel(event.getGuild()).ifPresent(channel -> {
-            if (event.getChannel().getId() == channel.getId()) {
+            if (event.getChannel().getId().equals(channel.getId())) {
                 if (event.getReaction().getEmoji().asUnicode().getName().equals("❤️")) {
                     event.getUser().openPrivateChannel().queue(dm -> {
                         event.getChannel().retrieveMessageById(event.getMessageId()).queue(msg -> {
