@@ -63,15 +63,18 @@ public class IRCCommand {
                     AtomicInteger voice = new AtomicInteger();
                     AtomicInteger total = new AtomicInteger();
                     channel.getUsers().forEach(user -> {
-                          stringBuilder.append(user.getNick()).append(", ");
                           if (channel.getUserModes(user).isPresent()) {
                               channel.getUserModes(user).get().forEach(usermode -> {
+
                                   total.getAndIncrement();
                                   if (usermode.getNickPrefix() == '@') {
+                                      stringBuilder.append("@");
                                       ops.getAndIncrement();
                                   } else if (usermode.getNickPrefix() == '+') {
+                                      stringBuilder.append("+");
                                       voice.getAndIncrement();
                                   }
+                                  stringBuilder.append(user.getNick().replace("_", "\\_")).append(", ");
                               });
                           }
                     });
