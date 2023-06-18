@@ -3,8 +3,10 @@ package net.zenoc.atom.ircbot.commands.minecraftonline;
 import net.zenoc.atom.Atom;
 import net.zenoc.atom.ircbot.CommandEvent;
 import net.zenoc.atom.ircbot.annotations.Command;
+import net.zenoc.atom.util.MCOPlayer;
 import net.zenoc.atom.util.MinecraftOnlineAPI;
 import net.zenoc.atom.util.MinecraftUtils;
+import net.zenoc.atom.util.UnknownPlayerException;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,34 +29,17 @@ public class MCOLastseen {
     )
     public void lastseenCommand(CommandEvent event) throws Exception {
         String username = event.getDesiredCommandUsername();
-        AtomicReference<String> correctname = new AtomicReference<>();
-        MinecraftOnlineAPI.getCorrectUsername(username).ifPresentOrElse(correctname::set, () -> event.reply("Could not find that player!"));
 
-        if (correctname.get() == null) {
-            return;
-        }
+        try {
+            MCOPlayer player = new MCOPlayer(username);
 
-        Optional<Date> mcoLastseen = Atom.database.getMCOLastseenByName(correctname.get());
-        if (mcoLastseen.isPresent()) {
-            // in database
-            this.sendResponse(correctname.get(), mcoLastseen.get(), event);
-        } else {
-            // not in database (or just doesn't exist)
-
-            // send a response immediately, we can add them to the database right after
-            AtomicReference<Date> lastseenDate = new AtomicReference<>();
-            MinecraftOnlineAPI.getPlayerLastseenByName(username).ifPresentOrElse(lastseenDate::set, () -> event.reply("Could not find that player!"));
-            this.sendResponse(correctname.get(), lastseenDate.get(), event);
-            log.info(correctname.get() + " hasn't got a lastseen record in the database, adding");
-            Optional<String> uuid = MinecraftUtils.getPlayerUUID(correctname.get());
-            if (uuid.isPresent()) {
-                if (!Atom.database.isMCOUserInDatabaseByUsername(correctname.get())) {
-                    log.info("Inserting user");
-                    Atom.database.insertMCOUser(correctname.get(), uuid.get());
-                }
-                Atom.database.setMCOLastseenByUUID(uuid.get(), lastseenDate.get());
-                log.info("Set lastseen date!");
-            }
+            player.getLastseen().ifPresentOrElse(lastseen -> {
+                this.sendResponse(player.getName(), lastseen, event);
+            }, () -> {
+                event.reply("Could not find that player!");
+            });
+        } catch (UnknownPlayerException e) {
+            event.reply("Could not find that player!");
         }
     }
 

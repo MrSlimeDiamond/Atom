@@ -12,6 +12,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class Atom {
     private static final Logger log = LoggerFactory.getLogger(Atom.class);
@@ -22,6 +24,8 @@ public class Atom {
     public static IRC irc;
 
     public static final List<Service> services;
+
+    public static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
 
     static {
         services = new ArrayList<>();

@@ -8,9 +8,7 @@ import net.zenoc.atom.discordbot.annotations.Command;
 import net.zenoc.atom.discordbot.annotations.Option;
 import net.zenoc.atom.discordbot.annotations.Subcommand;
 import net.zenoc.atom.reference.EmbedReference;
-import net.zenoc.atom.util.EmbedUtil;
-import net.zenoc.atom.util.MinecraftOnlineAPI;
-import net.zenoc.atom.util.MinecraftUtils;
+import net.zenoc.atom.util.*;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
@@ -159,27 +157,15 @@ public class MCOCommands {
     }
 
     public void firstseenCommand(CommandEvent event, String correctname) throws IOException, SQLException {
-        Optional<Date> mcoFirstseen = Atom.database.getMCOFirstseenByName(correctname);
-        if (mcoFirstseen.isPresent()) {
-            // in database
-            this.sendFirstseenResponse(correctname, mcoFirstseen.get(), event);
-        } else {
-            // not in database (or just doesn't exist)
-
-            // send a response immediately, we can add them to the database right after
-            AtomicReference<Date> firstseenDate = new AtomicReference<>();
-            MinecraftOnlineAPI.getPlayerFirstseenByName(correctname).ifPresentOrElse(firstseenDate::set, () -> event.reply("Could not find that player!"));
-            this.sendFirstseenResponse(correctname, firstseenDate.get(), event);
-            log.info(correctname + " hasn't got a firstseen record in the database, adding");
-            Optional<String> uuid = MinecraftUtils.getPlayerUUID(correctname);
-            if (uuid.isPresent()) {
-                if (!Atom.database.isMCOUserInDatabaseByUsername(correctname)) {
-                    log.info("Inserting user");
-                    Atom.database.insertMCOUser(correctname, uuid.get());
-                }
-                Atom.database.setMCOFirstseenByUUID(uuid.get(), firstseenDate.get());
-                log.info("Set firstseen date!");
-            }
+        try {
+            MCOPlayer player = new MCOPlayer(correctname);
+            player.getFirstseen().ifPresentOrElse(firstseen -> {
+                this.sendFirstseenResponse(correctname, firstseen, event);
+            }, () -> {
+                event.replyEmbeds(EmbedUtil.expandedErrorEmbed("Player " + correctname + " does not exist"));
+            });
+        } catch (UnknownPlayerException e) {
+            event.replyEmbeds(EmbedUtil.expandedErrorEmbed("Player " + correctname + " does not exist"));
         }
     }
 
@@ -225,21 +211,15 @@ public class MCOCommands {
             // in database
             this.sendLastseenResponse(correctname, mcoLastseen.get(), event);
         } else {
-            // not in database (or just doesn't exist)
-
-            // send a response immediately, we can add them to the database right after
-            AtomicReference<Date> date = new AtomicReference<>();
-            MinecraftOnlineAPI.getPlayerLastseenByName(correctname).ifPresentOrElse(date::set, () -> event.reply("Could not find that player!"));
-            this.sendLastseenResponse(correctname, date.get(), event);
-            log.info(correctname + " hasn't got a lastseen record in the database, adding");
-            Optional<String> uuid = MinecraftUtils.getPlayerUUID(correctname);
-            if (uuid.isPresent()) {
-                if (!Atom.database.isMCOUserInDatabaseByUsername(correctname)) {
-                    log.info("Inserting user");
-                    Atom.database.insertMCOUser(correctname, uuid.get());
-                }
-                Atom.database.setMCOLastseenByUUID(uuid.get(), date.get());
-                log.info("Set lastseen date!");
+            try {
+                MCOPlayer player = new MCOPlayer(correctname);
+                player.getLastseen().ifPresentOrElse(firstseen -> {
+                    this.sendFirstseenResponse(correctname, firstseen, event);
+                }, () -> {
+                    event.replyEmbeds(EmbedUtil.expandedErrorEmbed("Player " + correctname + " does not exist"));
+                });
+            } catch (UnknownPlayerException e) {
+                event.replyEmbeds(EmbedUtil.expandedErrorEmbed("Player " + correctname + " does not exist"));
             }
         }
     }
@@ -266,9 +246,10 @@ public class MCOCommands {
     public void playtimeCommand(CommandEvent event, String username) throws Exception {
         AtomicReference<String> correctname = new AtomicReference<>();
         MinecraftOnlineAPI.getCorrectUsername(username).ifPresentOrElse(correctname::set, () -> event.reply("Could not find that player!"));
-        MinecraftOnlineAPI.getPlayerPlaytime(correctname.get()).ifPresent(playtime -> {
+        if (correctname.get() == null) return;
+        MCOPlayer player = new MCOPlayer(correctname.get());
+        player.getPlaytime().ifPresent(playtime -> {
             long hours = playtime / 3600;
-
             this.sendPlaytimeResponse(correctname.get(), hours, event);
         });
     }
