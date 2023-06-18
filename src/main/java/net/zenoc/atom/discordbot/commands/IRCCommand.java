@@ -74,9 +74,9 @@ public class IRCCommand {
                                       stringBuilder.append("+");
                                       voice.getAndIncrement();
                                   }
-                                  stringBuilder.append(user.getNick().replace("_", "\\_")).append(", ");
                               });
                           }
+                        stringBuilder.append(user.getNick().replace("_", "\\_")).append(", ");
                     });
                     MessageEmbed embed = new EmbedBuilder()
                             .setAuthor("Users in " + channel.getName())
