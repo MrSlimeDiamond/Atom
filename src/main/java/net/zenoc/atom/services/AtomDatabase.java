@@ -282,22 +282,7 @@ public class AtomDatabase implements Service {
                 long authorID = resultSet.getLong("AuthorID");
                 long guildID = resultSet.getLong("GuildID");
                 String messageContent = resultSet.getString("MessageContent");
-                CachedMessage msg = new CachedMessage() {
-                    @Override
-                    public User getUser() {
-                        return DiscordBot.jda.retrieveUserById(authorID).complete();
-                    }
-
-                    @Override
-                    public String getMessageContent() {
-                        return messageContent;
-                    }
-
-                    @Override
-                    public Guild getGuild() {
-                        return DiscordBot.jda.getGuildById(guildID);
-                    }
-                };
+                CachedMessage msg = new CachedMessage(DiscordBot.jda.retrieveUserById(authorID).complete(), messageContent, DiscordBot.jda.getGuildById(guildID));
 
                 return Optional.of(msg);
             } else {

@@ -1,10 +1,28 @@
 package net.zenoc.atom.discordbot;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 
-public interface CachedMessage {
-    User getUser();
-    String getMessageContent();
-    Guild getGuild();
+public class CachedMessage {
+    User user;
+    String messageContent;
+    Guild guild;
+    public CachedMessage(User user, String messageContent, Guild guild) {
+        this.user = user;
+        this.messageContent = messageContent;
+        this.guild = guild;
+    }
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public String getMessageContent() {
+        return this.messageContent;
+    }
+
+    public Guild getGuild() {
+        return this.guild;
+    }
 }
