@@ -131,7 +131,7 @@ public class Pinnerino extends ListenerAdapter implements Service {
 
     public static WebhookMessageBuilder fromMessage(Message message, Boolean attachments) {
         WebhookMessageBuilder builder = new WebhookMessageBuilder();
-        builder.setUsername(message.getAuthor().getName());
+        builder.setUsername(message.getAuthor().getEffectiveName());
         builder.setAvatarUrl(message.getAuthor().getEffectiveAvatarUrl());
         builder.setContent(message.getContentRaw());
         builder.setAllowedMentions(AllowedMentions.none());
