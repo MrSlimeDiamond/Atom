@@ -63,7 +63,8 @@ public class DiscordLoggerService extends ListenerAdapter implements Service {
                         .setAuthor(UserUtil.getUserName(event.getAuthor()), null, event.getAuthor().getAvatarUrl())
                         .setDescription("Message Updated - [Jump](" + event.getJumpUrl() + ")")
                         .addField("Old Content", oldContent, false)
-                        .addField("New Content", newContent, false);
+                        .addField("New Content", newContent, false)
+                        .setFooter("Message ID: " + event.getMessageId());
                 Guild guild = event.getGuild();
                 event.getJDA().retrieveUserById(event.getAuthor().getId()).queue(user -> {
                     guild.retrieveMember(user).queue(member -> {
@@ -74,7 +75,8 @@ public class DiscordLoggerService extends ListenerAdapter implements Service {
             }, () -> {
                 EmbedBuilder builder = new EmbedBuilder()
                         .setAuthor(UserUtil.getUserName(event.getAuthor()), null, event.getAuthor().getAvatarUrl())
-                        .setDescription("Message Updated - [Jump](" + event.getJumpUrl() + ")\n\n*Unable to get content information*");
+                        .setDescription("Message Updated - [Jump](" + event.getJumpUrl() + ")\n\n*Unable to get content information*")
+                        .setFooter("Message ID: " + event.getMessageId());
                 Guild guild = event.getGuild();
                 event.getJDA().retrieveUserById(event.getAuthor().getId()).queue(user -> {
                     guild.retrieveMember(user).queue(member -> {
