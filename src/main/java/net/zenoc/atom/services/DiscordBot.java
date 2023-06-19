@@ -38,7 +38,6 @@ public class DiscordBot implements Service {
         CommandHandler commandHandler = new CommandHandler(jda, DiscordReference.prefix);
 
         commandHandler.registerCommand(new BotCommands());
-        commandHandler.registerCommand(new TestCommands());
         commandHandler.registerCommand(new InformationCommands());
         commandHandler.registerCommand(new LoggerCommand());
         commandHandler.registerCommand(new PinnerinoCommand());
