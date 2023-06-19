@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.zenoc.atom.Atom;
 import net.zenoc.atom.discordbot.CachedMessage;
+import net.zenoc.atom.util.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +59,7 @@ public class DiscordLoggerService extends ListenerAdapter implements Service {
         Atom.database.getGuildLog(event.getGuild()).ifPresent(channel -> {
             Atom.database.getMessage(event.getMessageIdLong()).ifPresentOrElse(cachedMessage -> {
                 EmbedBuilder builder = new EmbedBuilder()
-                        .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
+                        .setAuthor(UserUtil.getUserName(event.getAuthor()), null, event.getAuthor().getAvatarUrl())
                         .setDescription("Message Updated - [Jump](" + event.getJumpUrl() + ")")
                         .addField("Old Content", cachedMessage.getMessageContent(), false)
                         .addField("New Content", event.getMessage().getContentDisplay(), false);
@@ -71,7 +72,7 @@ public class DiscordLoggerService extends ListenerAdapter implements Service {
                 channel.sendMessageEmbeds(builder.build()).queue();
             }, () -> {
                 EmbedBuilder builder = new EmbedBuilder()
-                        .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
+                        .setAuthor(UserUtil.getUserName(event.getAuthor()), null, event.getAuthor().getAvatarUrl())
                         .setDescription("Message Updated - [Jump](" + event.getJumpUrl() + ")\n\n*Unable to get content information*");
                 Guild guild = event.getGuild();
                 event.getJDA().retrieveUserById(event.getAuthor().getId()).queue(user -> {

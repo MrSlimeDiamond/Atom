@@ -8,6 +8,7 @@ import net.zenoc.atom.discordbot.CommandEvent;
 import net.zenoc.atom.util.EmbedUtil;
 import net.zenoc.atom.discordbot.annotations.Command;
 import net.zenoc.atom.discordbot.annotations.Subcommand;
+import net.zenoc.atom.util.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,6 +89,23 @@ public class BotCommands {
     public void addGuildCommand(CommandEvent event) throws SQLException {
         Atom.database.addGuild(event.getGuild().getIdLong());
         event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Added guild to database"));
+    }
+
+    @Command(name = "whoami", description = "Check who the bot thinks you are", slashCommand = false, usage = "whoami")
+    public void whoamiCommand(CommandEvent event) throws SQLException {
+        boolean admin = Atom.database.isDiscordAdminByID(event.getAuthor().getIdLong());
+        String used = UserUtil.getUserName(event.getAuthor());
+        EmbedBuilder builder = new EmbedBuilder()
+                .setColor(Color.WHITE)
+                .setAuthor(used, null, event.getAuthor().getAvatarUrl())
+                .addField("Atom Admin", (admin ? "Yes" : "No"), true)
+                .addField("Discriminated name", event.getAuthor().getAsTag(), true)
+                .addField("Username", event.getAuthor().getName(), true)
+                .addField("Display Name", event.getAuthor().getGlobalName(), true)
+                .addField("Server Display Name", event.getAuthor().getEffectiveName(), true)
+                .addField("Used Discriminator", used, true);
+
+        event.replyEmbeds(builder.build());
     }
 
 }
