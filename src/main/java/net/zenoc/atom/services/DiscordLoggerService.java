@@ -55,11 +55,15 @@ public class DiscordLoggerService extends ListenerAdapter implements Service {
         if (event.getAuthor().isBot()) return;
         Atom.database.getGuildLog(event.getGuild()).ifPresent(channel -> {
             Atom.database.getMessage(event.getMessageIdLong()).ifPresentOrElse(cachedMessage -> {
+                String oldContent = cachedMessage.getMessageContent();
+                String newContent = event.getMessage().getContentRaw();
+                if (oldContent.equals(newContent)) return;
+
                 EmbedBuilder builder = new EmbedBuilder()
                         .setAuthor(UserUtil.getUserName(event.getAuthor()), null, event.getAuthor().getAvatarUrl())
                         .setDescription("Message Updated - [Jump](" + event.getJumpUrl() + ")")
-                        .addField("Old Content", cachedMessage.getMessageContent(), false)
-                        .addField("New Content", event.getMessage().getContentDisplay(), false);
+                        .addField("Old Content", oldContent, false)
+                        .addField("New Content", newContent, false);
                 Guild guild = event.getGuild();
                 event.getJDA().retrieveUserById(event.getAuthor().getId()).queue(user -> {
                     guild.retrieveMember(user).queue(member -> {
@@ -79,7 +83,7 @@ public class DiscordLoggerService extends ListenerAdapter implements Service {
                 });
                 channel.sendMessageEmbeds(builder.build()).queue();
             });
-            Atom.database.updateMessage(event.getMessageIdLong(), event.getMessage().getContentDisplay());
+            Atom.database.updateMessage(event.getMessageIdLong(), event.getMessage().getContentRaw());
         });
     }
 
