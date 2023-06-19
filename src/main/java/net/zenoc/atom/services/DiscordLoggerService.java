@@ -92,7 +92,7 @@ public class DiscordLoggerService extends ListenerAdapter implements Service {
         Atom.database.getGuildLog(event.getGuild()).ifPresent(channel -> {
             MessageEmbed embed = new EmbedBuilder()
                     .setColor(Color.RED)
-                    .setAuthor(event.getUser().getAsTag(), null, event.getUser().getAvatarUrl())
+                    .setAuthor(UserUtil.getUserName(event.getUser()), null, event.getUser().getAvatarUrl())
                     .setTitle(event.getUser().getName() + " left")
                     .build();
 
@@ -105,7 +105,7 @@ public class DiscordLoggerService extends ListenerAdapter implements Service {
         Atom.database.getGuildLog(event.getGuild()).ifPresent(channel -> {
             MessageEmbed embed = new EmbedBuilder()
                     .setColor(Color.GREEN)
-                    .setAuthor(event.getUser().getAsTag(), null, event.getUser().getAvatarUrl())
+                    .setAuthor(UserUtil.getUserName(event.getUser()), null, event.getUser().getAvatarUrl())
                     .setTitle(event.getUser().getName() + " joined")
                     .build();
 
