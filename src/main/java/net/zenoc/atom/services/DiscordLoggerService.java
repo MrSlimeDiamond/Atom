@@ -32,7 +32,7 @@ public class DiscordLoggerService extends ListenerAdapter implements Service {
         Atom.database.getGuildLog(event.getGuild()).ifPresent(channel -> {
             Atom.database.getMessage(event.getMessageIdLong()).ifPresentOrElse(cachedMessage -> {
                 EmbedBuilder builder = new EmbedBuilder()
-                        .setAuthor(cachedMessage.getUser().getAsTag(), null, cachedMessage.getUser().getAvatarUrl())
+                        .setAuthor(UserUtil.getUserName(cachedMessage.getUser()), null, cachedMessage.getUser().getAvatarUrl())
                         .setDescription("Message Deleted in <#" + event.getChannel().getId() + ">")
                         .addField("Content", cachedMessage.getMessageContent(), false);
                 Guild guild = cachedMessage.getGuild();
