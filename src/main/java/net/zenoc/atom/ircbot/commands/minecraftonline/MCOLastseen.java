@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MCOLastseen {
-    private static final Logger log = LoggerFactory.getLogger(MCOFirstseen.class);
     @Command(
             name = "lastseen",
             aliases = {"ls", "lastjoin", "lj"},

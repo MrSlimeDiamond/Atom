@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MCOFirstseen {
-    private static final Logger log = LoggerFactory.getLogger(MCOFirstseen.class);
     @Command(
             name = "firstseen",
             aliases = {"fs", "firstjoin", "fj"},

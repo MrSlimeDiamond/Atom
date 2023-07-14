@@ -214,7 +214,7 @@ public class MCOCommands {
             try {
                 MCOPlayer player = new MCOPlayer(correctname);
                 player.getLastseen().ifPresentOrElse(firstseen -> {
-                    this.sendFirstseenResponse(correctname, firstseen, event);
+                    this.sendLastseenResponse(correctname, firstseen, event);
                 }, () -> {
                     event.replyEmbeds(EmbedUtil.expandedErrorEmbed("Player " + correctname + " does not exist"));
                 });

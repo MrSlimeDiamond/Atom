@@ -98,18 +98,18 @@ public class MCOPlayer {
                 return mcoLastseen;
             } else {
                 // We'll have to retrieve it first
-                Optional<Date> lastseen = MinecraftOnlineAPI.getPlayerFirstseenByName(username);
+                Optional<Date> lastseen = MinecraftOnlineAPI.getPlayerLastseenByName(username);
 
                 // This shouldn't happen, but just in case
                 if (!lastseen.isPresent()) throw new UnknownPlayerException(this.username + " was not found");
 
-                // If the player's firstseen is not in the database, insert it
+                // If the player's lastseen is not in the database, insert it
 
                 // Creating a new thread for the sake of efficiency,
                 // we want to return a value as fast as possible
                 new Thread(() -> {
                     try {
-                        setFirstseen(lastseen.get());
+                        setLastseen(lastseen.get());
                     } catch (SQLException e) {
                         this.lastseen = lastseen.get();
                         throw new RuntimeException(e);
