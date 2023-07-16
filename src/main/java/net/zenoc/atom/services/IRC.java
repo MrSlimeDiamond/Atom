@@ -3,6 +3,7 @@ package net.zenoc.atom.services;
 import net.engio.mbassy.listener.Handler;
 import net.zenoc.atom.Atom;
 import net.zenoc.atom.discordbot.commands.IRCCommand;
+import net.zenoc.atom.discordbot.commands.minecraftonline.GoodnightCommand;
 import net.zenoc.atom.ircbot.MCOEventHandler;
 import net.zenoc.atom.ircbot.commands.minecraftonline.*;
 import net.zenoc.atom.ircbot.CommandHandler;
@@ -39,6 +40,7 @@ public class IRC implements Service {
         commandHandler.registerCommand(new MCOPlaytime());
         commandHandler.registerCommand(new RefreshLastseen());
         commandHandler.registerCommand(new BansCommand());
+        commandHandler.registerCommand(new GoodnightCommand());
 
         client.getEventManager().registerEventListener(new IRCCommand());
         client.getEventManager().registerEventListener(new MCOEventHandler());
