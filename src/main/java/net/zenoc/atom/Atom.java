@@ -18,12 +18,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class Atom {
-    private static final Logger log = LoggerFactory.getLogger("launch");
+    private static final Logger log = LoggerFactory.getLogger("atom");
     public static Config config;
     public static String ip;
-    public static DiscordBot discordBot;
     public static Database database;
-    public static IRC irc;
 
     private static ServiceManager serviceManager = new ServiceManager();
 
@@ -58,10 +56,7 @@ public class Atom {
     public static void shutdown(Class<?> clazz) throws Exception {
         log.info("Graceful shutdown called from: " + clazz.getSimpleName());
         log.info("Shutting down services...");
-//        for (Service service : services) {
-//            log.info("Stopping service: " + service.getClass().getSimpleName());
-//            service.shutdownService();
-//        }
+        serviceManager.shutdownAll();
         log.info("Bye!");
         System.exit(1);
     }
@@ -74,5 +69,9 @@ public class Atom {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static ServiceManager getServiceManager() {
+        return serviceManager;
     }
 }

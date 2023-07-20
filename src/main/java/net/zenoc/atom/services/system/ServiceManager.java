@@ -44,4 +44,15 @@ public class ServiceManager {
             service.start();
         });
     }
+
+    public void shutdownAll() {
+        services.forEach(service -> {
+            logger.info("Shutting down service {}", service.getMetadata().value());
+            service.shutdown();
+        });
+    }
+
+    public ArrayList<ServiceContainer> getServices() {
+        return services;
+    }
 }
