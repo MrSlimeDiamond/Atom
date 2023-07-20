@@ -1,14 +1,15 @@
 package net.zenoc.atom;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import net.zenoc.atom.inject.modules.ServiceModule;
 import net.zenoc.atom.services.*;
-import org.kitteh.irc.client.library.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,28 +21,12 @@ public class Atom {
     public static Config config;
     public static String ip;
     public static DiscordBot discordBot;
-    public static AtomDatabase database;
+    public static Database database;
     public static IRC irc;
-
-    public static final List<Service> services;
 
     public static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
 
     static {
-        services = new ArrayList<>();
-
-        services.add(database = new AtomDatabase());
-        services.add(discordBot = new DiscordBot());
-        services.add(new DiscordLoggerService());
-//        services.add(new API());
-        services.add(new MessageCacheService());
-        services.add(new Pinnerino());
-        services.add(irc = new IRC());
-        services.add(new ChatBridgeService());
-        services.add(new ReactionRoleService());
-        services.add(new TwitchNotifier());
-        services.add(new MemeVoteService());
-
         try {
             config = new Config();
         } catch (IOException e) {
@@ -63,15 +48,7 @@ public class Atom {
 
         log.info("Starting services");
 
-        try {
-            for (Service service : services) {
-                log.info("Starting service: " + service.getClass().getSimpleName());
-                service.startService();
-            }
-        } catch (Exception e) {
-            log.error("Exception when starting, throwing...");
-            throw new RuntimeException(e);
-        }
+        Injector injector = Guice.createInjector(new ServiceModule());
 
         log.info("Started all services");
 
@@ -80,10 +57,10 @@ public class Atom {
     public static void shutdown(Class<?> clazz) throws Exception {
         log.info("Graceful shutdown called from: " + clazz.getSimpleName());
         log.info("Shutting down services...");
-        for (Service service : services) {
-            log.info("Stopping service: " + service.getClass().getSimpleName());
-            service.shutdownService();
-        }
+//        for (Service service : services) {
+//            log.info("Stopping service: " + service.getClass().getSimpleName());
+//            service.shutdownService();
+//        }
         log.info("Bye!");
         System.exit(1);
     }

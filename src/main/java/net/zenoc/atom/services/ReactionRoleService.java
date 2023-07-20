@@ -6,10 +6,12 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.Service;
 
-public class ReactionRoleService extends ListenerAdapter implements Service {
+@Service("reaction roles")
+public class ReactionRoleService extends ListenerAdapter {
 
-    @Override
+    @Service.Start
     public void startService() throws Exception {
         DiscordBot.jda.addEventListener(this);
     }

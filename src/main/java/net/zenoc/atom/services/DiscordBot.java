@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.Service;
 import net.zenoc.atom.discordbot.CommandHandler;
 import net.zenoc.atom.discordbot.commands.*;
 import net.zenoc.atom.discordbot.commands.minecraftonline.MCOCommands;
@@ -16,10 +17,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class DiscordBot implements Service {
+@Service("discord")
+public class DiscordBot {
     private static final Logger log = LoggerFactory.getLogger(DiscordBot.class);
     public static JDA jda;
-    @Override
+    @Service.Start
     public void startService() throws IOException, InterruptedException {
         JDABuilder builder = JDABuilder.createDefault(DiscordReference.token);
         builder.enableIntents(
@@ -58,14 +60,14 @@ public class DiscordBot implements Service {
         });
     }
 
-    @Override
+    @Service.Reload
     public void reloadService() throws IOException, InterruptedException {
         log.info("Reloading...");
         this.shutdownService();
         this.startService();
     }
 
-    @Override
+    @Service.Shutdown
     public void shutdownService() {
         log.info("Shutting down bot...");
         jda.shutdownNow();

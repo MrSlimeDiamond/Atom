@@ -23,6 +23,7 @@ import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.api.utils.data.SerializableData;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.Service;
 import net.zenoc.atom.discordbot.CachedMessage;
 import net.zenoc.atom.util.NumberUtils;
 import net.zenoc.atom.reference.DBReference;
@@ -38,8 +39,9 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class AtomDatabase implements Service {
-    private static final Logger log = LoggerFactory.getLogger(AtomDatabase.class);
+@Service(value = "database", priority = 999)
+public class Database {
+    private static final Logger log = LoggerFactory.getLogger(Database.class);
     private Connection conn;
 
     private PreparedStatement isDiscordAdminByID;
@@ -117,9 +119,11 @@ public class AtomDatabase implements Service {
 
     private PreparedStatement getServerMemesChannel;
     private PreparedStatement setServerMemesChannel;
-    @Override
+
+    @Service.Start
     public void startService() throws Exception {
         openConnection();
+        Atom.database = this;
     }
 
     private void openConnection() throws SQLException {
@@ -225,7 +229,7 @@ public class AtomDatabase implements Service {
         getServerMemesChannel = conn.prepareStatement("SELECT MemesChannel FROM guilds WHERE GuildID = ?");
         setServerMemesChannel = conn.prepareStatement("UPDATE guilds SET MemesChannel = ? WHERE GuildID = ?");
     }
-    public AtomDatabase() {}
+    public Database() {}
 
     public boolean isDiscordAdminByID(long idLong) throws SQLException {
         isDiscordAdminByID.setLong(1, idLong);

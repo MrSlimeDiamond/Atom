@@ -8,15 +8,17 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 
-public class MemeVoteService extends ListenerAdapter implements Service {
+@Service("meme vote")
+public class MemeVoteService extends ListenerAdapter {
     private static Logger log = LoggerFactory.getLogger(MemeVoteService.class);
 
-    @Override
+    @Service.Start
     public void startService() throws Exception {
         DiscordBot.jda.addEventListener(this);
     }

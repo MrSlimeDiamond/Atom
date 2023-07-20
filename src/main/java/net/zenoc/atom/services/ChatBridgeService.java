@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.engio.mbassy.listener.Handler;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.Service;
 import net.zenoc.atom.reference.DiscordReference;
 import net.zenoc.atom.reference.IRCReference;
 import org.kitteh.irc.client.library.event.channel.ChannelJoinEvent;
@@ -22,14 +23,15 @@ import org.kitteh.irc.client.library.event.user.UserQuitEvent;
 import java.awt.*;
 import java.sql.SQLException;
 
-public class ChatBridgeService extends ListenerAdapter implements Service {
-    @Override
+@Service("chat bridge")
+public class ChatBridgeService extends ListenerAdapter {
+    @Service.Start
     public void startService() throws Exception {
         DiscordBot.jda.addEventListener(this);
         IRC.client.getEventManager().registerEventListener(this);
     }
 
-    @Override
+    @Service.Shutdown
     public void shutdownService() {
         // TODO: Disconnect message
     }

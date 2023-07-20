@@ -1,48 +1,44 @@
 package net.zenoc.atom.inject.modules;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import net.zenoc.atom.annotations.Service;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Set;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
-public class AtomModule extends AbstractModule {
+public class ServiceModule extends AbstractModule {
+    Logger logger = LoggerFactory.getLogger(ServiceModule.class);
     @Override
     protected void configure() {
-        // Create a ClasspathScanner to scan for classes with the @Service annotation
-        ClasspathScanner.create(Service.class).scanModulesAndInstall(binder());
+        Reflections reflections = new Reflections("net.zenoc.atom.services");
+        Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Service.class);
+        List<Class<?>> sorted = new ArrayList<>(annotated);
 
-        // Automatically bind all classes annotated with @Service to the Multibinder
-        // Optionally, call the startup methods for enabled services
-        for (Class<?> serviceClass : getClassesWithAnnotation(Service.class)) {
-            Service serviceAnnotation = serviceClass.getAnnotation(Service.class);
-            if (serviceAnnotation.enabled()) {
-                bind((Class<Object>) serviceClass).annotatedWith(Service.class);
-                invokeStartupMethods(serviceClass);
-            }
-        }
-    }
+        sorted.sort(Comparator.comparingInt(clazz -> {
+            Service metadata = clazz.getAnnotation(Service.class);
+            return -metadata.priority();
+        }));
 
-    // Helper method to get all classes with a specific annotation using Reflections
-    private Set<Class<?>> getClassesWithAnnotation(Class<? extends Annotation> annotation) {
-        Reflections reflections = new Reflections("net.zenoc.atom.services"); // Specify the package to scan
-        return reflections.getTypesAnnotatedWith(annotation);
-    }
-
-    // Helper method to invoke the startup methods for enabled services
-    private void invokeStartupMethods(Class<?> serviceClass) {
-        Method[] methods = serviceClass.getDeclaredMethods();
-        for (Method method : methods) {
-            if (method.isAnnotationPresent(Service.Start.class)) {
-                try {
-                    Object serviceInstance = injector.getInstance(serviceClass);
-                    method.invoke(serviceInstance);
-                } catch (Exception e) {
-                    // Handle any exceptions that may occur during reflection
-                    e.printStackTrace();
-                }
+        Injector injector = Guice.createInjector(new AtomModule());
+        for (Class<?> clazz : sorted) {
+            Service metadata = clazz.getAnnotation(Service.class);
+            if (metadata.enabled()) {
+                Object instance = injector.getInstance(clazz);
+                Arrays.stream(instance.getClass().getMethods())
+                        .filter(method -> method.isAnnotationPresent(Service.Start.class))
+                        .forEach(method -> {
+                            try {
+                                logger.info("Enabling {} (invoking)", metadata.value());
+                                method.invoke(instance);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
             }
         }
     }

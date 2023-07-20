@@ -11,16 +11,18 @@ import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.Service;
 import net.zenoc.atom.util.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 
-public class DiscordLoggerService extends ListenerAdapter implements Service {
+@Service("discord logger")
+public class DiscordLoggerService extends ListenerAdapter {
     private static Logger log = LoggerFactory.getLogger(DiscordLoggerService.class);
 
-    @Override
+    @Service.Start
     public void startService() throws Exception {
         JDA jda = DiscordBot.jda;
 

@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.Service;
 import net.zenoc.atom.reference.TwitchReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,14 +26,15 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class TwitchNotifier implements Service {
+@Service("twitch notifier")
+public class TwitchNotifier {
 
     private static final Logger log = LoggerFactory.getLogger(TwitchNotifier.class);
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     TwitchClient client;
 
-    @Override
+    @Service.Start
     public void startService() throws Exception {
         client = TwitchClientBuilder.builder()
                 .withEnableHelix(true)

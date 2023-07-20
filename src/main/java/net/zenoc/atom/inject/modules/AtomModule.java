@@ -1,4 +1,6 @@
 package net.zenoc.atom.inject.modules;
 
-public class AtomModule {
+import com.google.inject.AbstractModule;
+
+public class AtomModule extends AbstractModule {
 }

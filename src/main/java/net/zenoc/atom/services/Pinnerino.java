@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.Service;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -28,9 +29,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class Pinnerino extends ListenerAdapter implements Service {
+@Service("pinnerino")
+public class Pinnerino extends ListenerAdapter {
     private static Logger log = LoggerFactory.getLogger(Pinnerino.class);
-    @Override
+    @Service.Start
     public void startService() throws Exception {
         DiscordBot.jda.addEventListener(this);
     }
