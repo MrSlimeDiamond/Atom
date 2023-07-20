@@ -13,6 +13,7 @@ alter table guilds add StreamsChannel BIGINT
 
 package net.zenoc.atom.services;
 
+import com.google.inject.Inject;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.Channel;
@@ -41,7 +42,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Service(value = "database", priority = 999)
 public class Database {
-    private static final Logger log = LoggerFactory.getLogger(Database.class);
+    @Inject
+    private Logger logger;
+
     private Connection conn;
 
     private PreparedStatement isDiscordAdminByID;
@@ -127,6 +130,8 @@ public class Database {
     }
 
     private void openConnection() throws SQLException {
+        logger.info("Opening connection");
+
         conn = DriverManager.getConnection(
                 "jdbc:mariadb://" +
                 DBReference.host +

@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import net.zenoc.atom.inject.modules.ServiceModule;
 import net.zenoc.atom.services.*;
+import net.zenoc.atom.services.system.ServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,12 +18,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class Atom {
-    private static final Logger log = LoggerFactory.getLogger(Atom.class);
+    private static final Logger log = LoggerFactory.getLogger("launch");
     public static Config config;
     public static String ip;
     public static DiscordBot discordBot;
     public static Database database;
     public static IRC irc;
+
+    private static ServiceManager serviceManager = new ServiceManager();
 
     public static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
 
@@ -47,9 +50,7 @@ public class Atom {
         }
 
         log.info("Starting services");
-
-        Injector injector = Guice.createInjector(new ServiceModule());
-
+        serviceManager.startAll();
         log.info("Started all services");
 
     }
