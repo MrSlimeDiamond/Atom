@@ -5,6 +5,8 @@ import club.minnced.discord.webhook.send.AllowedMentions;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
+import com.google.inject.Inject;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.Webhook;
@@ -31,10 +33,13 @@ import java.util.stream.Collectors;
 
 @Service("pinnerino")
 public class Pinnerino extends ListenerAdapter {
+    @Inject
+    private JDA jda;
+
     private static Logger log = LoggerFactory.getLogger(Pinnerino.class);
     @Service.Start
     public void startService() throws Exception {
-        DiscordBot.jda.addEventListener(this);
+        jda.addEventListener(this);
     }
 
     public void onMessageReactionAdd(MessageReactionAddEvent event) {

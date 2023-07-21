@@ -2,8 +2,9 @@ package net.zenoc.atom;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import net.zenoc.atom.inject.modules.ServiceModule;
-import net.zenoc.atom.services.*;
+import net.zenoc.atom.database.Database;
+import net.zenoc.atom.inject.modules.ServiceProviderModule;
+import net.zenoc.atom.launch.AppLaunch;
 import net.zenoc.atom.services.system.ServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +13,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class Atom {
     private static final Logger log = LoggerFactory.getLogger("atom");
@@ -23,9 +20,7 @@ public class Atom {
     public static String ip;
     public static Database database;
 
-    private static ServiceManager serviceManager = new ServiceManager();
-
-    public static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
+    private static ServiceManager serviceManager;
 
     static {
         try {
@@ -39,17 +34,19 @@ public class Atom {
     public static void main(String[] args) throws IOException, InterruptedException {
         log.info("Starting...");
 
-        refreshIP();
-        log.info("Got IP: " + ip);
-
-        if (config.discord().getProperty("token").equals("BOT_TOKEN_HERE")) {
+        log.info("Checking config");
+        if (Atom.config.discord().getProperty("token").equals("BOT_TOKEN_HERE")) {
             log.error("Configuration is not set up!");
             System.exit(1);
         }
+        refreshIP();
 
-        log.info("Starting services");
-        serviceManager.startAll();
-        log.info("Started all services");
+        log.info("Got IP: " + ip);
+
+        log.info("Validated everything -- proceeding with app launch");
+
+        // AppLaunch will handle starting services and other tasks that should happen during startup
+        AppLaunch.launch();
 
     }
 
@@ -73,5 +70,9 @@ public class Atom {
 
     public static ServiceManager getServiceManager() {
         return serviceManager;
+    }
+
+    protected static void setServiceManager(ServiceManager serviceManager) {
+        Atom.serviceManager = serviceManager;
     }
 }

@@ -1,5 +1,6 @@
 package net.zenoc.atom.services;
 
+import com.google.inject.Inject;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -20,12 +21,13 @@ import java.awt.*;
 
 @Service("discord logger")
 public class DiscordLoggerService extends ListenerAdapter {
+    @Inject
+    private JDA jda;
+
     private static Logger log = LoggerFactory.getLogger(DiscordLoggerService.class);
 
     @Service.Start
     public void startService() throws Exception {
-        JDA jda = DiscordBot.jda;
-
         jda.addEventListener(this);
     }
 

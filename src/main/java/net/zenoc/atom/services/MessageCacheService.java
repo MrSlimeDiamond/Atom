@@ -1,5 +1,7 @@
 package net.zenoc.atom.services;
 
+import com.google.inject.Inject;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
@@ -12,11 +14,14 @@ import java.sql.SQLException;
 
 @Service("discord message cache")
 public class MessageCacheService extends ListenerAdapter {
+    @Inject
+    private JDA jda;
+
     private static Logger log = LoggerFactory.getLogger(MessageCacheService.class);
 
     @Service.Start
     public void startService() throws Exception {
-        DiscordBot.jda.addEventListener(this);
+        jda.addEventListener(this);
     }
     @SubscribeEvent
     public void onMessageReceived(MessageReceivedEvent event) {

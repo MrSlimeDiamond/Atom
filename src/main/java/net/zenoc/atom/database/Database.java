@@ -11,10 +11,11 @@ create table irc_channels (ChannelName TINYTEXT, DiscordChannel BIGINT, Pipe BOO
 alter table guilds add StreamsChannel BIGINT
  */
 
-package net.zenoc.atom.services;
+package net.zenoc.atom.database;
 
 import com.google.inject.Inject;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -26,6 +27,8 @@ import net.dv8tion.jda.api.utils.data.SerializableData;
 import net.zenoc.atom.Atom;
 import net.zenoc.atom.annotations.Service;
 import net.zenoc.atom.discordbot.CachedMessage;
+import net.zenoc.atom.inject.modules.AtomModule;
+import net.zenoc.atom.services.IRC;
 import net.zenoc.atom.util.NumberUtils;
 import net.zenoc.atom.reference.DBReference;
 import net.zenoc.atom.reference.IRCReference;
@@ -40,10 +43,16 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Service(value = "database", priority = 999)
+/*
+ * Database must be started first!
+ */
+@Service(value = "database", priority = 9999)
 public class Database {
     @Inject
     private Logger logger;
+
+    @Inject
+    private JDA jda;
 
     private Connection conn;
 
@@ -129,7 +138,7 @@ public class Database {
         Atom.database = this;
     }
 
-    private void openConnection() throws SQLException {
+    public void openConnection() throws SQLException {
         logger.info("Opening connection");
 
         conn = DriverManager.getConnection(
@@ -234,7 +243,6 @@ public class Database {
         getServerMemesChannel = conn.prepareStatement("SELECT MemesChannel FROM guilds WHERE GuildID = ?");
         setServerMemesChannel = conn.prepareStatement("UPDATE guilds SET MemesChannel = ? WHERE GuildID = ?");
     }
-    public Database() {}
 
     public boolean isDiscordAdminByID(long idLong) throws SQLException {
         isDiscordAdminByID.setLong(1, idLong);
@@ -261,7 +269,7 @@ public class Database {
     public Optional<TextChannel> getGuildLog(Guild guild) {
         try {
             long channelID = getServerLogChannel(guild.getIdLong());
-            TextChannel channel = DiscordBot.jda.getTextChannelById(channelID);
+            TextChannel channel = jda.getTextChannelById(channelID);
             if (channel == null) return Optional.empty();
             return Optional.of(channel);
         } catch (SQLException e) {
@@ -291,7 +299,7 @@ public class Database {
                 long authorID = resultSet.getLong("AuthorID");
                 long guildID = resultSet.getLong("GuildID");
                 String messageContent = resultSet.getString("MessageContent");
-                CachedMessage msg = new CachedMessage(DiscordBot.jda.retrieveUserById(authorID).complete(), messageContent, DiscordBot.jda.getGuildById(guildID));
+                CachedMessage msg = new CachedMessage(jda.retrieveUserById(authorID).complete(), messageContent, jda.getGuildById(guildID));
 
                 return Optional.of(msg);
             } else {
@@ -327,7 +335,7 @@ public class Database {
 
     public Optional<TextChannel> getServerPinnerinoChannel(Guild guild) {
         long id = getServerPinnerinoChannel(guild.getIdLong());
-        TextChannel channel = DiscordBot.jda.getTextChannelById(id);
+        TextChannel channel = jda.getTextChannelById(id);
         if (channel != null) return Optional.of(channel);
         return Optional.empty();
     }
@@ -472,7 +480,7 @@ public class Database {
         enableIRCPipe.execute();
 
         // Send the pipe enable message
-        TextChannel channel = DiscordBot.jda.getTextChannelById(getDiscordBridgeChannelID(ircChannel));
+        TextChannel channel = jda.getTextChannelById(getDiscordBridgeChannelID(ircChannel));
         MessageEmbed embed = new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setDescription("Bridge pipe enabled")
@@ -487,7 +495,7 @@ public class Database {
         disableIRCPipe.execute();
 
         // Send the pipe disable message
-        TextChannel channel = DiscordBot.jda.getTextChannelById(getDiscordBridgeChannelID(ircChannel));
+        TextChannel channel = jda.getTextChannelById(getDiscordBridgeChannelID(ircChannel));
         MessageEmbed embed = new EmbedBuilder()
                 .setColor(Color.RED)
                 .setDescription("Bridge pipe disabled")
@@ -562,7 +570,7 @@ public class Database {
             while (resultSet.next()) {
                 long channel = resultSet.getLong("DiscordChannel");
                 if (isPipeEnabled(getIRCBridgeChannel(channel))) {
-                    channels.add(DiscordBot.jda.getTextChannelById(channel));
+                    channels.add(jda.getTextChannelById(channel));
                 }
             }
             return channels;
@@ -593,7 +601,7 @@ public class Database {
 
     public EmojiUnion getServerPinnerinoEmojiUnion(long serverID) throws SQLException {
         String emoji = Atom.database.getServerPinnerinoEmoji(serverID);
-        Guild guild = DiscordBot.jda.getGuildById(serverID);
+        Guild guild = jda.getGuildById(serverID);
         if (guild == null) return null;
         DataObject data;
         if (NumberUtils.isNumeric(emoji)) {
@@ -716,7 +724,7 @@ public class Database {
             ResultSet resultSet = getReactionRole.executeQuery();
             if (resultSet.next()) {
                 String roleID = resultSet.getString("RoleID");
-                Role role = DiscordBot.jda.getRoleById(roleID);
+                Role role = jda.getRoleById(roleID);
                 if (role == null) {
                     return Optional.empty();
                 }
@@ -825,7 +833,7 @@ public class Database {
             getServerMemesChannel.setLong(1, guild.getIdLong());
             ResultSet resultSet = getServerMemesChannel.executeQuery();
             if (resultSet.next()) {
-                return Optional.ofNullable(DiscordBot.jda.getTextChannelById(resultSet.getLong("MemesChannel")));
+                return Optional.ofNullable(jda.getTextChannelById(resultSet.getLong("MemesChannel")));
             } else {
                 return Optional.empty();
             }

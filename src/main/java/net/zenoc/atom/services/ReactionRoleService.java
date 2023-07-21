@@ -1,5 +1,7 @@
 package net.zenoc.atom.services;
 
+import com.google.inject.Inject;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
@@ -10,10 +12,12 @@ import net.zenoc.atom.annotations.Service;
 
 @Service("reaction roles")
 public class ReactionRoleService extends ListenerAdapter {
+    @Inject
+    private JDA jda;
 
     @Service.Start
     public void startService() throws Exception {
-        DiscordBot.jda.addEventListener(this);
+        jda.addEventListener(this);
     }
 
     @SubscribeEvent

@@ -15,7 +15,7 @@ import net.zenoc.atom.reference.IRCReference;
 import org.kitteh.irc.client.library.Client;
 import org.kitteh.irc.client.library.feature.auth.NickServ;
 
-@Service("irc")
+@Service(value = "irc", priority = 999)
 public class IRC {
     public static Client client;
     @Service.Start

@@ -1,6 +1,8 @@
 package net.zenoc.atom.services;
 
+import com.google.inject.Inject;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -16,11 +18,14 @@ import java.awt.*;
 
 @Service("meme vote")
 public class MemeVoteService extends ListenerAdapter {
+    @Inject
+    private JDA jda;
+
     private static Logger log = LoggerFactory.getLogger(MemeVoteService.class);
 
     @Service.Start
     public void startService() throws Exception {
-        DiscordBot.jda.addEventListener(this);
+        jda.addEventListener(this);
     }
 
     @SubscribeEvent

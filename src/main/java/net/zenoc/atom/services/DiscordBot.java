@@ -1,13 +1,11 @@
 package net.zenoc.atom.services;
 
+import com.google.inject.Inject;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.utils.ChunkingFilter;
-import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
 import net.zenoc.atom.annotations.Service;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.discordbot.CommandHandler;
 import net.zenoc.atom.discordbot.commands.*;
 import net.zenoc.atom.discordbot.commands.minecraftonline.MCOCommands;
@@ -15,26 +13,22 @@ import net.zenoc.atom.reference.DiscordReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
+import java.sql.SQLException;
 
-@Service("discord")
+@Service(value = "discord", priority = 999)
 public class DiscordBot {
     private static final Logger log = LoggerFactory.getLogger(DiscordBot.class);
-    public static JDA jda;
-    @Service.Start
-    public void startService() throws IOException, InterruptedException {
-        JDABuilder builder = JDABuilder.createDefault(DiscordReference.token);
-        builder.enableIntents(
-                GatewayIntent.MESSAGE_CONTENT,
-                GatewayIntent.GUILD_MEMBERS,
-                GatewayIntent.GUILD_MESSAGES,
-                GatewayIntent.GUILD_WEBHOOKS,
-                GatewayIntent.GUILD_MESSAGE_REACTIONS
-        );
-        builder.setMemberCachePolicy(MemberCachePolicy.ALL);
-        builder.setChunkingFilter(ChunkingFilter.ALL);
 
-        jda = builder.build();
+    @Inject
+    private JDA jda;
+
+    @GetService
+    private Database database;
+
+    @Service.Start
+    public void startService() throws IOException, InterruptedException, SQLException {
         jda.awaitReady();
 
         CommandHandler commandHandler = new CommandHandler(jda, DiscordReference.prefix);
@@ -54,14 +48,14 @@ public class DiscordBot {
         jda.addEventListener(commandHandler);
 
         jda.getGuilds().forEach(guild -> {
-            if (!Atom.database.isGuildInDatabase(guild)) {
+            if (!database.isGuildInDatabase(guild)) {
                 log.warn("Guild with name " + guild.getName() + " is not in the database!!!");
             }
         });
     }
 
     @Service.Reload
-    public void reloadService() throws IOException, InterruptedException {
+    public void reloadService() throws IOException, InterruptedException, SQLException {
         log.info("Reloading...");
         this.shutdownService();
         this.startService();

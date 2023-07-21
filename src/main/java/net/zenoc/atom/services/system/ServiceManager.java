@@ -1,25 +1,29 @@
 package net.zenoc.atom.services.system;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
+import net.dv8tion.jda.api.JDA;
 import net.zenoc.atom.annotations.Service;
 import net.zenoc.atom.inject.modules.AtomModule;
 import net.zenoc.atom.inject.modules.ServiceModule;
+import net.zenoc.atom.inject.providers.JDAProvider;
+import net.zenoc.atom.launch.AppLaunch;
+import net.zenoc.atom.reference.ServiceReference;
 import org.reflections.Reflections;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ServiceManager {
+    private JDA jda = new JDAProvider().get();
     private Logger logger = LoggerFactory.getLogger("service manager");
     private ArrayList<ServiceContainer> services = new ArrayList<>();
 
-    public void startAll() {
-        Reflections reflections = new Reflections("net.zenoc.atom.services");
+    public void startAll() throws InterruptedException {
+        jda.awaitReady();
+        Reflections reflections = new Reflections(ServiceReference.SERVICES_PACKAGES.toArray());
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Service.class);
         List<Class<?>> sorted = new ArrayList<>(annotated);
 
@@ -32,9 +36,11 @@ public class ServiceManager {
             Service metadata = clazz.getAnnotation(Service.class);
             if (metadata.enabled()) {
                 ServiceContainer container = new ServiceContainer(clazz, metadata);
-                Injector injector = Guice.createInjector(new ServiceModule(container));
+                Injector injector = AppLaunch.getInjector().createChildInjector(new ServiceModule(container));
+                Object instance = injector.getInstance(clazz);
                 container.setInjector(injector);
-                container.setInstance(injector.getInstance(clazz));
+                container.setInstance(instance);
+                GetServiceProcessor.processAnnotations(instance);
                 services.add(container);
             }
         }
@@ -54,5 +60,21 @@ public class ServiceManager {
 
     public ArrayList<ServiceContainer> getServices() {
         return services;
+    }
+
+    public <T> T getInstance(Class<T> clazz) {
+        return (T) services.stream()
+                .filter(service -> service.getClazz() == clazz)
+                .findFirst()
+                .map(ServiceContainer::getInstance)
+                .orElse(null);
+    }
+
+    public <T> T getInstance(String name) {
+        return (T) services.stream()
+                .filter(service -> service.getMetadata().value().equals(name))
+                .findFirst()
+                .map(ServiceContainer::getInstance)
+                .orElse(null);
     }
 }

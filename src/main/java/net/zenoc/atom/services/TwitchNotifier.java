@@ -5,7 +5,9 @@ import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.helix.domain.UserList;
+import com.google.inject.Inject;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -28,6 +30,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Service("twitch notifier")
 public class TwitchNotifier {
+    @Inject
+    private JDA jda;
 
     private static final Logger log = LoggerFactory.getLogger(TwitchNotifier.class);
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -44,7 +48,7 @@ public class TwitchNotifier {
     }
 
     public void refreshStreams() {
-        DiscordBot.jda.getGuilds().forEach(this::refreshStreams);
+        jda.getGuilds().forEach(this::refreshStreams);
     }
 
     public void refreshStreams(Guild guild) {
@@ -71,7 +75,7 @@ public class TwitchNotifier {
                 List<Message> messages = history.getRetrievedHistory();
 
                 Message message = messages.stream()
-                        .filter(msg -> msg.getAuthor() == DiscordBot.jda.getSelfUser())
+                        .filter(msg -> msg.getAuthor() == jda.getSelfUser())
                         .findFirst().orElseGet(() -> this.createStreamsMessage(channel));
 
                 if (joiner.length() == 0) {
