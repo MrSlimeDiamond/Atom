@@ -10,7 +10,9 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
 import net.zenoc.atom.annotations.Service;
+import net.zenoc.atom.database.Database;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +23,8 @@ public class MemeVoteService extends ListenerAdapter {
     @Inject
     private JDA jda;
 
-    private static Logger log = LoggerFactory.getLogger(MemeVoteService.class);
+    @GetService
+    private Database database;
 
     @Service.Start
     public void startService() throws Exception {
@@ -31,7 +34,7 @@ public class MemeVoteService extends ListenerAdapter {
     @SubscribeEvent
     public void onMessageReceived(MessageReceivedEvent event) {
         if (!event.isFromGuild()) return;
-        Atom.database.getServerMemesChannel(event.getGuild()).ifPresent(channel -> {
+        database.getServerMemesChannel(event.getGuild()).ifPresent(channel -> {
 //            log.info("Got channel");
             if (event.getChannel().getId().equals(channel.getId()) && event.getMessage().getAttachments().size() > 0) {
                 event.getMessage().addReaction(Emoji.fromUnicode("⬆️")).queue();
@@ -46,7 +49,7 @@ public class MemeVoteService extends ListenerAdapter {
         if (event.getUser() == null) return;
         if (!event.isFromGuild()) return;
         if (event.getUser().isBot()) return;
-        Atom.database.getServerMemesChannel(event.getGuild()).ifPresent(channel -> {
+        database.getServerMemesChannel(event.getGuild()).ifPresent(channel -> {
             if (event.getChannel().getId().equals(channel.getId())) {
                 if (event.getReaction().getEmoji().asUnicode().getName().equals("❤️")) {
                     event.getUser().openPrivateChannel().queue(dm -> {

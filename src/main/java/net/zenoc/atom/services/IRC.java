@@ -2,7 +2,9 @@ package net.zenoc.atom.services;
 
 import net.engio.mbassy.listener.Handler;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
 import net.zenoc.atom.annotations.Service;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.discordbot.commands.IRCCommand;
 import net.zenoc.atom.discordbot.commands.minecraftonline.GoodnightCommand;
 import net.zenoc.atom.ircbot.MCOEventHandler;
@@ -18,6 +20,10 @@ import org.kitteh.irc.client.library.feature.auth.NickServ;
 @Service(value = "irc", priority = 999)
 public class IRC {
     public static Client client;
+
+    @GetService
+    private Database database;
+    
     @Service.Start
     public void startService() throws Exception {
         client = Client.builder()
@@ -31,7 +37,7 @@ public class IRC {
                 .then().buildAndConnect();
 
         client.getAuthManager().addProtocol(NickServ.builder(client).account(IRCReference.nickServUsername).password(IRCReference.nickServPassword).build());
-        Atom.database.joinAllIRCChannels();
+        database.joinAllIRCChannels();
 
         CommandHandler commandHandler = new CommandHandler();
         commandHandler.registerCommand(new PingCommand());

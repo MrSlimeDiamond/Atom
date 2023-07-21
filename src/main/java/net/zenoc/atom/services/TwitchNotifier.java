@@ -17,7 +17,9 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
 import net.zenoc.atom.annotations.Service;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.reference.TwitchReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,12 @@ public class TwitchNotifier {
     @Inject
     private JDA jda;
 
-    private static final Logger log = LoggerFactory.getLogger(TwitchNotifier.class);
+    @Inject
+    private Logger logger;
+
+    @GetService
+    private Database database;
+
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     TwitchClient client;
@@ -53,8 +60,8 @@ public class TwitchNotifier {
 
     public void refreshStreams(Guild guild) {
         Thread.currentThread().setName("Twitch Refresh Thread");
-        log.info("Streams are being refreshed for " + guild.getName());
-        Atom.database.getServerStreamers(guild).ifPresent(streamers -> {
+        logger.info("Streams are being refreshed for " + guild.getName());
+        database.getServerStreamers(guild).ifPresent(streamers -> {
             StreamList streams = client.getHelix().getStreams(TwitchReference.API_TOKEN, null, null, null, null, null, null, streamers).execute();
             MessageCreateBuilder builder = new MessageCreateBuilder();
             StringJoiner joiner = new StringJoiner(", ");
@@ -70,7 +77,7 @@ public class TwitchNotifier {
                 joiner.add("**" + user.getDisplayName() + "**");
             });
 
-            Atom.database.getServerStreamsChannel(guild).ifPresent(channel -> {
+            database.getServerStreamsChannel(guild).ifPresent(channel -> {
                 MessageHistory history = MessageHistory.getHistoryFromBeginning(channel).complete();
                 List<Message> messages = history.getRetrievedHistory();
 

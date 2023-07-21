@@ -12,7 +12,9 @@ import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
 import net.zenoc.atom.annotations.Service;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.util.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +26,8 @@ public class DiscordLoggerService extends ListenerAdapter {
     @Inject
     private JDA jda;
 
-    private static Logger log = LoggerFactory.getLogger(DiscordLoggerService.class);
+    @GetService
+    private Database database;
 
     @Service.Start
     public void startService() throws Exception {
@@ -33,8 +36,8 @@ public class DiscordLoggerService extends ListenerAdapter {
 
     @SubscribeEvent
     public void onMessageDelete(MessageDeleteEvent event) {
-        Atom.database.getGuildLog(event.getGuild()).ifPresent(channel -> {
-            Atom.database.getMessage(event.getMessageIdLong()).ifPresentOrElse(cachedMessage -> {
+        database.getGuildLog(event.getGuild()).ifPresent(channel -> {
+            database.getMessage(event.getMessageIdLong()).ifPresentOrElse(cachedMessage -> {
                 EmbedBuilder builder = new EmbedBuilder()
                         .setAuthor(UserUtil.getUserName(cachedMessage.getUser()), null, cachedMessage.getUser().getAvatarUrl())
                         .setDescription("Message Deleted in <#" + event.getChannel().getId() + ">")
@@ -57,8 +60,8 @@ public class DiscordLoggerService extends ListenerAdapter {
     @SubscribeEvent
     public void onMessageUpdate(MessageUpdateEvent event) {
         if (event.getAuthor().isBot()) return;
-        Atom.database.getGuildLog(event.getGuild()).ifPresent(channel -> {
-            Atom.database.getMessage(event.getMessageIdLong()).ifPresentOrElse(cachedMessage -> {
+        database.getGuildLog(event.getGuild()).ifPresent(channel -> {
+            database.getMessage(event.getMessageIdLong()).ifPresentOrElse(cachedMessage -> {
                 String oldContent = cachedMessage.getMessageContent();
                 String newContent = event.getMessage().getContentRaw();
                 if (oldContent.equals(newContent)) return;
@@ -89,13 +92,13 @@ public class DiscordLoggerService extends ListenerAdapter {
                 });
                 channel.sendMessageEmbeds(builder.build()).queue();
             });
-            Atom.database.updateMessage(event.getMessageIdLong(), event.getMessage().getContentRaw());
+            database.updateMessage(event.getMessageIdLong(), event.getMessage().getContentRaw());
         });
     }
 
     @SubscribeEvent
     public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-        Atom.database.getGuildLog(event.getGuild()).ifPresent(channel -> {
+        database.getGuildLog(event.getGuild()).ifPresent(channel -> {
             MessageEmbed embed = new EmbedBuilder()
                     .setColor(Color.RED)
                     .setAuthor(UserUtil.getUserName(event.getUser()), null, event.getUser().getAvatarUrl())
@@ -108,7 +111,7 @@ public class DiscordLoggerService extends ListenerAdapter {
 
     @SubscribeEvent
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-        Atom.database.getGuildLog(event.getGuild()).ifPresent(channel -> {
+        database.getGuildLog(event.getGuild()).ifPresent(channel -> {
             MessageEmbed embed = new EmbedBuilder()
                     .setColor(Color.GREEN)
                     .setAuthor(UserUtil.getUserName(event.getUser()), null, event.getUser().getAvatarUrl())

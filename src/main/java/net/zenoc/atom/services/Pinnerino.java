@@ -20,7 +20,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
 import net.zenoc.atom.annotations.Service;
+import net.zenoc.atom.database.Database;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -36,21 +38,23 @@ public class Pinnerino extends ListenerAdapter {
     @Inject
     private JDA jda;
 
-    private static Logger log = LoggerFactory.getLogger(Pinnerino.class);
+    @GetService
+    private Database database;
+    
     @Service.Start
     public void startService() throws Exception {
         jda.addEventListener(this);
     }
 
     public void onMessageReactionAdd(MessageReactionAddEvent event) {
-            if (Atom.database.isChannelBlacklistedPinnerino(event.getChannel().getIdLong())) return;
+            if (database.isChannelBlacklistedPinnerino(event.getChannel().getIdLong())) return;
             Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
 
-            message.getReactions().forEach(emoji -> Atom.database.getServerPinnerinoThreshold(event.getGuild()).ifPresent(threshold -> {
+            message.getReactions().forEach(emoji -> database.getServerPinnerinoThreshold(event.getGuild()).ifPresent(threshold -> {
                 if (emoji.getCount() >= threshold) {
-                    Atom.database.getServerPinnerinoEmoji(event.getGuild()).ifPresent(pinEmoji -> {
+                    database.getServerPinnerinoEmoji(event.getGuild()).ifPresent(pinEmoji -> {
                         if (emoji.getEmoji().equals(pinEmoji)) {
-                            if (Atom.database.isMessagePinnerinoed(message.getIdLong())) {
+                            if (database.isMessagePinnerinoed(message.getIdLong())) {
                                 updatePin(message.getChannel().asTextChannel(), message, emoji.getCount(), emoji);
                             } else {
                                 pinMessage(message, emoji.getCount(), emoji);
@@ -62,14 +66,14 @@ public class Pinnerino extends ListenerAdapter {
     }
 
     public void onMessageReactionRemove(MessageReactionRemoveEvent event) {
-        if (Atom.database.isMessagePinnerinoed(event.getMessageIdLong())) {
+        if (database.isMessagePinnerinoed(event.getMessageIdLong())) {
             Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
 
             // Update it to 0 because there might not be any reactions left after one is removed
             updatePin(event.getChannel().asTextChannel(), message, 0, event.getReaction());
 
             message.getReactions().forEach(emoji -> {
-                Atom.database.getServerPinnerinoEmoji(event.getGuild()).ifPresent(pinEmoji -> {
+                database.getServerPinnerinoEmoji(event.getGuild()).ifPresent(pinEmoji -> {
                     if (emoji.getEmoji().equals(pinEmoji)) {
                         updatePin(event.getChannel().asTextChannel(), message, emoji.getCount(), event.getReaction());
                     }
@@ -79,10 +83,10 @@ public class Pinnerino extends ListenerAdapter {
     }
 
     public void onMessageUpdate(MessageUpdateEvent event) {
-        if (Atom.database.isMessagePinnerinoed(event.getMessageIdLong())) {
+        if (database.isMessagePinnerinoed(event.getMessageIdLong())) {
             Message message = event.getChannel().retrieveMessageById(event.getMessageIdLong()).complete();
             message.getReactions().forEach(emoji -> {
-                Atom.database.getServerPinnerinoEmoji(event.getGuild()).ifPresent(pinEmoji -> {
+                database.getServerPinnerinoEmoji(event.getGuild()).ifPresent(pinEmoji -> {
                     if (emoji.getEmoji().equals(pinEmoji)) {
                         updatePin(event.getChannel().asTextChannel(), message, emoji.getCount(), emoji);
                     }
@@ -92,13 +96,13 @@ public class Pinnerino extends ListenerAdapter {
     }
 
     public void onMessageDelete(MessageDeleteEvent event) {
-        if (Atom.database.isMessagePinnerinoed(event.getMessageIdLong())) {
-            Atom.database.getPinnerino(event.getGuild(), event.getMessageIdLong()).ifPresent(pin -> pin.queue(message -> message.delete().queue()));
+        if (database.isMessagePinnerinoed(event.getMessageIdLong())) {
+            database.getPinnerino(event.getGuild(), event.getMessageIdLong()).ifPresent(pin -> pin.queue(message -> message.delete().queue()));
         }
     }
 
     public void pinMessage(Message message, int count, MessageReaction emoji) {
-        Atom.database.getServerPinnerinoChannel(message.getGuild()).ifPresent(channel -> {
+        database.getServerPinnerinoChannel(message.getGuild()).ifPresent(channel -> {
             Webhook webhook = channel.retrieveWebhooks().complete().stream()
                     .filter(hook -> hook.getName().toLowerCase().contains("atom") || hook.getName().toLowerCase().contains("pinnerino"))
                     .findAny().orElseGet(() -> this.createPinWebhook(channel));
@@ -111,12 +115,12 @@ public class Pinnerino extends ListenerAdapter {
                     .build();
             builder.addEmbeds(jumpEmbed);
 
-            client.build().send(builder.build()).thenAccept(msg -> Atom.database.addPinnerino(message.getGuild().getIdLong(), message.getIdLong(), msg.getId()));
+            client.build().send(builder.build()).thenAccept(msg -> database.addPinnerino(message.getGuild().getIdLong(), message.getIdLong(), msg.getId()));
         });
     }
 
     public void updatePin(TextChannel channel, Message message, int count, MessageReaction emoji) {
-        Atom.database.getServerPinnerinoChannel(message.getGuild()).ifPresent(pinChannel -> {
+        database.getServerPinnerinoChannel(message.getGuild()).ifPresent(pinChannel -> {
             Webhook webhook = pinChannel.retrieveWebhooks().complete().stream()
                     .filter(hook -> hook.getName().toLowerCase().contains("atom") || hook.getName().toLowerCase().contains("pinnerino"))
                     .findAny().orElseGet(() -> this.createPinWebhook(pinChannel));
@@ -128,7 +132,7 @@ public class Pinnerino extends ListenerAdapter {
                     .setDescription(emoji.getEmoji().getFormatted() + count + " - [Jump](" + message.getJumpUrl() + ")")
                     .build();
             builder.addEmbeds(jumpEmbed);
-            Atom.database.getPinnerino(channel.getGuild(), message.getIdLong()).ifPresent(notif -> notif.queue(pinNotification -> client.build().edit(pinNotification.getId(), builder.build())));
+            database.getPinnerino(channel.getGuild(), message.getIdLong()).ifPresent(notif -> notif.queue(pinNotification -> client.build().edit(pinNotification.getId(), builder.build())));
         });
     }
 

@@ -8,13 +8,18 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
 import net.zenoc.atom.annotations.Service;
+import net.zenoc.atom.database.Database;
 
 @Service("reaction roles")
 public class ReactionRoleService extends ListenerAdapter {
     @Inject
     private JDA jda;
 
+    @GetService
+    private Database database;
+    
     @Service.Start
     public void startService() throws Exception {
         jda.addEventListener(this);
@@ -24,8 +29,8 @@ public class ReactionRoleService extends ListenerAdapter {
     public void onMessageReactionAdd(MessageReactionAddEvent event) {
         if (event.getUser().isBot()) return;
         if (event.isFromGuild()) {
-            if (Atom.database.messageHasReactionRoles(event.getMessageIdLong())) {
-                Atom.database.getReactionRole(event.getMessageIdLong(), event.getEmoji()).ifPresent(role -> {
+            if (database.messageHasReactionRoles(event.getMessageIdLong())) {
+                database.getReactionRole(event.getMessageIdLong(), event.getEmoji()).ifPresent(role -> {
                     event.getGuild().addRoleToMember(event.getUser(), role).queue();
                 });
             }
@@ -36,8 +41,8 @@ public class ReactionRoleService extends ListenerAdapter {
     public void onMessageReactionRemove(MessageReactionRemoveEvent event) {
         if (event.getUser().isBot()) return;
         if (event.isFromGuild()) {
-            if (Atom.database.messageHasReactionRoles(event.getMessageIdLong())) {
-                Atom.database.getReactionRole(event.getMessageIdLong(), event.getEmoji()).ifPresent(role -> {
+            if (database.messageHasReactionRoles(event.getMessageIdLong())) {
+                database.getReactionRole(event.getMessageIdLong(), event.getEmoji()).ifPresent(role -> {
                     event.getGuild().removeRoleFromMember(event.getUser(), role).queue();
                 });
             }

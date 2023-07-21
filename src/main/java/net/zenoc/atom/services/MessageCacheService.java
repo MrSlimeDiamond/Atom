@@ -6,7 +6,9 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
 import net.zenoc.atom.annotations.Service;
+import net.zenoc.atom.database.Database;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +19,11 @@ public class MessageCacheService extends ListenerAdapter {
     @Inject
     private JDA jda;
 
-    private static Logger log = LoggerFactory.getLogger(MessageCacheService.class);
+    @Inject
+    private Logger logger;
+    
+    @GetService
+    private Database database;
 
     @Service.Start
     public void startService() throws Exception {
@@ -28,9 +34,9 @@ public class MessageCacheService extends ListenerAdapter {
         // Don't cache messages that don't really need to be cached
         if (!event.isFromGuild() || event.getAuthor().getIdLong() == event.getJDA().getSelfUser().getIdLong()) return;
         try {
-            Atom.database.addMessage(event.getMessageIdLong(), event.getGuild().getIdLong(), event.getAuthor().getIdLong(), event.getMessage().getContentDisplay());
+            database.addMessage(event.getMessageIdLong(), event.getGuild().getIdLong(), event.getAuthor().getIdLong(), event.getMessage().getContentDisplay());
         } catch (SQLException e) {
-            log.error("SQLException when caching message, is the database down?");
+            logger.error("SQLException when caching message, is the database down?");
             e.printStackTrace();
         }
     }
