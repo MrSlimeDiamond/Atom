@@ -1,6 +1,8 @@
 package net.zenoc.atom.ircbot.commands;
 
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.util.NumberUtils;
 import net.zenoc.atom.ircbot.CommandEvent;
 import net.zenoc.atom.ircbot.annotations.Command;
@@ -10,7 +12,9 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 
 public class BridgeCommand {
-    private static final Logger log = LoggerFactory.getLogger(BridgeCommand.class);
+    @GetService
+    private Database database;
+
     @Command(
             name = "bridge",
             description = "Manage chat bridges",
@@ -30,7 +34,7 @@ public class BridgeCommand {
                         return;
                     } else {
                         try {
-                            Atom.database.setIRCDiscordBridgeChannelID(event.getChannel().getName(), Long.parseLong(event.getCommandArgs()[2]));
+                            database.setIRCDiscordBridgeChannelID(event.getChannel().getName(), Long.parseLong(event.getCommandArgs()[2]));
                             event.reply("Set Discord bridge channel!");
                         } catch (SQLException e) {
                             event.reply("SQLException! Is the database down? Tell an admin!");
@@ -38,7 +42,7 @@ public class BridgeCommand {
                     }
                 } else if (event.getCommandArgs()[1].equals("unset")) {
                     try {
-                        Atom.database.setIRCDiscordBridgeChannelID(event.getChannel().getName(), -1L);
+                        database.setIRCDiscordBridgeChannelID(event.getChannel().getName(), -1L);
                         event.reply("Unset Discord bridge channel!");
                     } catch (SQLException e) {
                         event.reply("SQLException! Is the database down? Tell an admin!");
@@ -47,7 +51,7 @@ public class BridgeCommand {
             } else if (event.getCommandArgs()[0].equals("pipe")) {
             if (event.getCommandArgs()[1].equals("on")) {
                 try {
-                    Atom.database.enableIRCPipe(event.getChannel().getName());
+                    database.enableIRCPipe(event.getChannel().getName());
                     event.reply("Bridge status: on");
                 } catch (SQLException e) {
                     event.reply("SQLException! Is the database down? Tell an admin!");
@@ -55,7 +59,7 @@ public class BridgeCommand {
                 }
             } else {
                 try {
-                    Atom.database.disableIRCPipe(event.getChannel().getName());
+                    database.disableIRCPipe(event.getChannel().getName());
                     event.reply("Bridge status: off");
                 } catch (SQLException e) {
                     event.reply("SQLException! Is the database down? Tell an admin!");
@@ -74,7 +78,7 @@ public class BridgeCommand {
                     } else { // bridge blacklist add irc user
                         String user = event.getCommandArgs()[3];
                         try {
-                            Atom.database.addUserIRCBridgeBlacklist(user);
+                            database.addUserIRCBridgeBlacklist(user);
                             event.reply("Added user to blacklist");
                         } catch(SQLException e) {
                             event.reply("SQLException! Is the database down?");
@@ -90,7 +94,7 @@ public class BridgeCommand {
                         } else {
                             long id = Long.parseLong(event.getCommandArgs()[3]);
                             try {
-                                Atom.database.addUserDiscordBridgeBlacklist(id);
+                                database.addUserDiscordBridgeBlacklist(id);
                                 event.reply("Added user to blacklist");
                             } catch(SQLException e) {
                                 event.reply("SQLException! Is the database down?");
@@ -110,7 +114,7 @@ public class BridgeCommand {
                     } else { // bridge blacklist add irc user
                         String user = event.getCommandArgs()[3];
                         try {
-                            Atom.database.removeUserIRCBridgeBlacklist(user);
+                            database.removeUserIRCBridgeBlacklist(user);
                             event.reply("Removed user from blacklist");
                         } catch(SQLException e) {
                             event.reply("SQLException! Is the database down?");
@@ -126,7 +130,7 @@ public class BridgeCommand {
                         } else {
                             long id = Long.parseLong(event.getCommandArgs()[3]);
                             try {
-                                Atom.database.removeUserDiscordBridgeBlacklist(id);
+                                database.removeUserDiscordBridgeBlacklist(id);
                                 event.reply("Removed user from blacklist");
                             } catch(SQLException e) {
                                 event.reply("SQLException! Is the database down?");

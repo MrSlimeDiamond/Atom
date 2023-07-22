@@ -3,6 +3,8 @@ package net.zenoc.atom.discordbot.commands;
 import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.discordbot.CommandEvent;
 import net.zenoc.atom.discordbot.annotations.Command;
 import net.zenoc.atom.discordbot.annotations.Subcommand;
@@ -15,7 +17,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class PinnerinoCommand {
-    private static final Logger log = LoggerFactory.getLogger(PinnerinoCommand.class);
+    @GetService
+    private Database database;
+
     @Command(
             name = "pinnerino",
             description = "Pinnerino service management",
@@ -58,10 +62,10 @@ public class PinnerinoCommand {
                     event.reply("Channel size is zero");
                 }
                 GuildChannel channel = channels.get(0);
-                Atom.database.setServerPinnerinoChannel(event.getGuild().getIdLong(), channel.getIdLong());
+                database.setServerPinnerinoChannel(event.getGuild().getIdLong(), channel.getIdLong());
                 event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Set pinnerino channel"));
             } else if (event.getCommandArgs()[1].equals("unset")) {
-                Atom.database.setServerPinnerinoChannel(event.getGuild().getIdLong(), -1L);
+                database.setServerPinnerinoChannel(event.getGuild().getIdLong(), -1L);
                 event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Unset pinnerino channel"));
             } else {
                 event.replyEmbeds(EmbedUtil.genericIncorrectUsageEmbed("pinnerino channel set <channel>"));
@@ -75,7 +79,7 @@ public class PinnerinoCommand {
                 if (EmojiParser.extractEmojis(event.getCommandArgs()[2]).size() == 0) {
                     // Custom emoji
                     String id = event.getCommandArgs()[2].split(":")[2].replace(">", "");
-                    Atom.database.setServerPinnerinoEmoji(event.getGuild().getIdLong(), id);
+                    database.setServerPinnerinoEmoji(event.getGuild().getIdLong(), id);
                 } else {
                     // Unicode emoji
                     String unicode = EmojiParser.parseToHtmlHexadecimal(event.getCommandArgs()[2])
@@ -83,7 +87,7 @@ public class PinnerinoCommand {
                             .replace("#", "+")
                             .replace(";", "")
                             .replaceFirst("x", "");
-                    Atom.database.setServerPinnerinoEmoji(event.getGuild().getIdLong(), unicode);
+                    database.setServerPinnerinoEmoji(event.getGuild().getIdLong(), unicode);
                 }
                 event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Set server pinnerino emoji"));
             } else {
@@ -93,7 +97,7 @@ public class PinnerinoCommand {
             if (event.getCommandArgs()[1].equals("set")) {
                 if (NumberUtils.isNumeric(event.getCommandArgs()[2])) {
                     int threshold = Integer.parseInt(event.getCommandArgs()[2]);
-                    Atom.database.setServerPinnerinoThreshold(event.getGuild().getIdLong(), threshold);
+                    database.setServerPinnerinoThreshold(event.getGuild().getIdLong(), threshold);
                     event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Set pinnerino threshold"));
                 }
             }
@@ -104,10 +108,10 @@ public class PinnerinoCommand {
             }
             GuildChannel channel = channels.get(0);
             if (event.getCommandArgs()[1].equals("add")) {
-                Atom.database.addPinnerinoBlacklist(channel.getIdLong());
+                database.addPinnerinoBlacklist(channel.getIdLong());
                 event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Added channel to blacklist"));
             } else if (event.getCommandArgs()[1].equals("remove")) {
-                Atom.database.removePinnerinoBlacklist(channel.getIdLong());
+                database.removePinnerinoBlacklist(channel.getIdLong());
                 event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Removed channel from blacklist"));
             }
         }

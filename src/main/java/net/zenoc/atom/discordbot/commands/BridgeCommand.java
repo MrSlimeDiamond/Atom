@@ -2,6 +2,8 @@ package net.zenoc.atom.discordbot.commands;
 
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.discordbot.CommandEvent;
 import net.zenoc.atom.discordbot.annotations.Command;
 import net.zenoc.atom.discordbot.annotations.Option;
@@ -11,6 +13,9 @@ import net.zenoc.atom.util.EmbedUtil;
 import java.sql.SQLException;
 
 public class BridgeCommand {
+    @GetService
+    private Database database;
+    
     @Command(
             name = "bridge",
             description = "Manage chat bridges",
@@ -57,12 +62,12 @@ public class BridgeCommand {
         }
         if (event.getSubcommandName().equals("pipe")) {
                 event.getBooleanOption("pipe").ifPresent(pipe -> {
-                    Atom.database.getBridgedChannel(event.getChannel()).ifPresentOrElse(channel -> {
+                    database.getBridgedChannel(event.getChannel()).ifPresentOrElse(channel -> {
                         try {
                             if (pipe) {
-                                Atom.database.enableIRCPipe(channel);
+                                database.enableIRCPipe(channel);
                             } else {
-                                Atom.database.disableIRCPipe(channel);
+                                database.disableIRCPipe(channel);
                             }
                         } catch (SQLException e) {
                             event.replyEmbeds(EmbedUtil.expandedErrorEmbed("SQLException! Is the database down?"));
@@ -76,7 +81,7 @@ public class BridgeCommand {
             try {
                 String channel = event.getStringOption("channel");
                 if (!channel.startsWith("#")) channel = "#" + channel;
-                Atom.database.setIRCDiscordBridgeChannelID(channel, event.getChannel().getIdLong());
+                database.setIRCDiscordBridgeChannelID(channel, event.getChannel().getIdLong());
                 event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Set IRC bridge channel"));
             } catch(SQLException e) {
                 event.replyEmbeds(EmbedUtil.expandedErrorEmbed("SQLException! Is the database down?"));
