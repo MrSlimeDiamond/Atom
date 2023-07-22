@@ -133,7 +133,6 @@ public class Database {
     @Service.Start
     public void startService() throws Exception {
         openConnection();
-        Atom.database = this;
     }
 
     public void openConnection() throws SQLException {
@@ -598,7 +597,7 @@ public class Database {
     }
 
     public EmojiUnion getServerPinnerinoEmojiUnion(long serverID) throws SQLException {
-        String emoji = Atom.database.getServerPinnerinoEmoji(serverID);
+        String emoji = getServerPinnerinoEmoji(serverID);
         Guild guild = jda.getGuildById(serverID);
         if (guild == null) return null;
         DataObject data;
@@ -615,7 +614,7 @@ public class Database {
     public Optional<EmojiUnion> getServerPinnerinoEmoji(Guild guild) {
         try {
             long serverID = guild.getIdLong();
-            String emoji = Atom.database.getServerPinnerinoEmoji(serverID);
+            String emoji = getServerPinnerinoEmoji(serverID);
             if (emoji == null) return Optional.empty();
             DataObject data;
             if (NumberUtils.isNumeric(emoji)) {

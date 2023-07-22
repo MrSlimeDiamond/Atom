@@ -6,6 +6,7 @@ import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.discord.CommandEvent;
 import net.slimediamond.atom.discord.annotations.Command;
 import net.slimediamond.atom.discord.annotations.Subcommand;
+import net.slimediamond.atom.util.NetworkUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -94,14 +95,12 @@ public class InformationCommands {
         if (event.getSubcommandName().equals("host")) {
             event.deferReply();
 
-            Atom.refreshIP();
-
             MessageEmbed embed = new EmbedBuilder()
                     .setColor(Color.decode("#4FEB34"))
                     .setTitle("Info / Host")
                     .addField("Hostname", InetAddress.getLocalHost().getHostName(), true)
                     .addField("OS", System.getProperty("os.name"), true)
-                    .addField("Public IP", Atom.ip, true)
+                    .addField("Public IP", NetworkUtils.getIP(), true)
                     .addField("Local IP", InetAddress.getLocalHost().getHostAddress(), true)
                     .addField("Uptime", formatDuration(Duration.ofMillis(getSystemUptime())), true)
                     .build();

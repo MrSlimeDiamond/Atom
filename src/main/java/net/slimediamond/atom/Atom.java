@@ -3,6 +3,7 @@ package net.slimediamond.atom;
 import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.launch.AppLaunch;
 import net.slimediamond.atom.services.system.ServiceManager;
+import net.slimediamond.atom.util.NetworkUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +15,6 @@ import java.net.URL;
 public class Atom {
     private static final Logger log = LoggerFactory.getLogger("atom");
     public static Config config;
-    public static String ip;
-    public static Database database;
 
     private static ServiceManager serviceManager;
 
@@ -36,15 +35,13 @@ public class Atom {
             log.error("Configuration is not set up!");
             System.exit(1);
         }
-        refreshIP();
 
-        log.info("Got IP: " + ip);
+        log.info("Got IP: {}", NetworkUtils.getIP());
 
         log.info("Validated everything -- proceeding with app launch");
 
         // AppLaunch will handle starting services and other tasks that should happen during startup
         AppLaunch.launch();
-
     }
 
     public static void shutdown(Class<?> clazz) throws Exception {
@@ -53,16 +50,6 @@ public class Atom {
         serviceManager.shutdownAll();
         log.info("Bye!");
         System.exit(1);
-    }
-
-    public static void refreshIP() {
-        try {
-            URL url = new URL("https://checkip.amazonaws.com");
-            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-            ip = br.readLine();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static ServiceManager getServiceManager() {

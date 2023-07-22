@@ -1,6 +1,7 @@
 package net.slimediamond.atom.util;
 
 import net.slimediamond.atom.Atom;
+import net.slimediamond.atom.database.Database;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,8 @@ public class MCOPlayer {
     Long playtime;
 
     private Logger log = LoggerFactory.getLogger(MCOPlayer.class);
+
+    private Database database = Atom.getServiceManager().getInstance(Database.class);
 
     /**
      * Creates a new MinecraftOnline player
@@ -51,7 +54,7 @@ public class MCOPlayer {
         if (this.firstseen != null) {
             return Optional.of(this.firstseen);
         } else {
-            Optional<Date> mcoFirstseen = Atom.database.getMCOFirstseenByName(username);
+            Optional<Date> mcoFirstseen = database.getMCOFirstseenByName(username);
             if (mcoFirstseen.isPresent()) {
                 // in database
                 this.firstseen = mcoFirstseen.get();
@@ -91,7 +94,7 @@ public class MCOPlayer {
         if (this.lastseen != null) {
             return Optional.of(this.lastseen);
         } else {
-            Optional<Date> mcoLastseen = Atom.database.getMCOLastseenByName(username);
+            Optional<Date> mcoLastseen = database.getMCOLastseenByName(username);
             if (mcoLastseen.isPresent()) {
                 // in database
                 this.lastseen = mcoLastseen.get();
@@ -138,11 +141,11 @@ public class MCOPlayer {
      */
     public void setFirstseen(Date date) throws SQLException {
         log.info(username + " hasn't got a firstseen record in the database, adding");
-        if (!Atom.database.isMCOUserInDatabaseByUsername(username)) {
+        if (!database.isMCOUserInDatabaseByUsername(username)) {
             log.info("Inserting user");
-            Atom.database.insertMCOUser(username, this.uuid);
+            database.insertMCOUser(username, this.uuid);
         }
-        Atom.database.setMCOFirstseenByUUID(this.uuid, date);
+        database.setMCOFirstseenByUUID(this.uuid, date);
         log.info("Set firstseen date!");
     }
 
@@ -153,11 +156,11 @@ public class MCOPlayer {
      */
     public void setLastseen(Date date) throws SQLException {
         log.info(username + " hasn't got a lastseen record in the database, adding");
-        if (!Atom.database.isMCOUserInDatabaseByUsername(username)) {
+        if (!database.isMCOUserInDatabaseByUsername(username)) {
             log.info("Inserting user");
-            Atom.database.insertMCOUser(username, this.uuid);
+            database.insertMCOUser(username, this.uuid);
         }
-        Atom.database.setMCOLastseenByUUID(this.uuid, date);
+        database.setMCOLastseenByUUID(this.uuid, date);
         log.info("Set lastseen date!");
     }
 

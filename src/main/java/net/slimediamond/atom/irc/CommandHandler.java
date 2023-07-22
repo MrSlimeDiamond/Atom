@@ -1,6 +1,7 @@
 package net.slimediamond.atom.irc;
 
 import net.engio.mbassy.listener.Handler;
+import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.irc.annotations.Command;
 import net.slimediamond.atom.reference.IRCReference;
 import net.slimediamond.atom.services.system.GetServiceProcessor;
@@ -17,6 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class CommandHandler {
     private static final Logger log = LoggerFactory.getLogger(CommandHandler.class);
+    private Database database = Atom.getServiceManager().getInstance(Database.class);
     ArrayList<IRCCommand> commands = new ArrayList<>();
     public CommandHandler() {
         IRC.client.getEventManager().registerEventListener(this);
@@ -76,7 +78,7 @@ public class CommandHandler {
                     }
                     if (!shouldExecute) return;
                     try {
-                        if (command.getCommand().adminOnly() && !Atom.database.isIRCAdmin(event.getActor())) {
+                        if (command.getCommand().adminOnly() && !database.isIRCAdmin(event.getActor())) {
                             event.getChannel().sendMessage("You do not have permission to do this.");
                             return;
                         }

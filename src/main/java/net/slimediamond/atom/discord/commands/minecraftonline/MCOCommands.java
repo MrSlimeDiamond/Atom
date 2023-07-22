@@ -3,6 +3,7 @@ package net.slimediamond.atom.discord.commands.minecraftonline;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.slimediamond.atom.Atom;
+import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.discord.CommandEvent;
 import net.slimediamond.atom.discord.annotations.Command;
 import net.slimediamond.atom.discord.annotations.Option;
@@ -204,21 +205,15 @@ public class MCOCommands {
     }
 
     public void lastseenCommand(CommandEvent event, String correctname) throws IOException, SQLException {
-        Optional<Date> mcoLastseen = Atom.database.getMCOLastseenByName(correctname);
-        if (mcoLastseen.isPresent()) {
-            // in database
-            this.sendLastseenResponse(correctname, mcoLastseen.get(), event);
-        } else {
-            try {
-                MCOPlayer player = new MCOPlayer(correctname);
-                player.getLastseen().ifPresentOrElse(firstseen -> {
-                    this.sendLastseenResponse(correctname, firstseen, event);
-                }, () -> {
-                    event.replyEmbeds(EmbedUtil.expandedErrorEmbed("Player " + correctname + " does not exist"));
-                });
-            } catch (UnknownPlayerException e) {
+        try {
+            MCOPlayer player = new MCOPlayer(correctname);
+            player.getLastseen().ifPresentOrElse(lastseen -> {
+                this.sendLastseenResponse(correctname, lastseen, event);
+            }, () -> {
                 event.replyEmbeds(EmbedUtil.expandedErrorEmbed("Player " + correctname + " does not exist"));
-            }
+            });
+        } catch (UnknownPlayerException e) {
+            event.replyEmbeds(EmbedUtil.expandedErrorEmbed("Player " + correctname + " does not exist"));
         }
     }
 

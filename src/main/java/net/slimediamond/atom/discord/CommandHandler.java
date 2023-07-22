@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 import net.slimediamond.atom.Atom;
+import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.discord.annotations.Command;
 import net.slimediamond.atom.discord.annotations.Option;
 import net.slimediamond.atom.discord.annotations.Subcommand;
@@ -29,6 +30,8 @@ public class CommandHandler extends ListenerAdapter {
     String prefix;
     ArrayList<AtomCommand> commands = new ArrayList<>();
     private static final Logger log = LoggerFactory.getLogger(CommandHandler.class);
+
+    private Database database = Atom.getServiceManager().getInstance(Database.class);
 
     public CommandHandler(JDA jda, String prefix) {
         this.jda = jda;
@@ -167,7 +170,7 @@ public class CommandHandler extends ListenerAdapter {
         CommandEvent commandEvent = new CommandEvent(jda, this, command);
         if (msgEvent != null) {
             commandEvent.setMsgEvent(msgEvent);
-            if (!Atom.database.isDiscordAdminByID(msgEvent.getAuthor().getIdLong()) && command.getCommand().adminOnly()) {
+            if (!database.isDiscordAdminByID(msgEvent.getAuthor().getIdLong()) && command.getCommand().adminOnly()) {
                 msgEvent.getChannel().sendMessageEmbeds(EmbedUtil.genericPermissionDeniedError()).queue();
                 return;
             }
@@ -187,7 +190,7 @@ public class CommandHandler extends ListenerAdapter {
             if (!go) return;
         } else {
             commandEvent.setSlashEvent(interaction);
-            if (!Atom.database.isDiscordAdminByID(interaction.getUser().getIdLong()) && command.getCommand().adminOnly()) {
+            if (!database.isDiscordAdminByID(interaction.getUser().getIdLong()) && command.getCommand().adminOnly()) {
                 interaction.replyEmbeds(EmbedUtil.genericPermissionDeniedError()).queue();
                 return;
             }
