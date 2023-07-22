@@ -3,7 +3,6 @@ package net.zenoc.atom;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import net.zenoc.atom.database.Database;
-import net.zenoc.atom.inject.modules.ServiceProviderModule;
 import net.zenoc.atom.launch.AppLaunch;
 import net.zenoc.atom.services.system.ServiceManager;
 import org.slf4j.Logger;

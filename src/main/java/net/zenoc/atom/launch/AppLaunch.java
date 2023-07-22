@@ -4,7 +4,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import net.zenoc.atom.Atom;
 import net.zenoc.atom.inject.modules.AtomModule;
-import net.zenoc.atom.inject.modules.ServiceProviderModule;
 import net.zenoc.atom.services.system.ServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
