@@ -4,8 +4,8 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-application.mainClass = 'net.zenoc.atom.Atom'
-group = 'net.zenoc'
+application.mainClass = 'net.slimediamond.atom.Atom'
+group = 'net.slimediamond'
 version = '1.0-SNAPSHOT'
 
 shadowJar {
