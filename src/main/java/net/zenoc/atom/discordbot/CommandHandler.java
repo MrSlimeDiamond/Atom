@@ -13,6 +13,7 @@ import net.zenoc.atom.Atom;
 import net.zenoc.atom.discordbot.annotations.Command;
 import net.zenoc.atom.discordbot.annotations.Option;
 import net.zenoc.atom.discordbot.annotations.Subcommand;
+import net.zenoc.atom.services.system.GetServiceProcessor;
 import net.zenoc.atom.util.EmbedUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,10 @@ public class CommandHandler extends ListenerAdapter {
         // normal
         Arrays.stream(command.getClass().getMethods())
                 .filter(method -> method.isAnnotationPresent(Command.class))
-                .map(method -> new AtomCommand(method.getAnnotation(Command.class), command, method))
+                .map(method -> {
+                    GetServiceProcessor.processAnnotations(command);
+                    return new AtomCommand(method.getAnnotation(Command.class), command, method);
+                })
                 .forEach(commands::add);
     }
 

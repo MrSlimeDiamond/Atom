@@ -7,6 +7,8 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.exceptions.ContextException;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.discordbot.CommandEvent;
 import net.zenoc.atom.discordbot.annotations.Command;
 import net.zenoc.atom.services.DiscordBot;
@@ -17,6 +19,9 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 public class ReactionRolesCommand {
+    @GetService
+    private Database database;
+    
     @Command(
             name = "reactionroles",
             aliases = {"rr"},
@@ -58,7 +63,7 @@ public class ReactionRolesCommand {
                                     .replaceFirst("x", "");
                     reaction = Emoji.fromUnicode(emoji);
                 }
-                Atom.database.insertReactionRole(messageID, emoji, roleID);
+                database.insertReactionRole(messageID, emoji, roleID);
                 event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Added reaction role\n> " + event.getCommandArgs()[2] + " = <@&" + event.getCommandArgs()[3] + ">"));
 
                 // this throws a million errors but don't worry about it
@@ -95,7 +100,7 @@ public class ReactionRolesCommand {
                     });
                 } else {
 
-                    Atom.database.getReactionRoleEmoji(event.getGuild(), messageID, roleID).ifPresent(reaction -> {
+                    database.getReactionRoleEmoji(event.getGuild(), messageID, roleID).ifPresent(reaction -> {
                         event.getGuild().getTextChannels().forEach(channel -> {
                             channel.retrieveMessageById(messageID).queue(message -> {
                                 if (message != null) {
@@ -106,9 +111,9 @@ public class ReactionRolesCommand {
                     });
                 }
                 if (removeAll) {
-                    Atom.database.removeAllReactionRoles(messageID);
+                    database.removeAllReactionRoles(messageID);
                 } else {
-                    Atom.database.removeReactionRole(messageID, roleID);
+                    database.removeReactionRole(messageID, roleID);
                 }
                 event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Removed reaction role"));
             }

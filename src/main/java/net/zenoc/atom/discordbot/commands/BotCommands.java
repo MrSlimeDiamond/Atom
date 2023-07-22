@@ -3,6 +3,8 @@ package net.zenoc.atom.discordbot.commands;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.discordbot.AtomCommand;
 import net.zenoc.atom.discordbot.CommandEvent;
 import net.zenoc.atom.util.EmbedUtil;
@@ -16,7 +18,9 @@ import java.awt.*;
 import java.sql.SQLException;
 
 public class BotCommands {
-    private static final Logger log = LoggerFactory.getLogger(BotCommands.class);
+    @GetService
+    private Database database;
+
     @Command(name = "ping", description = "Replies with Pong", usage = "ping")
     public void pingCommand(CommandEvent event) {
         MessageEmbed embed = new EmbedBuilder()
@@ -87,13 +91,13 @@ public class BotCommands {
             usage = "add_server"
     )
     public void addGuildCommand(CommandEvent event) throws SQLException {
-        Atom.database.addGuild(event.getGuild().getIdLong());
+        database.addGuild(event.getGuild().getIdLong());
         event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Added guild to database"));
     }
 
     @Command(name = "whoami", description = "Check who the bot thinks you are", slashCommand = false, usage = "whoami")
     public void whoamiCommand(CommandEvent event) throws SQLException {
-        boolean admin = Atom.database.isDiscordAdminByID(event.getAuthor().getIdLong());
+        boolean admin = database.isDiscordAdminByID(event.getAuthor().getIdLong());
         String used = UserUtil.getUserName(event.getAuthor());
         EmbedBuilder builder = new EmbedBuilder()
                 .setColor(Color.WHITE)

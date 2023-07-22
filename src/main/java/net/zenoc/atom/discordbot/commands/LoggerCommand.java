@@ -3,6 +3,8 @@ package net.zenoc.atom.discordbot.commands;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.discordbot.CommandEvent;
 import net.zenoc.atom.discordbot.annotations.Command;
 import net.zenoc.atom.discordbot.annotations.Option;
@@ -14,6 +16,9 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 
 public class LoggerCommand {
+    @GetService
+    private Database database;
+    
     private static final Logger log = LoggerFactory.getLogger(LoggerCommand.class);
     @Command(
             name = "logger_channel",
@@ -50,9 +55,9 @@ public class LoggerCommand {
             GuildChannel channel = event.getChannelOption("channel");
             Long channelID = channel.getIdLong();
             log.debug(String.valueOf(channelID));
-            Atom.database.updateServerLogChannel(event.getGuild().getIdLong(), channelID);
+            database.updateServerLogChannel(event.getGuild().getIdLong(), channelID);
         } else if (event.getSubcommandName().equals("unset")) {
-            Atom.database.updateServerLogChannel(event.getGuild().getIdLong(), -1L);
+            database.updateServerLogChannel(event.getGuild().getIdLong(), -1L);
         }
         event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Updated logger channel"));
     }

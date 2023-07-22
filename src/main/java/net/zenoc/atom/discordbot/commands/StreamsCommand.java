@@ -2,6 +2,8 @@ package net.zenoc.atom.discordbot.commands;
 
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.discordbot.CommandEvent;
 import net.zenoc.atom.discordbot.annotations.Command;
 import net.zenoc.atom.discordbot.annotations.Option;
@@ -12,6 +14,8 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 public class StreamsCommand {
+    @GetService
+    private Database database;
     @Command(
             name = "streams",
             description = "Manage the stream listener service",
@@ -62,17 +66,17 @@ public class StreamsCommand {
     public void streamsCommand(CommandEvent event) throws SQLException {
         if (event.getSubcommandName().equals("channel")) {
             if (event.getCommandArgs()[1].equals("set")) {
-                Atom.database.setServerStreamsChannel(event.getGuild(), Objects.requireNonNull(event.getJDA().getTextChannelById(event.getChannelOption("channel").getIdLong())));
+                database.setServerStreamsChannel(event.getGuild(), Objects.requireNonNull(event.getJDA().getTextChannelById(event.getChannelOption("channel").getIdLong())));
                 event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Set streams channel"));
             } else {
                 // unset
-                Atom.database.setServerStreamsChannel(event.getGuild(), null);
+                database.setServerStreamsChannel(event.getGuild(), null);
             }
         } else if (event.getSubcommandName().equals("add")) {
-            Atom.database.insertServerStreamer(event.getGuild(), event.getStringOption("login"));
+            database.insertServerStreamer(event.getGuild(), event.getStringOption("login"));
             event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Added streamer"));
         } else if (event.getSubcommandName().equals("remove")) {
-            Atom.database.deleteServerStreamer(event.getGuild(), event.getStringOption("login"));
+            database.deleteServerStreamer(event.getGuild(), event.getStringOption("login"));
             event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Removed streamer"));
         }
     }

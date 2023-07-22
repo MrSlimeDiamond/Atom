@@ -1,25 +1,36 @@
 package net.zenoc.atom.services;
 
+import com.google.inject.Inject;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
+import net.zenoc.atom.annotations.Service;
+import net.zenoc.atom.database.Database;
 
-public class ReactionRoleService extends ListenerAdapter implements Service {
+@Service("reaction roles")
+public class ReactionRoleService extends ListenerAdapter {
+    @Inject
+    private JDA jda;
 
-    @Override
+    @GetService
+    private Database database;
+    
+    @Service.Start
     public void startService() throws Exception {
-        DiscordBot.jda.addEventListener(this);
+        jda.addEventListener(this);
     }
 
     @SubscribeEvent
     public void onMessageReactionAdd(MessageReactionAddEvent event) {
         if (event.getUser().isBot()) return;
         if (event.isFromGuild()) {
-            if (Atom.database.messageHasReactionRoles(event.getMessageIdLong())) {
-                Atom.database.getReactionRole(event.getMessageIdLong(), event.getEmoji()).ifPresent(role -> {
+            if (database.messageHasReactionRoles(event.getMessageIdLong())) {
+                database.getReactionRole(event.getMessageIdLong(), event.getEmoji()).ifPresent(role -> {
                     event.getGuild().addRoleToMember(event.getUser(), role).queue();
                 });
             }
@@ -30,8 +41,8 @@ public class ReactionRoleService extends ListenerAdapter implements Service {
     public void onMessageReactionRemove(MessageReactionRemoveEvent event) {
         if (event.getUser().isBot()) return;
         if (event.isFromGuild()) {
-            if (Atom.database.messageHasReactionRoles(event.getMessageIdLong())) {
-                Atom.database.getReactionRole(event.getMessageIdLong(), event.getEmoji()).ifPresent(role -> {
+            if (database.messageHasReactionRoles(event.getMessageIdLong())) {
+                database.getReactionRole(event.getMessageIdLong(), event.getEmoji()).ifPresent(role -> {
                     event.getGuild().removeRoleFromMember(event.getUser(), role).queue();
                 });
             }

@@ -5,7 +5,9 @@ import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.helix.domain.UserList;
+import com.google.inject.Inject;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -15,6 +17,9 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
+import net.zenoc.atom.annotations.Service;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.reference.TwitchReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,14 +30,22 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class TwitchNotifier implements Service {
+@Service("twitch notifier")
+public class TwitchNotifier {
+    @Inject
+    private JDA jda;
 
-    private static final Logger log = LoggerFactory.getLogger(TwitchNotifier.class);
+    @Inject
+    private Logger logger;
+
+    @GetService
+    private Database database;
+
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     TwitchClient client;
 
-    @Override
+    @Service.Start
     public void startService() throws Exception {
         client = TwitchClientBuilder.builder()
                 .withEnableHelix(true)
@@ -42,13 +55,13 @@ public class TwitchNotifier implements Service {
     }
 
     public void refreshStreams() {
-        DiscordBot.jda.getGuilds().forEach(this::refreshStreams);
+        jda.getGuilds().forEach(this::refreshStreams);
     }
 
     public void refreshStreams(Guild guild) {
         Thread.currentThread().setName("Twitch Refresh Thread");
-        log.info("Streams are being refreshed for " + guild.getName());
-        Atom.database.getServerStreamers(guild).ifPresent(streamers -> {
+        logger.info("Streams are being refreshed for " + guild.getName());
+        database.getServerStreamers(guild).ifPresent(streamers -> {
             StreamList streams = client.getHelix().getStreams(TwitchReference.API_TOKEN, null, null, null, null, null, null, streamers).execute();
             MessageCreateBuilder builder = new MessageCreateBuilder();
             StringJoiner joiner = new StringJoiner(", ");
@@ -64,12 +77,12 @@ public class TwitchNotifier implements Service {
                 joiner.add("**" + user.getDisplayName() + "**");
             });
 
-            Atom.database.getServerStreamsChannel(guild).ifPresent(channel -> {
+            database.getServerStreamsChannel(guild).ifPresent(channel -> {
                 MessageHistory history = MessageHistory.getHistoryFromBeginning(channel).complete();
                 List<Message> messages = history.getRetrievedHistory();
 
                 Message message = messages.stream()
-                        .filter(msg -> msg.getAuthor() == DiscordBot.jda.getSelfUser())
+                        .filter(msg -> msg.getAuthor() == jda.getSelfUser())
                         .findFirst().orElseGet(() -> this.createStreamsMessage(channel));
 
                 if (joiner.length() == 0) {

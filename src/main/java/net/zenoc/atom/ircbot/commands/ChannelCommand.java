@@ -1,6 +1,8 @@
 package net.zenoc.atom.ircbot.commands;
 
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.ircbot.CommandEvent;
 import net.zenoc.atom.ircbot.annotations.Command;
 import net.zenoc.atom.services.IRC;
@@ -8,6 +10,9 @@ import net.zenoc.atom.services.IRC;
 import java.sql.SQLException;
 
 public class ChannelCommand {
+    @GetService
+    private Database database;
+
     @Command(
             name = "channel",
             description = "Manage bot channels",
@@ -23,7 +28,7 @@ public class ChannelCommand {
                 String channelName = event.getCommandArgs()[1];
                 if (!channelName.startsWith("#")) channelName = "#" + event.getCommandArgs()[2];
                 try {
-                    Atom.database.addIRCChannel(channelName);
+                    database.addIRCChannel(channelName);
                     event.reply("Added channel!");
                 } catch(SQLException e) {
                     event.reply("SQLException! Is the database down?");
@@ -49,7 +54,7 @@ public class ChannelCommand {
                         event.reply("Usage: channel modify <channel> autojoin on/off");
                     } else if (event.getCommandArgs()[3].equals("on")) {
                         try {
-                            Atom.database.enableIRCAutojoin(channelName);
+                            database.enableIRCAutojoin(channelName);
                             event.reply("Autojoin for " + channelName + " on");
                         } catch(SQLException e) {
                             event.reply("SQLException! Is the database down?");
@@ -57,7 +62,7 @@ public class ChannelCommand {
                         }
                     } else {
                         try {
-                            Atom.database.disableIRCAutojoin(channelName);
+                            database.disableIRCAutojoin(channelName);
                             event.reply("Autojoin for " + channelName + " off");
                         } catch(SQLException e) {
                             event.reply("SQLException! Is the database down?");

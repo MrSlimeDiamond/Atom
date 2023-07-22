@@ -1,47 +1,28 @@
 package net.zenoc.atom;
 
-import net.zenoc.atom.services.*;
-import org.kitteh.irc.client.library.Client;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import net.zenoc.atom.database.Database;
+import net.zenoc.atom.inject.modules.ServiceProviderModule;
+import net.zenoc.atom.launch.AppLaunch;
+import net.zenoc.atom.services.system.ServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class Atom {
-    private static final Logger log = LoggerFactory.getLogger(Atom.class);
+    private static final Logger log = LoggerFactory.getLogger("atom");
     public static Config config;
     public static String ip;
-    public static DiscordBot discordBot;
-    public static AtomDatabase database;
-    public static IRC irc;
+    public static Database database;
 
-    public static final List<Service> services;
-
-    public static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
+    private static ServiceManager serviceManager;
 
     static {
-        services = new ArrayList<>();
-
-        services.add(database = new AtomDatabase());
-        services.add(discordBot = new DiscordBot());
-        services.add(new DiscordLoggerService());
-//        services.add(new API());
-        services.add(new MessageCacheService());
-        services.add(new Pinnerino());
-        services.add(irc = new IRC());
-        services.add(new ChatBridgeService());
-        services.add(new ReactionRoleService());
-        services.add(new TwitchNotifier());
-        services.add(new MemeVoteService());
-
         try {
             config = new Config();
         } catch (IOException e) {
@@ -53,37 +34,26 @@ public class Atom {
     public static void main(String[] args) throws IOException, InterruptedException {
         log.info("Starting...");
 
-        refreshIP();
-        log.info("Got IP: " + ip);
-
-        if (config.discord().getProperty("token").equals("BOT_TOKEN_HERE")) {
+        log.info("Checking config");
+        if (Atom.config.discord().getProperty("token").equals("BOT_TOKEN_HERE")) {
             log.error("Configuration is not set up!");
             System.exit(1);
         }
+        refreshIP();
 
-        log.info("Starting services");
+        log.info("Got IP: " + ip);
 
-        try {
-            for (Service service : services) {
-                log.info("Starting service: " + service.getClass().getSimpleName());
-                service.startService();
-            }
-        } catch (Exception e) {
-            log.error("Exception when starting, throwing...");
-            throw new RuntimeException(e);
-        }
+        log.info("Validated everything -- proceeding with app launch");
 
-        log.info("Started all services");
+        // AppLaunch will handle starting services and other tasks that should happen during startup
+        AppLaunch.launch();
 
     }
 
     public static void shutdown(Class<?> clazz) throws Exception {
         log.info("Graceful shutdown called from: " + clazz.getSimpleName());
         log.info("Shutting down services...");
-        for (Service service : services) {
-            log.info("Stopping service: " + service.getClass().getSimpleName());
-            service.shutdownService();
-        }
+        serviceManager.shutdownAll();
         log.info("Bye!");
         System.exit(1);
     }
@@ -96,5 +66,13 @@ public class Atom {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static ServiceManager getServiceManager() {
+        return serviceManager;
+    }
+
+    protected static void setServiceManager(ServiceManager serviceManager) {
+        Atom.serviceManager = serviceManager;
     }
 }

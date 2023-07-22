@@ -17,6 +17,7 @@ import java.awt.*;
 import java.io.IOException;
 
 public class PortalCommands {
+
     @Command(
             name = "portal2",
             description = "Portal 2 speedrunning commands",

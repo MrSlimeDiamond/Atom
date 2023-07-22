@@ -2,6 +2,9 @@ package net.zenoc.atom.services;
 
 import net.engio.mbassy.listener.Handler;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
+import net.zenoc.atom.annotations.Service;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.discordbot.commands.IRCCommand;
 import net.zenoc.atom.discordbot.commands.minecraftonline.GoodnightCommand;
 import net.zenoc.atom.ircbot.MCOEventHandler;
@@ -14,9 +17,14 @@ import net.zenoc.atom.reference.IRCReference;
 import org.kitteh.irc.client.library.Client;
 import org.kitteh.irc.client.library.feature.auth.NickServ;
 
-public class IRC implements Service {
+@Service(value = "irc", priority = 999)
+public class IRC {
     public static Client client;
-    @Override
+
+    @GetService
+    private Database database;
+    
+    @Service.Start
     public void startService() throws Exception {
         client = Client.builder()
                 .nick(IRCReference.nickname)
@@ -29,7 +37,7 @@ public class IRC implements Service {
                 .then().buildAndConnect();
 
         client.getAuthManager().addProtocol(NickServ.builder(client).account(IRCReference.nickServUsername).password(IRCReference.nickServPassword).build());
-        Atom.database.joinAllIRCChannels();
+        database.joinAllIRCChannels();
 
         CommandHandler commandHandler = new CommandHandler();
         commandHandler.registerCommand(new PingCommand());
@@ -47,12 +55,12 @@ public class IRC implements Service {
 
     }
 
-    @Override
+    @Service.Shutdown
     public void shutdownService() {
         client.shutdown("Service stopped");
     }
 
-    @Override
+    @Service.Reload
     public void reloadService() {
         client.reconnect("Service is reloading");
     }

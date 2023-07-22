@@ -1,6 +1,8 @@
 package net.zenoc.atom.ircbot.commands.minecraftonline;
 
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.ircbot.CommandEvent;
 import net.zenoc.atom.ircbot.annotations.Command;
 import net.zenoc.atom.util.MinecraftOnlineAPI;
@@ -11,6 +13,8 @@ import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class RefreshLastseen {
+    @GetService
+    private Database database;
     @Command(
             name = "refreshlastseen",
             description = "Refresh the lastseen date of a user",
@@ -29,7 +33,7 @@ public class RefreshLastseen {
             try {
                 MinecraftUtils.getPlayerUUID(correctname.get()).ifPresent(uuid -> {
                     try {
-                        Atom.database.setMCOLastseenByUUID(uuid, lastseen);
+                        database.setMCOLastseenByUUID(uuid, lastseen);
                         event.reply("Refreshed lastseen date for " + correctname + " new date: " + lastseen);
                     } catch (SQLException e) {
                         event.reply("SQLException! Is the database down? Tell an admin!");

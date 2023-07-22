@@ -2,7 +2,9 @@ package net.zenoc.atom.services;
 
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
+import com.google.inject.Inject;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -11,6 +13,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.engio.mbassy.listener.Handler;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
+import net.zenoc.atom.annotations.Service;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.reference.DiscordReference;
 import net.zenoc.atom.reference.IRCReference;
 import org.kitteh.irc.client.library.event.channel.ChannelJoinEvent;
@@ -22,14 +27,21 @@ import org.kitteh.irc.client.library.event.user.UserQuitEvent;
 import java.awt.*;
 import java.sql.SQLException;
 
-public class ChatBridgeService extends ListenerAdapter implements Service {
-    @Override
+@Service("chat bridge")
+public class ChatBridgeService extends ListenerAdapter {
+    @Inject
+    private JDA jda;
+
+    @GetService
+    private Database database;
+
+    @Service.Start
     public void startService() throws Exception {
-        DiscordBot.jda.addEventListener(this);
+        jda.addEventListener(this);
         IRC.client.getEventManager().registerEventListener(this);
     }
 
-    @Override
+    @Service.Shutdown
     public void shutdownService() {
         // TODO: Disconnect message
     }
@@ -39,11 +51,11 @@ public class ChatBridgeService extends ListenerAdapter implements Service {
         if (event.getAuthor().isBot()) return;
         if (event.getMessage().getContentRaw().startsWith(DiscordReference.prefix)) return;
         try {
-            if (Atom.database.isUserBlacklisted(event.getMessage().getAuthor().getIdLong())) return;
-            if (Atom.database.isChannelBridged(event.getChannel().getIdLong())) {
+            if (database.isUserBlacklisted(event.getMessage().getAuthor().getIdLong())) return;
+            if (database.isChannelBridged(event.getChannel().getIdLong())) {
                 // Is a bridged channel
-                String channel = Atom.database.getIRCBridgeChannel(event.getChannel().getIdLong());
-                if (!Atom.database.isPipeEnabled(channel)) return;
+                String channel = database.getIRCBridgeChannel(event.getChannel().getIdLong());
+                if (!database.isPipeEnabled(channel)) return;
                 if (channel == null) return;
                 IRC.client.sendMessage(channel, "[DIS] " + event.getMember().getEffectiveName() + ": " + event.getMessage().getContentDisplay());
             }
@@ -56,12 +68,12 @@ public class ChatBridgeService extends ListenerAdapter implements Service {
     public void onChannelMessage(ChannelMessageEvent event) {
         if (event.getActor().getNick().equals(IRCReference.nickname)) return;
         try {
-            if (Atom.database.isUserBlacklisted(event.getActor().getNick())) return;
-            if (!Atom.database.isPipeEnabled(event.getChannel().getName())) return;
+            if (database.isUserBlacklisted(event.getActor().getNick())) return;
+            if (!database.isPipeEnabled(event.getChannel().getName())) return;
             if (event.getMessage().startsWith(IRCReference.prefix)) return;
-            long channelID = Atom.database.getDiscordBridgeChannelID(event.getChannel().getName());
+            long channelID = database.getDiscordBridgeChannelID(event.getChannel().getName());
             if (channelID == -1L) return;
-            TextChannel channel = DiscordBot.jda.getTextChannelById(channelID);
+            TextChannel channel = jda.getTextChannelById(channelID);
             if (channel == null) return;
 
             toDiscord(channel, event.getActor().getNick(), event.getMessage(), event.getChannel().getName());
@@ -76,10 +88,10 @@ public class ChatBridgeService extends ListenerAdapter implements Service {
     public void onChannelJoin(ChannelJoinEvent event) {
         if (event.getActor().getNick().equals(IRCReference.nickname)) return;
         try {
-            if (!Atom.database.isPipeEnabled(event.getChannel().getName())) return;
-            long channelID = Atom.database.getDiscordBridgeChannelID(event.getChannel().getName());
+            if (!database.isPipeEnabled(event.getChannel().getName())) return;
+            long channelID = database.getDiscordBridgeChannelID(event.getChannel().getName());
             if (channelID == -1L) return;
-            TextChannel channel = DiscordBot.jda.getTextChannelById(channelID);
+            TextChannel channel = jda.getTextChannelById(channelID);
             if (channel == null) return;
 
             MessageEmbed embed = new EmbedBuilder()
@@ -98,10 +110,10 @@ public class ChatBridgeService extends ListenerAdapter implements Service {
     public void onChannelLeave(ChannelPartEvent event) {
         if (event.getActor().getNick().equals(IRCReference.nickname)) return;
         try {
-            if (!Atom.database.isPipeEnabled(event.getChannel().getName())) return;
-            long channelID = Atom.database.getDiscordBridgeChannelID(event.getChannel().getName());
+            if (!database.isPipeEnabled(event.getChannel().getName())) return;
+            long channelID = database.getDiscordBridgeChannelID(event.getChannel().getName());
             if (channelID == -1L) return;
-            TextChannel channel = DiscordBot.jda.getTextChannelById(channelID);
+            TextChannel channel = jda.getTextChannelById(channelID);
             if (channel == null) return;
 
             MessageEmbed embed = new EmbedBuilder()
@@ -120,10 +132,10 @@ public class ChatBridgeService extends ListenerAdapter implements Service {
         if (event.getActor().getNick().equals(IRCReference.nickname)) return;
         try {
             if (!event.getAffectedChannel().isPresent()) return;
-            if (!Atom.database.isPipeEnabled(event.getAffectedChannel().get().getName())) return;
-            long channelID = Atom.database.getDiscordBridgeChannelID(event.getAffectedChannel().get().getName());
+            if (!database.isPipeEnabled(event.getAffectedChannel().get().getName())) return;
+            long channelID = database.getDiscordBridgeChannelID(event.getAffectedChannel().get().getName());
             if (channelID == -1L) return;
-            TextChannel channel = DiscordBot.jda.getTextChannelById(channelID);
+            TextChannel channel = jda.getTextChannelById(channelID);
             if (channel == null) return;
 
             MessageEmbed embed = new EmbedBuilder()
@@ -140,7 +152,7 @@ public class ChatBridgeService extends ListenerAdapter implements Service {
 
     @Handler
     public void onReady(ConnectionEvent event) {
-        Atom.database.getBridgedChannelsDiscord().forEach(channel -> {
+        database.getBridgedChannelsDiscord().forEach(channel -> {
             if (channel == null) return;
             MessageEmbed embed = new EmbedBuilder()
                     .setColor(Color.GREEN)
@@ -182,7 +194,7 @@ public class ChatBridgeService extends ListenerAdapter implements Service {
         WebhookMessageBuilder builder = new WebhookMessageBuilder()
                 .setUsername(nickname + " [IRC]")
                 .setContent(content)
-                .setAvatarUrl(Atom.database.getChannelBridgeIcon(channel));
+                .setAvatarUrl(database.getChannelBridgeIcon(channel));
         client.send(builder.build());
     }
 }

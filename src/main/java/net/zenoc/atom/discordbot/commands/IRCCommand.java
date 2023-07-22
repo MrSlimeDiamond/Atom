@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.engio.mbassy.listener.Handler;
 import net.zenoc.atom.Atom;
+import net.zenoc.atom.annotations.GetService;
+import net.zenoc.atom.database.Database;
 import net.zenoc.atom.discordbot.CommandEvent;
 import net.zenoc.atom.discordbot.annotations.Command;
 import net.zenoc.atom.discordbot.annotations.Option;
@@ -24,6 +26,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class IRCCommand {
+    @GetService
+    private Database database;
+    
     private static CommandEvent commandEvent;
     @Command(
             name = "irc",
@@ -55,9 +60,9 @@ public class IRCCommand {
         if (!event.isSubCommand()) {
             event.replyEmbeds(EmbedUtil.genericIncorrectUsageEmbed("irc <names|whois>"));
         }
-        if (Atom.database.isChannelBridged(event.getChannel().getIdLong()) && event.getSubcommandName() != "whois") {
+        if (database.isChannelBridged(event.getChannel().getIdLong()) && event.getSubcommandName() != "whois") {
             if (event.getSubcommandName().equals("names")) {
-                IRC.client.getChannel(Atom.database.getIRCBridgeChannel(event.getChannel().getIdLong())).ifPresent(channel -> {
+                IRC.client.getChannel(database.getIRCBridgeChannel(event.getChannel().getIdLong())).ifPresent(channel -> {
                     StringBuilder stringBuilder = new StringBuilder();
                     AtomicInteger ops = new AtomicInteger();
                     AtomicInteger voice = new AtomicInteger();
