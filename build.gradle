@@ -30,18 +30,16 @@ dependencies {
     // IRC
     implementation "org.kitteh.irc:client-lib:8.0.0"
 
-    implementation 'org.mariadb.jdbc:mariadb-java-client:3.1.3'
-    implementation 'org.json:json:20230227'
-    implementation 'com.auth0:java-jwt:4.3.0'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.1.4'
+    implementation 'org.json:json:20230618'
     implementation "club.minnced:discord-webhooks:0.8.2"
     implementation "com.github.minndevelopment:emoji-java:6.1.0"
-    implementation 'org.apache.httpcomponents:httpclient:4.5'
-    implementation 'org.ocpsoft.prettytime:prettytime:5.0.6.Final'
+    implementation 'org.apache.httpcomponents:httpclient:4.5' // Needs 5.0
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.github.twitch4j:twitch4j:1.15.0'
-    implementation 'com.google.guava:guava:32.0.1-jre'
+    implementation 'com.google.guava:guava:32.1.1-jre'
     implementation 'com.google.inject:guice:7.0.0'
-    implementation 'org.reflections:reflections:0.9.12'
+    implementation 'org.reflections:reflections:0.10.2'
 
 }
 
