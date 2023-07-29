@@ -1,2 +1,4 @@
 rootProject.name = 'Atom'
+include 'common'
+include 'bot'
 

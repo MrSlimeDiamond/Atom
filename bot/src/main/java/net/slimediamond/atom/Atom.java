@@ -49,7 +49,7 @@ public class Atom {
         log.info("Shutting down services...");
         serviceManager.shutdownAll();
         log.info("Bye!");
-        System.exit(1);
+        System.exit(0);
     }
 
     public static ServiceManager getServiceManager() {

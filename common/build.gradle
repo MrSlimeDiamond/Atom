@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+}
+
+group = 'net.slimediamond'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.guava:guava:32.1.1-jre'
+    implementation 'com.google.inject:guice:7.0.0'
+}
