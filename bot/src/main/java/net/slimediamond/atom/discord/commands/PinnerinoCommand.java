@@ -8,7 +8,7 @@ import net.slimediamond.atom.discord.CommandEvent;
 import net.slimediamond.atom.discord.annotations.Command;
 import net.slimediamond.atom.discord.annotations.Subcommand;
 import net.slimediamond.atom.util.EmbedUtil;
-import net.slimediamond.atom.util.NumberUtils;
+import net.slimediamond.util.number.NumberUtils;
 
 import java.sql.SQLException;
 import java.util.List;

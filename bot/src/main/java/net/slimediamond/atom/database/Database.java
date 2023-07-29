@@ -28,9 +28,8 @@ import net.slimediamond.atom.discord.CachedMessage;
 import net.slimediamond.atom.reference.DBReference;
 import net.slimediamond.atom.reference.IRCReference;
 import net.slimediamond.atom.irc.IRC;
-import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.common.annotations.Service;
-import net.slimediamond.atom.util.NumberUtils;
+import net.slimediamond.util.number.NumberUtils;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 

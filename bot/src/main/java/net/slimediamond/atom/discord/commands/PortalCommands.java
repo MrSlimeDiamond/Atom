@@ -10,7 +10,7 @@ import net.slimediamond.atom.discord.annotations.Subcommand;
 import net.slimediamond.atom.reference.EmbedReference;
 import net.slimediamond.atom.util.EmbedUtil;
 import net.slimediamond.atom.util.HTTPUtil;
-import net.slimediamond.atom.util.portal2.Portal2;
+import net.slimediamond.util.portal2.Portal2Util;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -118,13 +118,13 @@ public class PortalCommands {
                         if (bestRankJSON.get("map").equals("several chambers")) {
                             bestRank.append("Map: Multiple\n");
                         } else {
-                            Portal2.getMapByID(bestRankJSON.getInt("map")).ifPresent(p2Map -> bestRank.append("Map: ").append(p2Map.getFormattedName()).append("\n"));
+                            Portal2Util.getMapByID(bestRankJSON.getInt("map")).ifPresent(p2Map -> bestRank.append("Map: ").append(p2Map.getFormattedName()).append("\n"));
                         }
 
                         if (worstRankJSON.get("map").equals("several chambers")) {
                             worstRank.append("Map: Multiple\n");
                         } else {
-                            Portal2.getMapByID(worstRankJSON.getInt("map")).ifPresent(p2Map -> worstRank.append("Map: ").append(p2Map.getFormattedName()).append("\n"));
+                            Portal2Util.getMapByID(worstRankJSON.getInt("map")).ifPresent(p2Map -> worstRank.append("Map: ").append(p2Map.getFormattedName()).append("\n"));
                         }
 
                         bestRank.append("Rank: ");

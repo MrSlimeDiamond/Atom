@@ -3,8 +3,8 @@ package net.slimediamond.atom.irc.commands;
 import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.irc.annotations.Command;
 import net.slimediamond.atom.common.annotations.GetService;
-import net.slimediamond.atom.util.NumberUtils;
 import net.slimediamond.atom.irc.CommandEvent;
+import net.slimediamond.util.number.NumberUtils;
 
 import java.sql.SQLException;
 

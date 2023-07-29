@@ -2,7 +2,7 @@ package net.slimediamond.atom.irc;
 
 import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.database.Database;
-import net.slimediamond.atom.util.MinecraftUtils;
+import net.slimediamond.util.minecraft.MinecraftUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;

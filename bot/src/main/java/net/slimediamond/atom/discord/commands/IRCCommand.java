@@ -12,8 +12,8 @@ import net.slimediamond.atom.discord.annotations.Option;
 import net.slimediamond.atom.discord.annotations.Subcommand;
 import net.slimediamond.atom.reference.IRCReference;
 import net.slimediamond.atom.irc.IRC;
-import net.slimediamond.atom.util.DateUtil;
 import net.slimediamond.atom.util.EmbedUtil;
+import net.slimediamond.util.date.DateUtil;
 import org.kitteh.irc.client.library.command.WhoisCommand;
 import org.kitteh.irc.client.library.event.user.WhoisEvent;
 

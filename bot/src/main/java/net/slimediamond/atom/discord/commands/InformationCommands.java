@@ -2,11 +2,10 @@ package net.slimediamond.atom.discord.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.discord.CommandEvent;
 import net.slimediamond.atom.discord.annotations.Command;
 import net.slimediamond.atom.discord.annotations.Subcommand;
-import net.slimediamond.atom.util.NetworkUtils;
+import net.slimediamond.util.network.NetworkUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

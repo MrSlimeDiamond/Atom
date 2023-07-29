@@ -2,6 +2,7 @@ package net.slimediamond.atom.util;
 
 import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.database.Database;
+import net.slimediamond.util.minecraft.MinecraftUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

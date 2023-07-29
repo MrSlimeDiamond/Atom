@@ -1,16 +1,12 @@
 package net.slimediamond.atom;
 
-import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.launch.AppLaunch;
 import net.slimediamond.atom.services.system.ServiceManager;
-import net.slimediamond.atom.util.NetworkUtils;
+import net.slimediamond.util.network.NetworkUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 
 public class Atom {
     private static final Logger log = LoggerFactory.getLogger("atom");

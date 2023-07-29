@@ -5,7 +5,7 @@ import net.slimediamond.atom.irc.annotations.Command;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.irc.CommandEvent;
 import net.slimediamond.atom.util.MinecraftOnlineAPI;
-import net.slimediamond.atom.util.MinecraftUtils;
+import net.slimediamond.util.minecraft.MinecraftUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;

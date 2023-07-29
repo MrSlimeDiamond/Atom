@@ -16,8 +16,18 @@ repositories {
     mavenLocal()
     mavenCentral()
     jcenter()
-    maven { url 'https://jitpack.io/' }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+
+    maven {
+        url 'https://jitpack.io/'
+    }
+
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+
+    maven {
+        url 'https://repo.zenoc.net/repository'
+    }
 }
 
 dependencies {
@@ -40,6 +50,7 @@ dependencies {
     implementation 'com.google.guava:guava:32.1.1-jre'
     implementation 'com.google.inject:guice:7.0.0'
     implementation 'org.reflections:reflections:0.10.2'
+    implementation 'net.slimediamond:util:1.0-SNAPSHOT'
 
     implementation(project(":common"))
 
