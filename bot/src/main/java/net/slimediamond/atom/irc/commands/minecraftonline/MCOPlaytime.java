@@ -21,7 +21,7 @@ public class MCOPlaytime {
 
             player.getPlaytime().ifPresentOrElse(playtime -> {
                 long hours = playtime / 3600;
-                event.reply(username + " has logged " + hours + " on Freedonia");
+                event.reply(username + " has logged " + hours + " hours on Freedonia");
             }, () -> {
                 event.reply("Could not find that player!");
             });
