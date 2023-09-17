@@ -13,6 +13,8 @@ import net.slimediamond.atom.irc.commands.PingCommand;
 import org.kitteh.irc.client.library.Client;
 import org.kitteh.irc.client.library.feature.auth.NickServ;
 
+import java.sql.SQLException;
+
 @Service(value = "irc", priority = 999)
 public class IRC {
     public static Client client;
@@ -57,7 +59,8 @@ public class IRC {
     }
 
     @Service.Reload
-    public void reloadService() {
-        client.reconnect("Service is reloading");
+    public void reloadService() throws SQLException {
+        client.reconnect("Service reloading!");
+        database.joinAllIRCChannels();
     }
 }

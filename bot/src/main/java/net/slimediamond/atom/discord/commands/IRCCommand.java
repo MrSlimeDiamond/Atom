@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.engio.mbassy.listener.Handler;
+import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.discord.CommandEvent;
@@ -20,6 +21,7 @@ import org.kitteh.irc.client.library.event.user.WhoisEvent;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -51,6 +53,13 @@ public class IRCCommand {
                                             required = true
                                     )
                             }
+                    ),
+                    @Subcommand(
+                            name = "restart",
+                            description = "Restarts the IRC bot",
+                            usage = "irc restart",
+                            adminOnly = true,
+                            slashCommand = false
                     )
             }
     )
@@ -58,8 +67,8 @@ public class IRCCommand {
         if (!event.isSubCommand()) {
             event.replyEmbeds(EmbedUtil.genericIncorrectUsageEmbed("irc <names|whois>"));
         }
-        if (database.isChannelBridged(event.getChannel().getIdLong()) && event.getSubcommandName() != "whois") {
-            if (event.getSubcommandName().equals("names")) {
+        if (event.getSubcommandName().equals("names")) {
+            if (database.isChannelBridged(event.getChannel().getIdLong())) {
                 IRC.client.getChannel(database.getIRCBridgeChannel(event.getChannel().getIdLong())).ifPresent(channel -> {
                     StringBuilder stringBuilder = new StringBuilder();
                     AtomicInteger ops = new AtomicInteger();
@@ -67,17 +76,17 @@ public class IRCCommand {
                     AtomicInteger total = new AtomicInteger();
                     channel.getUsers().forEach(user -> {
                         total.getAndIncrement();
-                          if (channel.getUserModes(user).isPresent()) {
-                              channel.getUserModes(user).get().forEach(usermode -> {
-                                  if (usermode.getNickPrefix() == '@') {
-                                      stringBuilder.append("@");
-                                      ops.getAndIncrement();
-                                  } else if (usermode.getNickPrefix() == '+') {
-                                      stringBuilder.append("+");
-                                      voice.getAndIncrement();
-                                  }
-                              });
-                          }
+                        if (channel.getUserModes(user).isPresent()) {
+                            channel.getUserModes(user).get().forEach(usermode -> {
+                                if (usermode.getNickPrefix() == '@') {
+                                    stringBuilder.append("@");
+                                    ops.getAndIncrement();
+                                } else if (usermode.getNickPrefix() == '+') {
+                                    stringBuilder.append("+");
+                                    voice.getAndIncrement();
+                                }
+                            });
+                        }
                         stringBuilder.append(user.getNick().replace("_", "\\_")).append(", ");
                     });
                     MessageEmbed embed = new EmbedBuilder()
@@ -87,14 +96,19 @@ public class IRCCommand {
                             .build();
                     event.replyEmbeds(embed);
                 });
-            } else if (event.getSubcommandName().equals("whois")) {
-                String name = event.getStringOption("user");
-                event.deferReply();
-                commandEvent = event;
-                new WhoisCommand(IRC.client).target(name).execute();
+            } else {
+                event.replyEmbeds(EmbedUtil.expandedErrorEmbed("This channel is not bridged"));
             }
-        } else {
-            event.replyEmbeds(EmbedUtil.expandedErrorEmbed("This channel is not bridged"));
+        } else if (event.getSubcommandName().equals("whois")) {
+            String name = event.getStringOption("user");
+            event.deferReply();
+            commandEvent = event;
+            new WhoisCommand(IRC.client).target(name).execute();
+        } else if (event.getSubcommandName().equals("restart")) {
+            event.deferReply();
+            IRC irc = Atom.getServiceManager().getInstance(IRC.class);
+            irc.reloadService();
+            event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Reloaded IRC service"));
         }
     }
 
