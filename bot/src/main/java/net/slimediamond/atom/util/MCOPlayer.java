@@ -69,16 +69,12 @@ public class MCOPlayer {
 
                 // If the player's firstseen is not in the database, insert it
 
-                // Creating a new thread for the sake of efficiency,
-                // we want to return a value as fast as possible
-                new Thread(() -> {
-                    try {
-                        setFirstseen(firstseen.get());
-                    } catch (SQLException e) {
-                        this.firstseen = firstseen.get();
-                        throw new RuntimeException(e);
-                    }
-                }).start();
+                try {
+                    setFirstseen(firstseen.get());
+                } catch (SQLException e) {
+                    this.firstseen = firstseen.get();
+                    throw new RuntimeException(e);
+                }
                 return firstseen;
             }
         }
@@ -109,16 +105,12 @@ public class MCOPlayer {
 
                 // If the player's lastseen is not in the database, insert it
 
-                // Creating a new thread for the sake of efficiency,
-                // we want to return a value as fast as possible
-                new Thread(() -> {
-                    try {
-                        setLastseen(lastseen.get());
-                    } catch (SQLException e) {
-                        this.lastseen = lastseen.get();
-                        throw new RuntimeException(e);
-                    }
-                }).start();
+                try {
+                    setLastseen(lastseen.get());
+                } catch (SQLException e) {
+                    this.lastseen = lastseen.get();
+                    throw new RuntimeException(e);
+                }
                 return lastseen;
             }
         }
