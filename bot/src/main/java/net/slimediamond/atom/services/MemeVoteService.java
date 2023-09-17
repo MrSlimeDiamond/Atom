@@ -30,6 +30,7 @@ public class MemeVoteService extends ListenerAdapter {
     @SubscribeEvent
     public void onMessageReceived(MessageReceivedEvent event) {
         if (!event.isFromGuild()) return;
+        if (event.getMessage().getContentRaw().toLowerCase().contains("stfu atom")) return;
         database.getServerMemesChannel(event.getGuild()).ifPresent(channel -> {
 //            log.info("Got channel");
             if (event.getChannel().getId().equals(channel.getId()) && event.getMessage().getAttachments().size() > 0) {
