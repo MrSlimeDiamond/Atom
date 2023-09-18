@@ -1,6 +1,7 @@
 package net.slimediamond.atom.util;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -66,5 +67,44 @@ public class MinecraftOnlineAPI {
         AtomicReference<String> temp = new AtomicReference<>();
         HTTPUtil.getDataFromURL("http://minecraftonline.com/cgi-bin/getbancount.sh").ifPresent(bans -> temp.set(bans.strip()));
         return Optional.of(Integer.parseInt(temp.get()));
+    }
+
+    public static Optional<String> getBanReason(String username) throws IOException {
+        AtomicReference<String> temp = new AtomicReference<>();
+        HTTPUtil.getDataFromURL("https://minecraftonline.com/cgi-bin/getplayerinfo?" + username).ifPresent(info -> {
+            String[] data = info.split(";");
+            if (data.length == 0 || data.length == 1) {
+                temp.set(null);
+            } else {
+                temp.set(data[2]);
+            }
+        });
+        if (temp.get() == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(temp.get());
+        }
+    }
+
+    public static Optional<Date> getBanTime(String username) throws IOException {
+        AtomicReference<String> temp = new AtomicReference<>();
+        HTTPUtil.getDataFromURL("https://minecraftonline.com/cgi-bin/getplayerinfo?" + username).ifPresent(info -> {
+            String[] data = info.split(";");
+            if (data.length == 0 || data.length == 1) {
+                System.out.println(Arrays.toString(data));
+                temp.set(null);
+            } else {
+                temp.set(data[1]);
+            }
+        });
+
+        if (temp.get() == null) {
+            return Optional.empty();
+        }
+
+        String data = temp.get().replaceAll("\\s+", "");
+        long time = Long.parseLong(data);
+        Date date = new Date(time * 1000);
+        return Optional.of(date);
     }
 }

@@ -83,6 +83,12 @@ public class MCOCommands {
                             name = "bans",
                             usage = "mco bans",
                             description = "Get the amount of bans on MCO"
+                    ),
+                    @Subcommand(
+                            name = "banwhy",
+                            aliases = "why",
+                            description = "Get a user's ban information",
+                            usage = "mco banwhy <username>"
                     )
             }
     )
@@ -115,6 +121,8 @@ public class MCOCommands {
                 lastseenCommand(event, correctname.get());
             } else if (event.getSubcommandName().equals("playtime")) {
                 playtimeCommand(event, correctname.get());
+            } else if (event.getSubcommandName().equals("banwhy")) {
+                banwhyCommand(event, correctname.get());
             }
         }
     }
@@ -268,6 +276,56 @@ public class MCOCommands {
         }, () -> {
             event.replyEmbeds(EmbedUtil.expandedErrorEmbed("MinecraftOnlineAPI::getBanCount Optional was not present! What the fuck happened? Tell an admin!"));
         });
+    }
+
+    @Command(
+            name = "banwhy",
+            aliases = "why",
+            description = "Get a user's ban information",
+            usage = "mco banwhy <username>"
+    )
+    public void banwhyCommand(CommandEvent event) {
+        String username;
+
+        if (event.getCommandArgs() == null) {
+            username = event.getAuthor().getName();
+        } else {
+            username = event.getCommandArgs()[0];
+        }
+
+        banwhyCommand(event, username);
+    }
+
+    public void banwhyCommand(CommandEvent event, String username) {
+        try {
+            MCOPlayer player = new MCOPlayer(username);
+
+            if (!player.isBanned()) {
+                event.replyEmbeds(new EmbedBuilder()
+                        .setColor(Color.GREEN)
+                        .setAuthor(username, null, "https://mc-heads.net/avatar/" + username)
+                        .setDescription(username + " is not banned!")
+                        .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
+                        .build());
+
+            } else {
+                player.getBanDate().ifPresentOrElse(date -> {
+                    event.replyEmbeds(new EmbedBuilder()
+                            .setColor(Color.GREEN)
+                            .setAuthor(username, null, "https://mc-heads.net/avatar/" + username)
+                            .setTitle(username + " is naughty!")
+                            .addField("Ban reason", player.getBanReason().orElseThrow(), false)
+                            .addField("Ban time", "<t:" + date.toInstant().getEpochSecond() + ":f> [<t:" + date.toInstant().getEpochSecond() + ":R>]", false)
+                            .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
+                            .build()
+                    );
+                }, () -> {
+                    event.replyEmbeds(EmbedUtil.genericErrorEmbed());
+                });
+            }
+        } catch(UnknownPlayerException e){
+            event.replyEmbeds(EmbedUtil.expandedErrorEmbed("User not found"));
+        }
     }
 
     public void sendFirstseenResponse(String username, Date date, CommandEvent event) {

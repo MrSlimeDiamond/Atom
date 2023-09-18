@@ -17,6 +17,10 @@ public class MCOPlayer {
     Date firstseen;
     Date lastseen;
     Long playtime;
+    Boolean isBanned;
+    MCOPlayer banner;
+    String banReason;
+    Date banDate;
 
     private Logger log = LoggerFactory.getLogger(MCOPlayer.class);
 
@@ -163,5 +167,51 @@ public class MCOPlayer {
      */
     public String getName() {
         return this.username;
+    }
+
+
+    /**
+     * Get whether a user is banned
+     * @return Whether a user is banned
+     */
+    public boolean isBanned() {
+        if (isBanned != null) {
+            return isBanned;
+        } else {
+            try {
+                isBanned = MinecraftOnlineAPI.getBanReason(username).isPresent();
+                return isBanned;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /**
+     * If the player is banned, get their ban reason
+     * @return User ban reason
+     */
+    public Optional<String> getBanReason() {
+        try {
+            return MinecraftOnlineAPI.getBanReason(username);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * If banned, return a user's ban time
+     * @return User ban time
+     */
+    public Optional<Date> getBanDate() {
+        if (banDate != null) {
+            return Optional.of(banDate);
+        } else {
+            try {
+                return MinecraftOnlineAPI.getBanTime(username);
+            } catch(IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
