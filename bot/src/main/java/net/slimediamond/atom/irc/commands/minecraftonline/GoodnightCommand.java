@@ -1,4 +1,4 @@
-package net.slimediamond.atom.discord.commands.minecraftonline;
+package net.slimediamond.atom.irc.commands.minecraftonline;
 
 import net.slimediamond.atom.irc.CommandEvent;
 import net.slimediamond.atom.irc.annotations.Command;

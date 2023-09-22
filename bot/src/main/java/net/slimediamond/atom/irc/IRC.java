@@ -6,7 +6,7 @@ import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.discord.commands.IRCCommand;
-import net.slimediamond.atom.discord.commands.minecraftonline.GoodnightCommand;
+import net.slimediamond.atom.irc.commands.minecraftonline.GoodnightCommand;
 import net.slimediamond.atom.irc.commands.BridgeCommand;
 import net.slimediamond.atom.irc.commands.ChannelCommand;
 import net.slimediamond.atom.irc.commands.PingCommand;
