@@ -312,8 +312,8 @@ public class MCOCommands {
                 player.getBanDate().ifPresentOrElse(date -> {
                     event.replyEmbeds(new EmbedBuilder()
                             .setColor(Color.GREEN)
-                            .setAuthor(username, null, "https://mc-heads.net/avatar/" + username)
-                            .setTitle(username + " is naughty!")
+                            .setAuthor(player.getName(), null, "https://mc-heads.net/avatar/" + player.getName())
+                            .setTitle(player.getName() + " is naughty!")
                             .addField("Ban reason", player.getBanReason().orElseThrow(), false)
                             .addField("Ban time", "<t:" + date.toInstant().getEpochSecond() + ":f> [<t:" + date.toInstant().getEpochSecond() + ":R>]", false)
                             .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
