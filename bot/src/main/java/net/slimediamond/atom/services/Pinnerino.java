@@ -19,12 +19,14 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.concurrent.ExecutionException;
 
 @Service("pinnerino")
 public class Pinnerino extends ListenerAdapter {
     @Inject
+    @Nullable
     private JDA jda;
 
     @GetService
@@ -32,6 +34,7 @@ public class Pinnerino extends ListenerAdapter {
     
     @Service.Start
     public void startService() throws Exception {
+        if (jda == null) return;
         jda.addEventListener(this);
     }
 

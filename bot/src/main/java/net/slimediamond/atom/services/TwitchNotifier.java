@@ -17,6 +17,7 @@ import net.slimediamond.atom.reference.TwitchReference;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 @Service("twitch notifier")
 public class TwitchNotifier {
     @Inject
+    @Nullable
     private JDA jda;
 
     @Inject
@@ -41,6 +43,7 @@ public class TwitchNotifier {
 
     @Service.Start
     public void startService() throws Exception {
+        if (jda == null) return;
         client = TwitchClientBuilder.builder()
                 .withEnableHelix(true)
                 .build();

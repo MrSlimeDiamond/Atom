@@ -19,7 +19,7 @@ public class ServiceManager {
     private ArrayList<ServiceContainer> services = new ArrayList<>();
 
     public void startAll() throws InterruptedException {
-        jda.awaitReady();
+        if (jda != null) jda.awaitReady();
         Reflections reflections = new Reflections(ServiceReference.SERVICES_PACKAGES.toArray());
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Service.class);
         List<Class<?>> sorted = new ArrayList<>(annotated);

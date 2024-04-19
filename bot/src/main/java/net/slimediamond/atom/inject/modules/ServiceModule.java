@@ -9,6 +9,8 @@ import net.slimediamond.atom.services.system.ServiceContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
+
 public class ServiceModule extends AbstractModule {
     private ServiceContainer container;
     public ServiceModule(ServiceContainer container) {
@@ -16,6 +18,7 @@ public class ServiceModule extends AbstractModule {
     }
 
     @Override
+    @Nullable
     protected void configure() {
         super.configure();
         bind(JDA.class).toProvider(new JDAProvider()).in(Singleton.class);

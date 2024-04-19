@@ -16,11 +16,13 @@ import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.util.UserUtil;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 
 @Service("discord logger")
 public class DiscordLoggerService extends ListenerAdapter {
     @Inject
+    @Nullable
     private JDA jda;
 
     @GetService
@@ -28,6 +30,7 @@ public class DiscordLoggerService extends ListenerAdapter {
 
     @Service.Start
     public void startService() throws Exception {
+        if (jda == null) return;
         jda.addEventListener(this);
     }
 

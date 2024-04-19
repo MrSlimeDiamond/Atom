@@ -24,12 +24,14 @@ import org.kitteh.irc.client.library.event.channel.ChannelPartEvent;
 import org.kitteh.irc.client.library.event.helper.ConnectionEvent;
 import org.kitteh.irc.client.library.event.user.UserQuitEvent;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.sql.SQLException;
 
 @Service("chat bridge")
 public class ChatBridgeService extends ListenerAdapter {
     @Inject
+    @Nullable
     private JDA jda;
 
     @GetService
@@ -37,6 +39,7 @@ public class ChatBridgeService extends ListenerAdapter {
 
     @Service.Start
     public void startService() throws Exception {
+        if (jda == null) return; // You can't build a bridge with just one mountain!
         jda.addEventListener(this);
         IRC.client.getEventManager().registerEventListener(this);
     }

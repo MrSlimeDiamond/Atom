@@ -49,6 +49,7 @@ public class Database {
     private Logger logger;
 
     @Inject
+    @Nullable
     private JDA jda;
 
     private Connection conn;

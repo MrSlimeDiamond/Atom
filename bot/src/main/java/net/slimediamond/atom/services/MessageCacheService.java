@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 
 import java.sql.SQLException;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 @Service("discord message cache")
 public class MessageCacheService extends ListenerAdapter {
     @Inject
+    @Nullable
     private JDA jda;
 
     @Inject
@@ -25,6 +27,7 @@ public class MessageCacheService extends ListenerAdapter {
 
     @Service.Start
     public void startService() throws Exception {
+        if (jda == null) return;
         jda.addEventListener(this);
     }
     @SubscribeEvent

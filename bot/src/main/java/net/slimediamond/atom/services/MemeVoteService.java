@@ -12,11 +12,13 @@ import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 
 @Service("meme vote")
 public class MemeVoteService extends ListenerAdapter {
     @Inject
+    @Nullable
     private JDA jda;
 
     @GetService
@@ -24,6 +26,7 @@ public class MemeVoteService extends ListenerAdapter {
 
     @Service.Start
     public void startService() throws Exception {
+        if (jda == null) return;
         jda.addEventListener(this);
     }
 

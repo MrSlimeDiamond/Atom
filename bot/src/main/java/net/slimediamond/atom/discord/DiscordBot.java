@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.sql.SQLException;
 
-@Service(value = "discord", priority = 999)
+@Service(value = "discord", priority = 999, enabled = false)
 public class DiscordBot {
     private static final Logger log = LoggerFactory.getLogger(DiscordBot.class);
 
