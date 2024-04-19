@@ -15,7 +15,7 @@ import org.kitteh.irc.client.library.feature.auth.NickServ;
 
 import java.sql.SQLException;
 
-@Service(value = "irc", priority = 999)
+@Service(value = "irc", priority = 999, enabled = true)
 public class IRC {
     public static Client client;
 
