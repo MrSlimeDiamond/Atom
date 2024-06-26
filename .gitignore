@@ -44,4 +44,4 @@ bin/
 */config/
 */build/
 
-./build.sh
+build.sh

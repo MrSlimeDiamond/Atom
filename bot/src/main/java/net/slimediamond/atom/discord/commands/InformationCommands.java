@@ -37,8 +37,9 @@ public class InformationCommands {
         if (seconds > 0) joiner.add(seconds + " seconds");
         return joiner.toString();
     }
-    // https://stackoverflow.com/a/14800849
-    public static long getSystemUptime() throws Exception {
+
+
+    public static long getSystemUptime() {
         return new SystemInfo().getOperatingSystem().getSystemUptime();
     }
 
@@ -70,7 +71,7 @@ public class InformationCommands {
                     .addField("OS", System.getProperty("os.name"), true)
                     .addField("Public IP", NetworkUtils.getIP(), true)
                     .addField("Local IP", InetAddress.getLocalHost().getHostAddress(), true)
-                    .addField("Uptime", formatDuration(Duration.ofMillis(getSystemUptime())), true)
+                    .addField("Uptime", formatDuration(Duration.ofSeconds(getSystemUptime())), true)
                     .build();
             event.replyEmbeds(embed);
         } else {
