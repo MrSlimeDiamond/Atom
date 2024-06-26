@@ -43,3 +43,5 @@ bin/
 
 */config/
 */build/
+
+./build.sh
