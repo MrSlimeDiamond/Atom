@@ -312,7 +312,7 @@ public class MCOCommands {
                     .setAuthor(randomPlayer, null, "https://mc-heads.net/avatar/" + randomPlayer)
                     .setDescription("Random online player: **" + randomPlayer + "**")
                     .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
-                    .setImage("https://mc-heads.net/avatar/" + randomPlayer)
+                    .setThumbnail("https://mc-heads.net/avatar/" + randomPlayer)
                     .build()
             );
         }, () -> {
