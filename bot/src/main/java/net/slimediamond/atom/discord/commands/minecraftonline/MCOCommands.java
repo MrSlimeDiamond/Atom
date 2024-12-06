@@ -1,6 +1,7 @@
 package net.slimediamond.atom.discord.commands.minecraftonline;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.database.Database;
@@ -8,6 +9,7 @@ import net.slimediamond.atom.discord.CommandEvent;
 import net.slimediamond.atom.discord.annotations.Command;
 import net.slimediamond.atom.discord.annotations.Option;
 import net.slimediamond.atom.discord.annotations.Subcommand;
+import net.slimediamond.atom.reference.DiscordReference;
 import net.slimediamond.atom.reference.EmbedReference;
 import net.slimediamond.atom.util.EmbedUtil;
 import net.slimediamond.atom.util.MCOPlayer;
@@ -21,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -294,6 +297,32 @@ public class MCOCommands {
         }
 
         banwhyCommand(event, username);
+    }
+
+    @Command(
+            name = "randomplayer",
+            description = "Get a random online player",
+            usage = "randomplayer"
+    )
+    public void randomPlayerCommand(CommandEvent event) throws IOException {
+        MinecraftOnlineAPI.getOnlinePlayers().ifPresentOrElse(players -> {
+            String randomPlayer = players.get(ThreadLocalRandom.current().nextInt(players.size()));
+            event.replyEmbeds(new EmbedBuilder()
+                    .setColor(Color.GREEN)
+                    .setAuthor(randomPlayer, null, "https://mc-heads.net/avatar/" + randomPlayer)
+                    .setDescription("Random online player: **" + randomPlayer + "**")
+                    .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
+                    .setImage("https://mc-heads.net/avatar/" + randomPlayer)
+                    .build()
+            );
+        }, () -> {
+            event.replyEmbeds(new EmbedBuilder()
+                    .setColor(Color.RED)
+                    .setAuthor("Could not find any online players!")
+                    .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
+                    .build()
+            );
+        });
     }
 
     public void banwhyCommand(CommandEvent event, String username) {
