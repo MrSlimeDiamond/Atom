@@ -1,9 +1,7 @@
 package net.slimediamond.atom.util;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MinecraftOnlineAPI {
@@ -106,5 +104,25 @@ public class MinecraftOnlineAPI {
         long time = Long.parseLong(data);
         Date date = new Date(time * 1000);
         return Optional.of(date);
+    }
+
+    public static Optional<List<String>> getOnlinePlayers() throws IOException {
+        AtomicReference<Optional<List<String>>> result = new AtomicReference<>(); // Fuck this
+
+        HTTPUtil.getDataFromURL("https://minecraftonline.com/cgi-bin/getplayerlist.sh").ifPresent(info -> {
+            String[] players = info.replace(" ", "").split(",");
+
+            List<String> output = new ArrayList<>();
+            Collections.addAll(output, players);
+
+            if (output.isEmpty()) {
+                // No players are online, or server is down
+                result.set(Optional.empty());
+            } else {
+                result.set(Optional.of(output));
+            }
+        });
+
+        return result.get();
     }
 }

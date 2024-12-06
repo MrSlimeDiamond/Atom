@@ -47,6 +47,7 @@ public class IRC {
         commandHandler.registerCommand(new RefreshLastseen());
         commandHandler.registerCommand(new BansCommand());
         commandHandler.registerCommand(new GoodnightCommand());
+        commandHandler.registerCommand(new RandomPlayerCommand());
 
         client.getEventManager().registerEventListener(new IRCCommand());
         client.getEventManager().registerEventListener(new MCOEventHandler());
