@@ -285,7 +285,8 @@ public class MCOCommands {
             name = "banwhy",
             aliases = "why",
             description = "Get a user's ban information",
-            usage = "mco banwhy <username>"
+            usage = "mco banwhy <username>",
+            whitelistedGuilds = {696218632618901504L, 288050647998136323L, 972936631558488094L}
     )
     public void banwhyCommand(CommandEvent event) {
         String username;
@@ -302,7 +303,8 @@ public class MCOCommands {
     @Command(
             name = "randomplayer",
             description = "Get a random online player",
-            usage = "randomplayer"
+            usage = "randomplayer",
+            whitelistedGuilds = {696218632618901504L, 288050647998136323L, 972936631558488094L}
     )
     public void randomPlayerCommand(CommandEvent event) throws IOException {
         MinecraftOnlineAPI.getOnlinePlayers().ifPresentOrElse(players -> {
