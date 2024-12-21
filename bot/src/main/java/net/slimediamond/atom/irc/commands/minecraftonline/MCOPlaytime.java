@@ -5,6 +5,9 @@ import net.slimediamond.atom.irc.annotations.Command;
 import net.slimediamond.atom.util.MCOPlayer;
 import net.slimediamond.atom.util.UnknownPlayerException;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class MCOPlaytime {
     @Command(
             name = "playtime",
@@ -20,8 +23,8 @@ public class MCOPlaytime {
             MCOPlayer player = new MCOPlayer(username);
 
             player.getPlaytime().ifPresentOrElse(playtime -> {
-                long hours = playtime / 3600;
-                event.reply(username + " has logged " + hours + " hours on Freedonia");
+                BigDecimal hours = new BigDecimal(playtime).divide(new BigDecimal(3600), 2, RoundingMode.HALF_UP);
+                event.reply(username + " has logged " + hours.toString() + " hours on Freedonia");
             }, () -> {
                 event.reply("Could not find that player!");
             });

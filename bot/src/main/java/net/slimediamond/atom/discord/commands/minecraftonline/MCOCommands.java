@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Optional;
@@ -253,7 +255,7 @@ public class MCOCommands {
         if (correctname.get() == null) return;
         MCOPlayer player = new MCOPlayer(correctname.get());
         player.getPlaytime().ifPresent(playtime -> {
-            long hours = playtime / 3600;
+            BigDecimal hours = new BigDecimal(playtime).divide(new BigDecimal(3600), 2, RoundingMode.HALF_UP);
             this.sendPlaytimeResponse(correctname.get(), hours, event);
         });
     }
@@ -379,11 +381,11 @@ public class MCOCommands {
         );
     }
 
-    public void sendPlaytimeResponse(String username, long hours, CommandEvent event) {
+    public void sendPlaytimeResponse(String username, BigDecimal hours, CommandEvent event) {
         event.replyEmbeds(new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setAuthor(username, null, "https://mc-heads.net/avatar/" + username)
-                .setDescription(username + " has played on Freedonia for " + hours + " hours")
+                .setDescription(username + " has played on Freedonia for " + hours.toString() + " hours")
                 .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
                 .build()
         );
