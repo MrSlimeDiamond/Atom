@@ -18,6 +18,8 @@ import net.slimediamond.atom.reference.IRCReference;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
+import org.kitteh.irc.client.library.element.Channel;
+import org.kitteh.irc.client.library.element.User;
 import org.kitteh.irc.client.library.event.channel.ChannelJoinEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelMessageEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelPartEvent;
@@ -133,24 +135,30 @@ public class ChatBridgeService extends ListenerAdapter {
     @Handler
     public void onUserQuit(UserQuitEvent event) {
         if (event.getActor().getNick().equals(IRCReference.nickname)) return;
-        try {
-            if (!event.getAffectedChannel().isPresent()) return;
-            if (!database.isPipeEnabled(event.getAffectedChannel().get().getName())) return;
-            long channelID = database.getDiscordBridgeChannelID(event.getAffectedChannel().get().getName());
-            if (channelID == -1L) return;
-            TextChannel channel = jda.getTextChannelById(channelID);
-            if (channel == null) return;
+        event.getUser().getChannels().forEach(channel -> {
+            // for each and every single channel this user is in that is
+            // bridged to discord, we will need to show a disconnect message
 
-            MessageEmbed embed = new EmbedBuilder()
-                    .setColor(Color.RED)
-                    .setDescription(event.getActor().getNick() + " quit (" + event.getMessage() + ")")
-                    .build();
+            try {
+                // the channel is in the database as a bridge
+                long channelId = database.getDiscordBridgeChannelID(channel);
+                if (channelId != -1L) {
+                    if (database.isPipeEnabled(channel)) return;
 
-            channel.sendMessageEmbeds(embed).queue();
+                    TextChannel textChannel = jda.getTextChannelById(channelId);
+                    if (textChannel == null) return;
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+                    MessageEmbed embed = new EmbedBuilder()
+                            .setColor(Color.RED)
+                            .setDescription(event.getActor().getNick() + " quit (" + event.getMessage() + ")")
+                            .build();
+
+                    textChannel.sendMessageEmbeds(embed).queue();
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Handler

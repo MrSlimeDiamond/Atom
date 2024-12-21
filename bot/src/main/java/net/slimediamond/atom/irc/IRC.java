@@ -61,6 +61,11 @@ public class IRC {
     @Service.Reload
     public void reloadService() throws SQLException {
         client.reconnect("Service reloading!");
+        /*
+         * The database handles this. -Slime 2023
+         * ... *one year later*
+         * WHY THE FUCK DOES THE DATABASE HANDLE THIS? -Slime 2024
+         */
         database.joinAllIRCChannels();
     }
 }
