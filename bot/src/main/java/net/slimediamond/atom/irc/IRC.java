@@ -9,7 +9,7 @@ import net.slimediamond.atom.discord.commands.IRCCommand;
 import net.slimediamond.atom.irc.commands.minecraftonline.GoodnightCommand;
 import net.slimediamond.atom.irc.commands.BridgeCommand;
 import net.slimediamond.atom.irc.commands.ChannelCommand;
-import net.slimediamond.atom.irc.commands.PingCommand;
+import net.slimediamond.atom.irc.commands.BotCommands;
 import org.kitteh.irc.client.library.Client;
 import org.kitteh.irc.client.library.feature.auth.NickServ;
 
@@ -38,7 +38,7 @@ public class IRC {
         database.joinAllIRCChannels();
 
         CommandHandler commandHandler = new CommandHandler();
-        commandHandler.registerCommand(new PingCommand());
+        commandHandler.registerCommand(new BotCommands());
         commandHandler.registerCommand(new BridgeCommand());
         commandHandler.registerCommand(new ChannelCommand());
         commandHandler.registerCommand(new MCOFirstseen());

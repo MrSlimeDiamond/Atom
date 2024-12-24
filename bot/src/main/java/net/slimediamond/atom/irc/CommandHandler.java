@@ -93,7 +93,7 @@ public class CommandHandler {
     }
 
     public void executeCommand(IRCCommand command, ChannelMessageEvent event, boolean hidden) {
-        CommandEvent commandEvent = new CommandEvent(event, hidden);
+        CommandEvent commandEvent = new CommandEvent(event, this, hidden);
 
         Method method = command.getMethod();
 
@@ -114,5 +114,9 @@ public class CommandHandler {
                     }
                 }
         ).start();
+    }
+
+    public ArrayList<IRCCommand> getCommands() {
+        return commands;
     }
 }

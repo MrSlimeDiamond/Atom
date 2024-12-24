@@ -11,10 +11,12 @@ import java.util.Arrays;
 public class CommandEvent {
     ChannelMessageEvent event;
     McObotMessageParser messageParser;
+    CommandHandler commandHandler;
     boolean hidden;
-    public CommandEvent(ChannelMessageEvent event, boolean hidden) {
+    public CommandEvent(ChannelMessageEvent event, CommandHandler commandHandler, boolean hidden) {
         this.event = event;
         this.hidden = hidden;
+        this.commandHandler = commandHandler;
         this.messageParser = new McObotMessageParser(this.getUser(), this.event.getMessage());
     }
     public void reply(String text) {
@@ -35,6 +37,10 @@ public class CommandEvent {
 
     public Client getClient() {
         return event.getClient();
+    }
+
+    public CommandHandler getCommandHandler() {
+        return this.commandHandler;
     }
 
     public String[] getCommandArgs() {
