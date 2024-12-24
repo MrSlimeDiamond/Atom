@@ -21,7 +21,7 @@ public class BotCommands {
     public void helpCommand(CommandEvent event) {
         StringBuilder stringBuilder = new StringBuilder("My commands are: ");
         for (IRCCommand command : event.getCommandHandler().getCommands()) {
-            stringBuilder.append(command);
+            stringBuilder.append(command.getCommand().name());
         }
 
         event.reply(stringBuilder.toString());
