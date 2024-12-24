@@ -3,6 +3,9 @@ package net.slimediamond.atom.irc.commands;
 import net.slimediamond.atom.irc.IRCCommand;
 import net.slimediamond.atom.irc.annotations.Command;
 import net.slimediamond.atom.irc.CommandEvent;
+
+import java.util.StringJoiner;
+
 public class BotCommands {
     @Command(
             name = "ping",
@@ -19,11 +22,15 @@ public class BotCommands {
             usage = "help"
     )
     public void helpCommand(CommandEvent event) {
-        StringBuilder stringBuilder = new StringBuilder("My commands are: ");
+        StringJoiner stringJoiner = new StringJoiner(", ");
         for (IRCCommand command : event.getCommandHandler().getCommands()) {
-            stringBuilder.append(command.getCommand().name());
+            // ignoring admin-only commands
+            // TODO: Show admins admin-only commands
+            if(!command.getCommand().adminOnly()) {
+                stringJoiner.add(command.getCommand().name());
+            }
         }
 
-        event.reply(stringBuilder.toString());
+        event.reply("My commands are: " + stringJoiner);
     }
 }
