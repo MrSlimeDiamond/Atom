@@ -24,7 +24,7 @@ public class MCOPlaytime {
 
             player.getPlaytime().ifPresentOrElse(playtime -> {
                 BigDecimal hours = new BigDecimal(playtime).divide(new BigDecimal(3600), 2, RoundingMode.HALF_UP);
-                event.reply(username + " has logged " + hours.toString() + " hours on Freedonia");
+                event.reply(username + " has played on Freedonia for " + hours.toString() + " hours");
             }, () -> {
                 event.reply("Could not find that player!");
             });
