@@ -52,6 +52,7 @@ dependencies {
     implementation 'org.reflections:reflections:0.10.2'
     implementation 'net.slimediamond:util:1.0-SNAPSHOT'
     implementation 'com.github.oshi:oshi-core:6.6.1'
+    implementation 'org.yaml:snakeyaml:2.3'
 
     implementation(project(":common"))
 

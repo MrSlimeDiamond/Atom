@@ -3,6 +3,7 @@ package net.slimediamond.atom.discord;
 import com.google.inject.Inject;
 import net.dv8tion.jda.api.JDA;
 import net.slimediamond.atom.discord.commands.*;
+import net.slimediamond.atom.discord.commands.amplicity.AmplicityTimeplayed;
 import net.slimediamond.atom.reference.DiscordReference;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
@@ -30,6 +31,10 @@ public class DiscordBot {
 
         CommandHandler commandHandler = new CommandHandler(jda, DiscordReference.prefix);
 
+        if (AmplicityTimeplayed.PLAYERDATA_FILE.exists()) {
+            commandHandler.registerCommand(new AmplicityTimeplayed());
+        }
+
         commandHandler.registerCommand(new BotCommands());
         commandHandler.registerCommand(new InformationCommands());
         commandHandler.registerCommand(new LoggerCommand());
@@ -44,6 +49,7 @@ public class DiscordBot {
 
         jda.addEventListener(commandHandler);
 
+        // TODO: Automatically add guilds to the database
         jda.getGuilds().forEach(guild -> {
             if (!database.isGuildInDatabase(guild)) {
                 log.warn("Guild with name " + guild.getName() + " is not in the database!!!");
