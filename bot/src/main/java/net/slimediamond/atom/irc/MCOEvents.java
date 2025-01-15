@@ -12,46 +12,36 @@ public class MCOEvents {
     private static Database database = Atom.getServiceManager().getInstance(Database.class);
     
     public static void onMCOJoin(String username) throws IOException, SQLException {
-        MinecraftUtils.getPlayerUUID(username).ifPresent(uuid -> {
-            try {
-                if (!database.isMCOUserInDatabaseByUsername(username)) {
-                    try {
-                        database.insertMCOUser(username, uuid);
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-
-            try {
-                database.setMCOLastseenByUUID(uuid, new Date());
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        insertAndSetLastseen(username);
     }
 
     public static void onMCOLeave(String username) throws IOException, SQLException {
-        MinecraftUtils.getPlayerUUID(username).ifPresent(uuid -> {
-            try {
-                if (!database.isMCOUserInDatabaseByUsername(username)) {
-                    try {
-                        database.insertMCOUser(username, uuid);
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+        insertAndSetLastseen(username);
+    }
 
-            try {
-                database.setMCOLastseenByUUID(uuid, new Date());
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
+    private static void insertAndSetLastseen(String username) throws SQLException, IOException {
+        if (!database.isMCOUserInDatabaseByUsername(username)) {
+            MinecraftUtils.getPlayerUUID(username).ifPresent(uuid -> {
+                try {
+                    // Insert the user
+                    database.insertMCOUser(username, uuid);
+
+                    // Set lastseen date
+                    database.setMCOLastseenByUUID(uuid, new Date());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } else {
+            // we can grab it locally, the user is in the db
+            database.getMCOuuid(username).ifPresent(uuid -> {
+                try {
+                    database.setMCOLastseenByUUID(uuid, new Date());
+                } catch (SQLException e) {
+                    // I hate Java.
+                    throw new RuntimeException(e);
+                }
+            });
+        }
     }
 }

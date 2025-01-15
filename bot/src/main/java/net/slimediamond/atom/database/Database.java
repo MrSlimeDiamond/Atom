@@ -29,11 +29,13 @@ import net.slimediamond.atom.reference.DBReference;
 import net.slimediamond.atom.reference.IRCReference;
 import net.slimediamond.atom.irc.IRC;
 import net.slimediamond.atom.common.annotations.Service;
+import net.slimediamond.util.minecraft.MinecraftUtils;
 import net.slimediamond.util.number.NumberUtils;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 
 import java.awt.*;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -111,6 +113,8 @@ public class Database {
 
     private PreparedStatement isMCOUserInDatabaseUsername;
     private PreparedStatement isMCOUserInDatabaseUUID;
+
+    private PreparedStatement getMCOuuid;
 
     private PreparedStatement getPinnerino;
 
@@ -223,6 +227,8 @@ public class Database {
 
         isMCOUserInDatabaseUsername = conn.prepareStatement("SELECT * FROM minecraftonline_users WHERE MinecraftName = ?");
         isMCOUserInDatabaseUUID = conn.prepareStatement("SELECT * FROM minecraftonline_users UUID MinecraftName = ?");
+
+        getMCOuuid = conn.prepareStatement("SELECT UUID FROM minecraftonline_users WHERE MinecraftName = ?");
 
         insertReactionRole = conn.prepareStatement("INSERT INTO reaction_roles (MessageID, Emoji, RoleID) VALUES (?, ?, ?)");
         messageHasReactionRoles = conn.prepareStatement("SELECT * FROM reaction_roles WHERE MessageID = ?");
@@ -668,6 +674,16 @@ public class Database {
         isMCOUserInDatabaseUsername.setString(1, username);
         ResultSet resultSet = isMCOUserInDatabaseUsername.executeQuery();
         return resultSet.next();
+    }
+
+    public Optional<String> getMCOuuid(String username) throws SQLException {
+        getMCOuuid.setString(1, username);
+        ResultSet resultSet = getMCOuuid.executeQuery();
+        if (resultSet.next()) {
+            return Optional.of(resultSet.getString(1));
+        } else {
+            return Optional.empty();
+        }
     }
 
     public Optional<Date> getMCOLastseenByName(String username) throws SQLException {
