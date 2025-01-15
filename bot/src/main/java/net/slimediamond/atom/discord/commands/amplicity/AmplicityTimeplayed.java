@@ -11,6 +11,8 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.awt.*;
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 
 public class AmplicityTimeplayed {
@@ -67,7 +69,8 @@ public class AmplicityTimeplayed {
                 Map<String, Object> playerdata = yaml.load(inputStream);
 
                 // I don't know
-                int hours = (Integer) playerdata.get("onlinetime") / 3600 / 1000;
+                BigDecimal hours = new BigDecimal((Long)playerdata.get("onlinetime")).divide(new BigDecimal(3600)).divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP);
+
                 try {
                     inputStream.close();
                 } catch (IOException e) {
