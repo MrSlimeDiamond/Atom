@@ -69,7 +69,7 @@ public class AmplicityTimeplayed {
                 Map<String, Object> playerdata = yaml.load(inputStream);
 
                 // I don't know
-                BigDecimal hours = new BigDecimal(String.valueOf(playerdata.get("onlinetime"))).divide(new BigDecimal(3600)).divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP);
+                BigDecimal hours = new BigDecimal(String.valueOf(playerdata.get("onlinetime"))).divide(new BigDecimal(3600000), 2, RoundingMode.HALF_UP);
 
                 try {
                     inputStream.close();
