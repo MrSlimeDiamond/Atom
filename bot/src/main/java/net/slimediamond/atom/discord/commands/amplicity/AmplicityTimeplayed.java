@@ -75,7 +75,7 @@ public class AmplicityTimeplayed {
                 }
 
                 event.replyEmbeds(new EmbedBuilder()
-                        .setAuthor(username, "", "https://mc-heads.net/avatar/" + username)
+                        .setAuthor(username, null, "https://mc-heads.net/avatar/" + username)
                         .setDescription(username + " has " + hours + " hours on Amplicity.")
                         .setFooter(EmbedReference.amplicityFooter, EmbedReference.amplicityIcon)
                         .setColor(Color.GREEN)
