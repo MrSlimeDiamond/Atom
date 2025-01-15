@@ -10,9 +10,7 @@ import net.slimediamond.util.minecraft.MinecraftUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Map;
 
 public class AmplicityTimeplayed {
@@ -59,11 +57,22 @@ public class AmplicityTimeplayed {
                 // parse it properly.
 
                 Yaml yaml = new Yaml();
-                InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(playerFile.getAbsolutePath());
+                InputStream inputStream = null;
+                try {
+                    inputStream = new FileInputStream(playerFile);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+
                 Map<String, Object> playerdata = yaml.load(inputStream);
 
                 // I don't know
                 int hours = (Integer) playerdata.get("onlinetime") / 3600 / 1000;
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
 
                 event.replyEmbeds(new EmbedBuilder()
                         .setAuthor(username, "", "https://mc-heads.net/avatar/" + username)
