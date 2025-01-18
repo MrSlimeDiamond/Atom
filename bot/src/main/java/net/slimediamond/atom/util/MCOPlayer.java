@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Optional;
 
-public class MCOPlayer {z
+public class MCOPlayer {
     String username;
     String uuid;
     Date firstseen;
