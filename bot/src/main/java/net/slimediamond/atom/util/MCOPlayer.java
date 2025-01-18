@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Optional;
 
-public class MCOPlayer {
+public class MCOPlayer {z
     String username;
     String uuid;
     Date firstseen;
@@ -32,9 +32,6 @@ public class MCOPlayer {
      * @throws UnknownPlayerException If the player does not exist
      */
     public MCOPlayer(String username) throws UnknownPlayerException {
-        // Set the name ASAP
-        this.username = username;
-
         try {
             Optional<String> playerCorrectName = MinecraftOnlineAPI.getCorrectUsername(username);
             playerCorrectName.ifPresent(correctname -> this.username = correctname);

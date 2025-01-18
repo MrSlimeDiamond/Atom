@@ -279,7 +279,7 @@ public class MCOCommands {
 
             event.replyEmbeds(builder.build());
         }, () -> {
-            event.replyEmbeds(EmbedUtil.expandedErrorEmbed("MinecraftOnlineAPI::getBanCount Optional was not present! What the fuck happened? Tell an admin!"));
+            event.replyEmbeds(EmbedUtil.expandedErrorEmbed("MinecraftOnlineAPI::getBanCount Optional was not present! Tell an admin!"));
         });
     }
 
@@ -337,24 +337,20 @@ public class MCOCommands {
                 event.replyEmbeds(new EmbedBuilder()
                         .setColor(Color.GREEN)
                         .setAuthor(username, null, "https://mc-heads.net/avatar/" + username)
-                        .setDescription(username + " is not banned!")
+                        .setDescription(player.getName() + " is not banned!")
                         .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
                         .build());
 
             } else {
-                player.getBanDate().ifPresentOrElse(date -> {
-                    event.replyEmbeds(new EmbedBuilder()
-                            .setColor(Color.GREEN)
-                            .setAuthor(player.getName(), null, "https://mc-heads.net/avatar/" + player.getName())
-                            .setTitle(player.getName() + " is naughty!")
-                            .addField("Ban reason", player.getBanReason().orElseThrow(), false)
-                            .addField("Ban time", "<t:" + date.toInstant().getEpochSecond() + ":f> [<t:" + date.toInstant().getEpochSecond() + ":R>]", false)
-                            .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
-                            .build()
-                    );
-                }, () -> {
-                    event.replyEmbeds(EmbedUtil.genericErrorEmbed());
-                });
+                player.getBanDate().ifPresentOrElse(date -> event.replyEmbeds(new EmbedBuilder()
+                        .setColor(Color.GREEN)
+                        .setAuthor(player.getName(), null, "https://mc-heads.net/avatar/" + player.getName())
+                        .setTitle(player.getName() + " is naughty!")
+                        .addField("Ban reason", player.getBanReason().orElseThrow(), false)
+                        .addField("Ban time", "<t:" + date.toInstant().getEpochSecond() + ":f> [<t:" + date.toInstant().getEpochSecond() + ":R>]", false)
+                        .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
+                        .build()
+                ), () -> event.replyEmbeds(EmbedUtil.genericErrorEmbed()));
             }
         } catch(UnknownPlayerException e){
             event.replyEmbeds(EmbedUtil.expandedErrorEmbed("User not found"));
