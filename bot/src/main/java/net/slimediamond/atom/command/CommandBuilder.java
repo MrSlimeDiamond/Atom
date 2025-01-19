@@ -1,5 +1,6 @@
 package net.slimediamond.atom.command;
 
+import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.command.exceptions.CommandBuildException;
 import net.slimediamond.atom.command.irc.IRCCommandExecutor;
 
@@ -89,16 +90,20 @@ public class CommandBuilder {
     }
 
     public CommandBuilder setExecutor(Consumer<CommandContext> executor) {
+        if (platform == null) {
+            throw new CommandBuildException("Please set a command platform before setting its executor.");
+        }
+
         if (platform == CommandPlatform.IRC) {
             this.commandExecutor = (IRCCommandExecutor)executor::accept;
         } else if (platform == CommandPlatform.DISCORD) {
-//            this.commandExecutor = (executor::accept;
+            this.commandExecutor = (DiscordCommandExecutor)executor::accept;
         }
 
         return this;
     }
 
-    public CommandMetadata build() throws CommandBuildException {
+    public CommandMetadata build() {
         // Make sure everything is hunky-dory
         if (aliases.isEmpty()) {
             throw new CommandBuildException("Cannot create a command without any aliases");

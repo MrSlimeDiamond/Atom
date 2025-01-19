@@ -2,6 +2,10 @@ package net.slimediamond.atom.discord;
 
 import com.google.inject.Inject;
 import net.dv8tion.jda.api.JDA;
+import net.slimediamond.atom.command.CommandBuilder;
+import net.slimediamond.atom.command.CommandManager;
+import net.slimediamond.atom.command.CommandPlatform;
+import net.slimediamond.atom.command.discord.DiscordCommandListener;
 import net.slimediamond.atom.discord.commands.*;
 import net.slimediamond.atom.discord.commands.amplicity.AmplicityTimeplayed;
 import net.slimediamond.atom.reference.DiscordReference;
@@ -15,12 +19,15 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.sql.SQLException;
 
-@Service(value = "discord", priority = 999, enabled = false)
+@Service(value = "discord", priority = 999, enabled = true)
 public class DiscordBot {
     private static final Logger log = LoggerFactory.getLogger(DiscordBot.class);
 
     @Inject
     private JDA jda;
+
+    @Inject
+    private CommandManager commandManager;
 
     @GetService
     private Database database;
@@ -29,25 +36,37 @@ public class DiscordBot {
     public void startService() throws IOException, InterruptedException, SQLException {
         jda.awaitReady();
 
-        CommandHandler commandHandler = new CommandHandler(jda, DiscordReference.prefix);
+//        CommandHandler commandHandler = new CommandHandler(jda, DiscordReference.prefix);
 
-        if (AmplicityTimeplayed.PLAYERDATA_FILE.exists()) {
-            commandHandler.registerCommand(new AmplicityTimeplayed());
-        }
+//        if (AmplicityTimeplayed.PLAYERDATA_FILE.exists()) {
+//            commandHandler.registerCommand(new AmplicityTimeplayed());
+//        }
 
-        commandHandler.registerCommand(new BotCommands());
-        commandHandler.registerCommand(new InformationCommands());
-        commandHandler.registerCommand(new LoggerCommand());
-        commandHandler.registerCommand(new PinnerinoCommand());
-        commandHandler.registerCommand(new IRCCommand());
-        commandHandler.registerCommand(new BridgeCommand());
-        commandHandler.registerCommand(new PortalCommands());
-        commandHandler.registerCommand(new MCOCommands());
-        commandHandler.registerCommand(new ReactionRolesCommand());
-        commandHandler.registerCommand(new StreamsCommand());
-        commandHandler.registerCommand(new MemesCommand());
+//        commandHandler.registerCommand(new BotCommands());
+//        commandHandler.registerCommand(new InformationCommands());
+//        commandHandler.registerCommand(new LoggerCommand());
+//        commandHandler.registerCommand(new PinnerinoCommand());
+//        commandHandler.registerCommand(new IRCCommand());
+//        commandHandler.registerCommand(new BridgeCommand());
+//        commandHandler.registerCommand(new PortalCommands());
+//        commandHandler.registerCommand(new MCOCommands());
+//        commandHandler.registerCommand(new ReactionRolesCommand());
+//        commandHandler.registerCommand(new StreamsCommand());
+//        commandHandler.registerCommand(new MemesCommand());
 
-        jda.addEventListener(commandHandler);
+//        jda.addEventListener(commandHandler);
+
+        DiscordCommandListener commandListener = new DiscordCommandListener(commandManager);
+        jda.addEventListener(commandListener);
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("ping")
+                .setDescription("Replies with pong")
+                .setUsage("ping")
+                .setCommandPlatform(CommandPlatform.DISCORD)
+                .setExecutor(ctx -> ctx.reply("Pong!"))
+                .build()
+        );
 
         // TODO: Automatically add guilds to the database
         jda.getGuilds().forEach(guild -> {

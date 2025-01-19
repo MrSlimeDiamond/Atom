@@ -1,0 +1,98 @@
+package net.slimediamond.atom.command.discord;
+
+import com.sun.jna.platform.win32.OaIdl;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.slimediamond.atom.Atom;
+import net.slimediamond.atom.command.CommandManager;
+import net.slimediamond.atom.command.CommandMetadata;
+import net.slimediamond.atom.command.CommandPlatform;
+import net.slimediamond.atom.command.irc.IRCCommandContext;
+import net.slimediamond.atom.command.irc.IRCCommandExecutor;
+import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.reference.DiscordReference;
+
+import java.sql.SQLException;
+import java.util.Arrays;
+
+public class DiscordCommandListener extends ListenerAdapter {
+    private CommandManager commandManager;
+    private Database database;
+
+    public DiscordCommandListener(CommandManager commandManager) {
+        this.commandManager = commandManager;
+        this.database = Atom.getServiceManager().getInstance(Database.class);
+    }
+
+    // Just context commands for now
+    @Override
+    public void onMessageReceived(MessageReceivedEvent event) {
+        String message = event.getMessage().getContentDisplay();
+        String prefix = DiscordReference.prefix;
+
+        if (message.startsWith(prefix)) {
+            System.out.println("starts with prefix");
+            // If there is a space after the prefix, remove it and extract the command
+            String extracted = message.length() > prefix.length() && message.charAt(prefix.length()) == ' '
+                    ? message.substring(prefix.length() + 1)
+                    : message.substring(prefix.length());
+
+            // Split into command and the remaining part
+            String[] parts = extracted.split("\\s+", 2);
+            String commandName = parts[0]; // The command itself
+            String remaining = parts.length > 1 ? parts[1] : ""; // Everything else after the command
+
+            for (CommandMetadata command : commandManager.getCommands()) {
+                // Only pay attention to Discord commands here
+                if (command.getCommandPlatform() != CommandPlatform.DISCORD) {
+                    continue;
+                }
+
+                if (command.getAliases().contains(commandName.strip())) {
+                    System.out.println("found a command with a matching alias");
+                    String[] args = new String[0];
+
+                    if (remaining != null) {
+                        args = remaining.split(" ");
+                    }
+                    // execute the command
+                    if (!command.getChildren().isEmpty()) {
+                        if (remaining != null) {
+                            // it might contain a subcommand. Let's check.
+                            for (CommandMetadata child : command.getChildren()) {
+                                if (child.getAliases().get(0).equalsIgnoreCase(remaining.split(" ")[0])) {
+                                    args = Arrays.copyOfRange(args, 1, args.length);
+                                    command = child;
+                                }
+                            }
+                        }
+                    }
+
+                    System.out.println("done stuff");
+
+                    if (command.isAdminOnly()) {
+                        try {
+                            if (!database.isDiscordAdminByID(event.getAuthor().getIdLong())) {
+                                event.getChannel().sendMessage("You do not have permission to do this!");
+                                return;
+                            }
+                        } catch (SQLException e) {
+                            event.getChannel().sendMessage("The database seems down! (SQLException occurred) - unable to determine whether you have admin permissions.");
+                            e.printStackTrace();
+                        }
+                    }
+
+                    DiscordCommandExecutor commandExecutor = (DiscordCommandExecutor) command.getCommandExecutor();
+                    try {
+                        System.out.println("invoking");
+                        commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager));
+                    } catch (Exception e) {
+                        event.getChannel().sendMessage("An error occurred: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
+        }
+    }
+}
