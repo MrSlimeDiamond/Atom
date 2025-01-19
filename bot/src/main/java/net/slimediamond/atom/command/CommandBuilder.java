@@ -134,6 +134,11 @@ public class CommandBuilder {
                 }
 
                 @Override
+                public boolean isAdminOnly() {
+                    return adminOnly;
+                }
+
+                @Override
                 public ArrayList<CommandMetadata> getChildren() {
                     return children;
                 }

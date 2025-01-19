@@ -4,20 +4,26 @@ import net.engio.mbassy.listener.Handler;
 import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandMetadata;
 import net.slimediamond.atom.command.CommandPlatform;
+import net.slimediamond.atom.common.annotations.GetService;
+import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.irc.McObotMessageParser;
 import net.slimediamond.atom.reference.IRCReference;
 import org.kitteh.irc.client.library.event.channel.ChannelMessageEvent;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 
 public class IRCCommandListener {
+    @GetService
+    private Database database;
+
     private CommandManager commandManager;
     public IRCCommandListener(CommandManager commandManager) {
         this.commandManager = commandManager;
     }
 
     @Handler
-    public void onChannelMessage(ChannelMessageEvent event) {
+    public void onChannelMessage(ChannelMessageEvent event) throws SQLException {
         String message = event.getMessage().toLowerCase();
         String prefix = IRCReference.prefix;
         boolean hidden = false;
@@ -71,11 +77,19 @@ public class IRCCommandListener {
                         }
                     }
 
+                    if (command.isAdminOnly()) {
+                        if (!database.isIRCAdmin(event.getActor())) {
+                            event.sendReply("You do not have permission to do this!");
+                            return;
+                        }
+                    }
+
                     IRCCommandExecutor commandExecutor = (IRCCommandExecutor)command.getCommandExecutor();
                     try {
                         commandExecutor.execute(new IRCCommandContext(event, command, mcobotParser, args, hidden, commandManager));
                     } catch (Exception e) {
                         event.sendReply("An error occurred: " + e.getMessage());
+                        e.printStackTrace();
                     }
                     break;
                 }

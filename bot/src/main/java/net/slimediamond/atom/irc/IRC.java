@@ -5,6 +5,7 @@ import net.slimediamond.atom.command.CommandBuilder;
 import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandPlatform;
 import net.slimediamond.atom.command.irc.IRCCommandListener;
+import net.slimediamond.atom.irc.commands.BridgeCommand;
 import net.slimediamond.atom.irc.commands.ChannelCommand;
 import net.slimediamond.atom.irc.commands.HelpCommand;
 import net.slimediamond.atom.irc.commands.minecraftonline.*;
@@ -12,6 +13,7 @@ import net.slimediamond.atom.reference.IRCReference;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.services.system.GetServiceProcessor;
 import org.apache.http.conn.SchemePortResolver;
 import org.kitteh.irc.client.library.Client;
 import org.kitteh.irc.client.library.feature.auth.NickServ;
@@ -70,7 +72,9 @@ public class IRC {
 //        client.getEventManager().registerEventListener(new IRCCommand());
 //        client.getEventManager().registerEventListener(new MCOEventHandler());
 
-        client.getEventManager().registerEventListener(new IRCCommandListener(commandManager));
+        IRCCommandListener ircCommandListener = new IRCCommandListener(commandManager);
+        GetServiceProcessor.processAnnotations(ircCommandListener);
+        client.getEventManager().registerEventListener(ircCommandListener);
 
         commandManager.register(new CommandBuilder()
                 .addAliases("ping")
@@ -177,7 +181,7 @@ public class IRC {
                 .setUsage("bridge <channel|pipe|blacklist>")
                 .setAdminOnly(true)
                 .setCommandPlatform(CommandPlatform.IRC)
-                .setExecutor(new RefreshLastseen())
+                .setExecutor(new BridgeCommand())
                 .build()
         );
 

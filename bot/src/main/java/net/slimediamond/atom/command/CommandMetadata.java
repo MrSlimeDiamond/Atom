@@ -40,9 +40,7 @@ public interface CommandMetadata {
      * Whether the command is admin only
      * @return whether the command is admin only
      */
-    default boolean isAdminOnly() {
-        return false;
-    }
+    boolean isAdminOnly();
 
     /**
      * Get this command's children (subcommands)
