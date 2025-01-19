@@ -31,7 +31,6 @@ public class DiscordCommandListener extends ListenerAdapter {
         String prefix = DiscordReference.prefix;
 
         if (message.startsWith(prefix)) {
-            System.out.println("starts with prefix");
             // If there is a space after the prefix, remove it and extract the command
             String extracted = message.length() > prefix.length() && message.charAt(prefix.length()) == ' '
                     ? message.substring(prefix.length() + 1)
@@ -49,7 +48,6 @@ public class DiscordCommandListener extends ListenerAdapter {
                 }
 
                 if (command.getAliases().contains(commandName.strip())) {
-                    System.out.println("found a command with a matching alias");
                     String[] args = new String[0];
 
                     if (remaining != null) {
@@ -68,8 +66,6 @@ public class DiscordCommandListener extends ListenerAdapter {
                         }
                     }
 
-                    System.out.println("done stuff");
-
                     if (command.isAdminOnly()) {
                         try {
                             if (!database.isDiscordAdminByID(event.getAuthor().getIdLong())) {
@@ -84,7 +80,6 @@ public class DiscordCommandListener extends ListenerAdapter {
 
                     DiscordCommandExecutor commandExecutor = (DiscordCommandExecutor) command.getCommandExecutor();
                     try {
-                        System.out.println("invoking");
                         commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager));
                     } catch (Exception e) {
                         event.getChannel().sendMessage("An error occurred: " + e.getMessage());
