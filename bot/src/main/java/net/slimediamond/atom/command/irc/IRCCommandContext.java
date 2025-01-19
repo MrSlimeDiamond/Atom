@@ -1,9 +1,7 @@
 package net.slimediamond.atom.command.irc;
 
-import net.slimediamond.atom.command.CommandContext;
-import net.slimediamond.atom.command.CommandMetadata;
-import net.slimediamond.atom.command.CommandPlatform;
-import net.slimediamond.atom.command.CommandSender;
+import net.slimediamond.atom.command.*;
+import net.slimediamond.atom.irc.McObotMessageParser;
 import org.kitteh.irc.client.library.event.channel.ChannelMessageEvent;
 
 import java.util.Arrays;
@@ -11,16 +9,28 @@ import java.util.Arrays;
 public class IRCCommandContext implements CommandContext {
     private ChannelMessageEvent event;
     private CommandMetadata metadata;
+    private McObotMessageParser mcObotMessageParser;
     private String[] args;
+    private boolean hidden;
+    private CommandManager commandManager;
 
-    public IRCCommandContext(ChannelMessageEvent event, CommandMetadata metadata, String[] args) {
+    public IRCCommandContext(ChannelMessageEvent event, CommandMetadata metadata, McObotMessageParser mcObotMessageParser, String[] args, boolean hidden, CommandManager commandManager) {
         this.event = event;
         this.metadata = metadata;
+        this.mcObotMessageParser = mcObotMessageParser;
         this.args = args;
+        this.hidden = hidden;
+        this.commandManager = commandManager;
     }
     @Override
     public CommandSender getSender() {
-        return new IRCCommandSender(this.event.getActor());
+        String name;
+        if (mcObotMessageParser.isChatMessage()) {
+            name = mcObotMessageParser.getSenderUsername();
+        } else {
+            name = this.event.getActor().getNick();
+        }
+        return new IRCCommandSender(name, this.event.getActor());
     }
 
     @Override
@@ -40,6 +50,27 @@ public class IRCCommandContext implements CommandContext {
 
     @Override
     public void reply(String message) {
+        if (this.hidden) {
+            message = "# " + message;
+        }
         this.event.sendReply(message);
+    }
+
+    @Override
+    public CommandManager getCommandManager() {
+        return this.commandManager;
+    }
+
+    @Override
+    public String getDesiredCommandUsername() {
+        if (this.args.length == 0) {
+            return this.getSender().getName();
+        } else {
+            return this.args[0]; // probably
+        }
+    }
+
+    public String getChannelName() {
+        return event.getChannel().getName();
     }
 }

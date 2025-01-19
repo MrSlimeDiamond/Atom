@@ -11,6 +11,14 @@ public interface CommandMetadata {
     ArrayList<String> getAliases();
 
     /**
+     * Get the command name
+     * @return command name
+     */
+    default String getName() {
+        return getAliases().get(0);
+    }
+
+    /**
      * Get command description
      * @return command description
      */

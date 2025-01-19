@@ -4,6 +4,7 @@ import net.engio.mbassy.listener.Handler;
 import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandMetadata;
 import net.slimediamond.atom.command.CommandPlatform;
+import net.slimediamond.atom.irc.McObotMessageParser;
 import net.slimediamond.atom.reference.IRCReference;
 import org.kitteh.irc.client.library.event.channel.ChannelMessageEvent;
 
@@ -19,17 +20,31 @@ public class IRCCommandListener {
     public void onChannelMessage(ChannelMessageEvent event) {
         String message = event.getMessage().toLowerCase();
         String prefix = IRCReference.prefix;
+        boolean hidden = false;
 
-        if (message.startsWith(prefix)) {
+        McObotMessageParser mcobotParser = new McObotMessageParser(event.getActor(), event.getMessage());
+        if (
+                event.getMessage().startsWith(prefix) ||
+                event.getMessage().startsWith("#" + prefix) && event.getChannel().getName().equals("#minecraftonline") ||
+                mcobotParser.isCommandMessage()
+        ) {
+            if (mcobotParser.isCommandMessage()) {
+                message = mcobotParser.getMessageContent();
+            }
+
+            if (message.startsWith("#" + prefix)) {
+                hidden = true;
+            }
+
             // If there is a space after the prefix, remove it and extract the command
-            String extracted = message.length() > prefix.length() && message.charAt(prefix.length()) == ' '
-                    ? message.substring(prefix.length() + 1)
-                    : message.substring(prefix.length());
+            String extracted = message.length() > prefix.length() && message.charAt(prefix.length() + (hidden ? 1 : 0)) == ' '
+                    ? message.substring(prefix.length() + (hidden ? 2 : 1))
+                    : message.substring(hidden ? prefix.length() + 1 : prefix.length());
 
             // Split into command and the remaining part
             String[] parts = extracted.split("\\s+", 2);
             String commandName = parts[0]; // The command itself
-            String remaining = parts.length > 1 ? parts[1] : ""; // Everything else after the command
+            String remaining = parts.length > 1 ? parts[1] : null; // Everything else after the command
 
             for (CommandMetadata command : commandManager.getCommands()) {
                 // Only pay attention to IRC commands here
@@ -38,10 +53,14 @@ public class IRCCommandListener {
                 }
 
                 if (command.getAliases().contains(commandName.strip())) {
-                    String[] args = remaining.split(" ");
+                    String[] args = new String[0];
+
+                    if (remaining != null) {
+                        args = remaining.split(" ");
+                    }
                     // execute the command
                     if (!command.getChildren().isEmpty()) {
-                        if (remaining.length() > 1) {
+                        if (remaining != null) {
                             // it might contain a subcommand. Let's check.
                             for (CommandMetadata child : command.getChildren()) {
                                 if (child.getAliases().get(0).equalsIgnoreCase(remaining.split(" ")[0])) {
@@ -53,7 +72,11 @@ public class IRCCommandListener {
                     }
 
                     IRCCommandExecutor commandExecutor = (IRCCommandExecutor)command.getCommandExecutor();
-                    commandExecutor.execute(new IRCCommandContext(event, command, args));
+                    try {
+                        commandExecutor.execute(new IRCCommandContext(event, command, mcobotParser, args, hidden, commandManager));
+                    } catch (Exception e) {
+                        event.sendReply("An error occurred: " + e.getMessage());
+                    }
                     break;
                 }
             }

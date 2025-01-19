@@ -1,5 +1,7 @@
 package net.slimediamond.atom.command;
 
+import net.slimediamond.atom.services.system.GetServiceProcessor;
+
 import java.util.ArrayList;
 
 public class CommandManager {
@@ -7,6 +9,8 @@ public class CommandManager {
 
     public void register(CommandMetadata metadata) {
         System.out.println("Registering command: " + metadata.getAliases().get(0));
+        // allow @GetService
+        GetServiceProcessor.processAnnotations(metadata.getCommandExecutor());
         this.commands.add(metadata);
         // TODO: Specific stuff for Discord. (slash commands)
     }
