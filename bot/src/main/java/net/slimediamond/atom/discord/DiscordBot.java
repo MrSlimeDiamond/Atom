@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 @Service(value = "discord", priority = 999, enabled = true)
 public class DiscordBot {
@@ -65,6 +66,24 @@ public class DiscordBot {
                 .setUsage("ping")
                 .setCommandPlatform(CommandPlatform.DISCORD)
                 .setExecutor(ctx -> ctx.reply("Pong!"))
+                .build()
+        );
+
+        // Mostly a debug command
+        commandManager.register(new CommandBuilder()
+                .addAliases("parent")
+                .setDescription("test command: parent command and subcommand")
+                .setUsage("parent")
+                .setCommandPlatform(CommandPlatform.DISCORD)
+                .setExecutor(context -> context.reply("parent command. args: " + Arrays.toString(context.getArgs())))
+                .addChild(new CommandBuilder()
+                        .addAliases("child")
+                        .setDescription("this is a child command of a parent")
+                        .setUsage("parent child")
+                        .setCommandPlatform(CommandPlatform.DISCORD)
+                        .setExecutor(context -> context.reply("child command. args: " + Arrays.toString(context.getArgs())))
+                        .build()
+                )
                 .build()
         );
 
