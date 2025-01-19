@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.sql.SQLException;
 
-@Service("chat bridge")
+@Service(value = "chat bridge", enabled = false)
 public class ChatBridgeService extends ListenerAdapter {
     @Inject
     @Nullable

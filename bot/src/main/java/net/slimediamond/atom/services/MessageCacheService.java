@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 
 import java.sql.SQLException;
 
-@Service("discord message cache")
+@Service(value = "discord message cache", enabled = false)
 public class MessageCacheService extends ListenerAdapter {
     @Inject
     @Nullable

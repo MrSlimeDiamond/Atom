@@ -4,6 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import net.dv8tion.jda.api.JDA;
+import net.slimediamond.atom.command.CommandManager;
+import net.slimediamond.atom.inject.providers.CommandManagerProvider;
 import net.slimediamond.atom.inject.providers.JDAProvider;
 import net.slimediamond.atom.services.system.ServiceContainer;
 import org.slf4j.Logger;
@@ -22,6 +24,7 @@ public class ServiceModule extends AbstractModule {
     protected void configure() {
         super.configure();
         bind(JDA.class).toProvider(new JDAProvider()).in(Singleton.class);
+        bind(CommandManager.class).toProvider(new CommandManagerProvider()).in(Singleton.class);
     }
 
     @Provides

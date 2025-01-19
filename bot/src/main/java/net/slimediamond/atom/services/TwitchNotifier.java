@@ -25,7 +25,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@Service("twitch notifier")
+@Service(value = "twitch notifier", enabled = false)
 public class TwitchNotifier {
     @Inject
     @Nullable
