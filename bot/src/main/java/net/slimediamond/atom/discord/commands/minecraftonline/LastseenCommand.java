@@ -29,8 +29,8 @@ public class LastseenCommand implements DiscordCommandExecutor {
             Date date = lastseen.get();
             context.replyEmbeds(new EmbedBuilder()
                     .setColor(Color.GREEN)
-                    .setAuthor(username.get(), null, "https://mc-heads.net/avatar/" + username.get())
-                    .setDescription(username.get() + " last visited Freedonia on <t:" + date.toInstant().getEpochSecond() + ":f> [<t:" + date.toInstant().getEpochSecond() + ":R>]")
+                    .setAuthor(player.getName(), null, "https://mc-heads.net/avatar/" + player.getName())
+                    .setDescription(player.getName() + " last visited Freedonia on <t:" + date.toInstant().getEpochSecond() + ":f> [<t:" + date.toInstant().getEpochSecond() + ":R>]")
                     .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
                     .build()
             );

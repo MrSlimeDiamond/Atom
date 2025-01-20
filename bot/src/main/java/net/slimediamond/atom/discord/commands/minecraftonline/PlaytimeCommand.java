@@ -27,8 +27,8 @@ public class PlaytimeCommand implements DiscordCommandExecutor {
             BigDecimal hours = new BigDecimal(playtime.get()).divide(new BigDecimal(3600), 2, RoundingMode.HALF_UP);
             context.replyEmbeds(new EmbedBuilder()
                     .setColor(Color.GREEN)
-                    .setAuthor(username.get(), null, "https://mc-heads.net/avatar/" + username.get())
-                    .setDescription(username.get() + " has played on Freedonia for " + hours.toString() + " hours")
+                    .setAuthor(player.getName(), null, "https://mc-heads.net/avatar/" + player.getName())
+                    .setDescription(player.getName() + " has played on Freedonia for " + hours.toString() + " hours")
                     .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
                     .build()
             );

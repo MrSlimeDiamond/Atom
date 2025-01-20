@@ -29,8 +29,8 @@ public class FirstseenCommand implements DiscordCommandExecutor {
             Date date = firstseen.get();
             context.replyEmbeds(new EmbedBuilder()
                     .setColor(Color.GREEN)
-                    .setAuthor(username.get(), null, "https://mc-heads.net/avatar/" + username)
-                    .setDescription(username.get() + " first visited Freedonia on <t:" + date.toInstant().getEpochSecond() + ":f> [<t:" + date.toInstant().getEpochSecond() + ":R>]")
+                    .setAuthor(player.getName(), null, "https://mc-heads.net/avatar/" + player.getName())
+                    .setDescription(player.getName() + " first visited Freedonia on <t:" + date.toInstant().getEpochSecond() + ":f> [<t:" + date.toInstant().getEpochSecond() + ":R>]")
                     .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
                     .build()
             );
