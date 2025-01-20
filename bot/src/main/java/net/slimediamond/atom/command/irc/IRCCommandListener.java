@@ -83,7 +83,13 @@ public class IRCCommandListener {
                         }
                     }
 
-                    IRCCommandExecutor commandExecutor = (IRCCommandExecutor)command.getIRCCommand().getCommandExecutor();
+                    if (!command.getIRCCommand().getWhitelistedChannels().isEmpty()) {
+                        if (!command.getIRCCommand().getWhitelistedChannels().contains(event.getChannel().getName())) {
+                            return;
+                        }
+                    }
+
+                    IRCCommandExecutor commandExecutor = command.getIRCCommand().getCommandExecutor();
                     try {
                         commandExecutor.execute(new IRCCommandContext(event, command, mcobotParser, args, hidden, commandManager));
                     } catch (Exception e) {

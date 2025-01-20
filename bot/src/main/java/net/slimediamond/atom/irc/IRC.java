@@ -12,6 +12,7 @@ import net.slimediamond.atom.reference.IRCReference;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.reference.MCOReference;
 import net.slimediamond.atom.services.system.GetServiceProcessor;
 import org.kitteh.irc.client.library.Client;
 import org.kitteh.irc.client.library.feature.auth.NickServ;
@@ -116,6 +117,7 @@ public class IRC {
                 .setDescription("Get the amount of bans on MinecraftOnline")
                 .setUsage("bans")
                 .irc()
+                .addWhitelistedChannels(MCOReference.whitelistedIRC)
                 .setExecutor(new BansCommand())
                 .then().build()
         );
@@ -134,6 +136,7 @@ public class IRC {
                 .setDescription("Get the first join date of a MinecraftOnline player")
                 .setUsage("firstseen [player]")
                 .irc()
+                .addWhitelistedChannels(MCOReference.whitelistedIRC)
                 .setExecutor(new MCOFirstseen())
                 .then().build()
         );
@@ -143,6 +146,7 @@ public class IRC {
                 .setDescription("Get the last join date of a MinecraftOnline player")
                 .setUsage("lastseen [player]")
                 .irc()
+                .addWhitelistedChannels(MCOReference.whitelistedIRC)
                 .setExecutor(new MCOLastseen())
                 .then().build()
         );
@@ -152,6 +156,7 @@ public class IRC {
                 .setDescription("Get the hour count of a MinecraftOnline player")
                 .setUsage("playtime [player]")
                 .irc()
+                .addWhitelistedChannels(MCOReference.whitelistedIRC)
                 .setExecutor(new MCOPlaytime())
                 .then().build()
         );
@@ -161,6 +166,7 @@ public class IRC {
                 .setDescription("Get a random player who is currently online on MCO")
                 .setUsage("randomplayer")
                 .irc()
+                .addWhitelistedChannels(MCOReference.whitelistedIRC)
                 .setExecutor(new RandomPlayerCommand())
                 .then().build()
         );
@@ -170,6 +176,7 @@ public class IRC {
                 .setDescription("Refresh the lastseen date of a MinecraftOnline player")
                 .setUsage("refreshlastseen [player]")
                 .irc()
+                .addWhitelistedChannels(MCOReference.whitelistedIRC)
                 .setExecutor(new RefreshLastseen())
                 .then().build()
         );
