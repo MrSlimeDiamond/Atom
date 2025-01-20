@@ -76,124 +76,125 @@ public class IRC {
         GetServiceProcessor.processAnnotations(ircCommandListener);
         client.getEventManager().registerEventListener(ircCommandListener);
 
-//        commandManager.register(new CommandBuilder()
-//                .addAliases("ping")
-//                .setDescription("replies with pong!")
-//                .setUsage("ping")
-//                .setCommandPlatform(CommandPlatform.IRC)
-//                .setExecutor(ctx -> ctx.reply("Pong!"))
-//                .build()
-//        );
-//
-//        // Mostly a debug command
-//        commandManager.register(new CommandBuilder()
-//                .addAliases("parent")
-//                .setDescription("test command: parent command and subcommand")
-//                .setUsage("parent")
-//                .setCommandPlatform(CommandPlatform.IRC)
-//                .setExecutor(context -> context.reply("parent command. args: " + Arrays.toString(context.getArgs())))
-//                .addChild(new CommandBuilder()
-//                        .addAliases("child")
-//                        .setDescription("this is a child command of a parent")
-//                        .setUsage("parent child")
-//                        .setCommandPlatform(CommandPlatform.IRC)
-//                        .setExecutor(context -> context.reply("child command. args: " + Arrays.toString(context.getArgs())))
-//                        .build()
-//                )
-//                .build()
-//        );
-//
-//        commandManager.register(new CommandBuilder()
-//                .addAliases("help")
-//                .setDescription("Help command, shows commands which are available")
-//                .setUsage("help")
-//                .setCommandPlatform(CommandPlatform.IRC)
-//                .setExecutor(new HelpCommand())
-//                .build()
-//        );
-//
-//        commandManager.register(new CommandBuilder()
-//                .addAliases("bans", "bancount")
-//                .setDescription("Get the amount of bans on MinecraftOnline")
-//                .setUsage("bans")
-//                .setCommandPlatform(CommandPlatform.IRC)
-//                .setExecutor(new BansCommand())
-//                .build()
-//        );
-//
-//        commandManager.register(new CommandBuilder()
-//                .addAliases("goodnight", "gn")
-//                .setDescription("Say goodnight in an IRC channel")
-//                .setUsage("goodnight")
-//                .setCommandPlatform(CommandPlatform.IRC)
-//                .setExecutor(new GoodnightCommand())
-//                .build()
-//        );
-//
-//        commandManager.register(new CommandBuilder()
-//                .addAliases("firstseen", "firstjoin", "fs", "fj")
-//                .setDescription("Get the first join date of a MinecraftOnline player")
-//                .setUsage("firstseen [player]")
-//                .setCommandPlatform(CommandPlatform.IRC)
-//                .setExecutor(new MCOFirstseen())
-//                .build()
-//        );
-//
-//        commandManager.register(new CommandBuilder()
-//                .addAliases("lastseen", "lastjoin", "ls", "lj")
-//                .setDescription("Get the last join date of a MinecraftOnline player")
-//                .setUsage("lastseen [player]")
-//                .setCommandPlatform(CommandPlatform.IRC)
-//                .setExecutor(new MCOLastseen())
-//                .build()
-//        );
-//
-//        commandManager.register(new CommandBuilder()
-//                .addAliases("playtime", "timeplayed", "tp", "pt")
-//                .setDescription("Get the hour count of a MinecraftOnline player")
-//                .setUsage("playtime [player]")
-//                .setCommandPlatform(CommandPlatform.IRC)
-//                .setExecutor(new MCOPlaytime())
-//                .build()
-//        );
-//
-//        commandManager.register(new CommandBuilder()
-//                .addAliases("randomplayer", "rp")
-//                .setDescription("Get a random player who is currently online on MCO")
-//                .setUsage("randomplayer")
-//                .setCommandPlatform(CommandPlatform.IRC)
-//                .setExecutor(new RandomPlayerCommand())
-//                .build()
-//        );
-//
-//        commandManager.register(new CommandBuilder()
-//                .addAliases("refreshlastseen")
-//                .setDescription("Refresh the lastseen date of a MinecraftOnline player")
-//                .setUsage("refreshlastseen [player]")
-//                .setCommandPlatform(CommandPlatform.IRC)
-//                .setExecutor(new RefreshLastseen())
-//                .build()
-//        );
-//
-//        commandManager.register(new CommandBuilder()
-//                .addAliases("bridge")
-//                .setDescription("Manage chat bridges")
-//                .setUsage("bridge <channel|pipe|blacklist>")
-//                .setAdminOnly(true)
-//                .setCommandPlatform(CommandPlatform.IRC)
-//                .setExecutor(new BridgeCommand())
-//                .build()
-//        );
-//
-//        commandManager.register(new CommandBuilder()
-//                .addAliases("channel")
-//                .setDescription("Manage IRC channels")
-//                .setUsage("channel <add|modify|join|part> <channel>")
-//                .setAdminOnly(true)
-//                .setCommandPlatform(CommandPlatform.IRC)
-//                .setExecutor(new ChannelCommand())
-//                .build()
-//        );
+        commandManager.register(new CommandBuilder()
+                .addAliases("ping")
+                .setDescription("replies with pong!")
+                .setUsage("ping")
+                .irc()
+                .setExecutor(ctx -> ctx.reply("Pong!"))
+                .then()
+                .build()
+        );
+
+        // Mostly a debug command
+        commandManager.register(new CommandBuilder()
+                .addAliases("parent")
+                .setDescription("test command: parent command and subcommand")
+                .setUsage("parent")
+                .irc()
+                .setExecutor(context -> context.reply("parent command. args: " + Arrays.toString(context.getArgs()))).then()
+                .addChild(new CommandBuilder()
+                        .addAliases("child")
+                        .setDescription("this is a child command of a parent")
+                        .setUsage("parent child")
+                        .irc()
+                        .setExecutor(context -> context.reply("child command. args: " + Arrays.toString(context.getArgs())))
+                        .then().build()
+                )
+                .build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("help")
+                .setDescription("Help command, shows commands which are available")
+                .setUsage("help")
+                .irc()
+                .setExecutor(new HelpCommand())
+                .then().build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("bans", "bancount")
+                .setDescription("Get the amount of bans on MinecraftOnline")
+                .setUsage("bans")
+                .irc()
+                .setExecutor(new BansCommand())
+                .then().build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("goodnight", "gn")
+                .setDescription("Say goodnight in an IRC channel")
+                .setUsage("goodnight")
+                .irc()
+                .setExecutor(new GoodnightCommand())
+                .then().build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("firstseen", "firstjoin", "fs", "fj")
+                .setDescription("Get the first join date of a MinecraftOnline player")
+                .setUsage("firstseen [player]")
+                .irc()
+                .setExecutor(new MCOFirstseen())
+                .then().build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("lastseen", "lastjoin", "ls", "lj")
+                .setDescription("Get the last join date of a MinecraftOnline player")
+                .setUsage("lastseen [player]")
+                .irc()
+                .setExecutor(new MCOLastseen())
+                .then().build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("playtime", "timeplayed", "tp", "pt")
+                .setDescription("Get the hour count of a MinecraftOnline player")
+                .setUsage("playtime [player]")
+                .irc()
+                .setExecutor(new MCOPlaytime())
+                .then().build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("randomplayer", "rp")
+                .setDescription("Get a random player who is currently online on MCO")
+                .setUsage("randomplayer")
+                .irc()
+                .setExecutor(new RandomPlayerCommand())
+                .then().build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("refreshlastseen")
+                .setDescription("Refresh the lastseen date of a MinecraftOnline player")
+                .setUsage("refreshlastseen [player]")
+                .irc()
+                .setExecutor(new RefreshLastseen())
+                .then().build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("bridge")
+                .setDescription("Manage chat bridges")
+                .setUsage("bridge <channel|pipe|blacklist>")
+                .setAdminOnly(true)
+                .irc()
+                .setExecutor(new BridgeCommand())
+                .then().build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("channel")
+                .setDescription("Manage IRC channels")
+                .setUsage("channel <add|modify|join|part> <channel>")
+                .setAdminOnly(true)
+                .irc()
+                .setExecutor(new ChannelCommand())
+                .then().build()
+        );
 
     }
 

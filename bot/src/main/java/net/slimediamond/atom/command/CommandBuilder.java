@@ -3,6 +3,7 @@ package net.slimediamond.atom.command;
 import net.slimediamond.atom.command.discord.DiscordCommand;
 import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.command.exceptions.CommandBuildException;
+import net.slimediamond.atom.command.irc.IRCCommand;
 import net.slimediamond.atom.command.irc.IRCCommandExecutor;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class CommandBuilder {
     private boolean adminOnly = false;
     private final ArrayList<CommandMetadata> children = new ArrayList<>();
     private DiscordCommand discordCommand;
-    private IRCCommandExecutor ircExecutor; // FIXME
+    private IRCCommand ircCommand;
 
     /**
      * Add one or more aliases to the command.
@@ -64,6 +65,11 @@ public class CommandBuilder {
         return this.discordCommand;
     }
 
+    public IRCCommand irc() {
+        this.ircCommand = new IRCCommand(this);
+        return this.ircCommand;
+    }
+
     /**
      * Add a child command (subcommand)
      * @param metadata
@@ -82,7 +88,7 @@ public class CommandBuilder {
             throw new CommandBuildException("Cannot create a command without a description");
         } else if (usage == null) {
             throw new CommandBuildException("Cannot create a command without any usage hint");
-        } else if (discordCommand == null && ircExecutor == null) {
+        } else if (discordCommand == null && ircCommand == null) {
             throw new CommandBuildException("Cannot create a command without an executor");
         } else {
             // I don't know if this is the best way of doing it
@@ -114,12 +120,18 @@ public class CommandBuilder {
 
                 @Override
                 public DiscordCommandExecutor getDiscordCommandExecutor() {
-                    return discordCommand.getCommandExecutor();
+                    if (discordCommand != null) {
+                        return discordCommand.getCommandExecutor();
+                    }
+                    return null;
                 }
 
                 @Override
                 public IRCCommandExecutor getIRCCommandExecutor() {
-                    return ircExecutor;
+                    if (ircCommand != null) {
+                        return ircCommand.getCommandExecutor();
+                    }
+                    return null;
                 }
             };
         }
