@@ -1,5 +1,7 @@
 package net.slimediamond.atom.command.discord.args;
 
+import java.util.Optional;
+
 public class UserArgument {
     private Object value;
     private DiscordArgumentMetadata metadata;

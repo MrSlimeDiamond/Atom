@@ -8,23 +8,22 @@ import net.slimediamond.atom.util.EmbedUtil;
 import net.slimediamond.atom.util.MCOPlayer;
 
 import java.awt.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class BanwhyCommand implements DiscordCommandExecutor {
     @Override
     public void execute(DiscordCommandContext context) throws Exception {
         context.deferReply();
 
-        String username = context.getArguments().get("username").getAsString();
-        if (username == null) {
-            username = context.getSender().getName();
-        }
+        AtomicReference<String> username = new AtomicReference();
+        context.getArguments().get("username").ifPresentOrElse(arg -> username.set(arg.getAsString()), () -> username.set(context.getSender().getName()));
 
-        MCOPlayer player = new MCOPlayer(username); // should get correct name from this
+        MCOPlayer player = new MCOPlayer(username.get()); // should get correct name from this
 
         if (!player.isBanned()) {
             context.replyEmbeds(new EmbedBuilder()
                     .setColor(Color.GREEN)
-                    .setAuthor(username, null, "https://mc-heads.net/avatar/" + username)
+                    .setAuthor(player.getName(), null, "https://mc-heads.net/avatar/" + player.getName())
                     .setDescription(player.getName() + " is not banned!")
                     .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
                     .build());

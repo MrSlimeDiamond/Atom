@@ -1,14 +1,15 @@
 package net.slimediamond.atom.command.discord.args;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class ArgumentList extends ArrayList<UserArgument> {
-    public UserArgument get(String name) {
+    public Optional<UserArgument> get(String name) {
         for (UserArgument userArgument : this) {
             if (userArgument.getMetadata().getName().equalsIgnoreCase(name)) {
-                return userArgument;
+                return Optional.of(userArgument);
             }
         }
-        return null;
+        return Optional.empty();
     }
 }

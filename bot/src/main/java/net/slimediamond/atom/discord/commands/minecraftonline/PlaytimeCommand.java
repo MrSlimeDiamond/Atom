@@ -11,25 +11,24 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class PlaytimeCommand implements DiscordCommandExecutor {
     @Override
     public void execute(DiscordCommandContext context) throws Exception {
         context.deferReply();
 
-        String username = context.getArguments().get("username").getAsString();
-        if (username == null) {
-            username = context.getSender().getName();
-        }
+        AtomicReference<String> username = new AtomicReference();
+        context.getArguments().get("username").ifPresentOrElse(arg -> username.set(arg.getAsString()), () -> username.set(context.getSender().getName()));
 
-        MCOPlayer player = new MCOPlayer(username); // should get correct name from this
+        MCOPlayer player = new MCOPlayer(username.get()); // should get correct name from this
         Optional<Long> playtime = player.getPlaytime();
         if (playtime.isPresent()) {
             BigDecimal hours = new BigDecimal(playtime.get()).divide(new BigDecimal(3600), 2, RoundingMode.HALF_UP);
             context.replyEmbeds(new EmbedBuilder()
                     .setColor(Color.GREEN)
-                    .setAuthor(username, null, "https://mc-heads.net/avatar/" + username)
-                    .setDescription(username + " has played on Freedonia for " + hours.toString() + " hours")
+                    .setAuthor(username.get(), null, "https://mc-heads.net/avatar/" + username.get())
+                    .setDescription(username.get() + " has played on Freedonia for " + hours.toString() + " hours")
                     .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
                     .build()
             );
