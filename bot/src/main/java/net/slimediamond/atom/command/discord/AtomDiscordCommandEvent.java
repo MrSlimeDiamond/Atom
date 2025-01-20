@@ -2,12 +2,15 @@ package net.slimediamond.atom.command.discord;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.Arrays;
 
 /**
  * Triggered either by a slash command or a
@@ -21,6 +24,7 @@ public class AtomDiscordCommandEvent {
     private MessageChannel channel;
     private Member member;
     private boolean isFromGuild;
+    private boolean deferred;
 
     @Nullable private SlashCommandInteractionEvent slashCommandInteractionEvent;
 
@@ -67,12 +71,34 @@ public class AtomDiscordCommandEvent {
         return member;
     }
 
+    public void setDeferred(boolean deferred) {
+        this.deferred = deferred;
+    }
+
     public void reply(String message) {
         if (isTextCommand()) {
             channel.sendMessage(message).queue();
         } else {
             if (slashCommandInteractionEvent != null) {
-                slashCommandInteractionEvent.reply(message).queue();
+                if (deferred) {
+                    slashCommandInteractionEvent.getHook().sendMessage(message).queue();
+                } else {
+                    slashCommandInteractionEvent.reply(message).queue();
+                }
+            }
+        }
+    }
+
+    public void replyEmbeds(MessageEmbed... embeds) {
+        if (isTextCommand()) {
+            this.channel.sendMessageEmbeds(Arrays.asList(embeds)).queue();
+        } else {
+            if (slashCommandInteractionEvent != null) {
+                if (deferred) {
+                    slashCommandInteractionEvent.getHook().sendMessageEmbeds(Arrays.asList(embeds)).queue();
+                } else {
+                    slashCommandInteractionEvent.replyEmbeds(Arrays.asList(embeds)).queue();
+                }
             }
         }
     }

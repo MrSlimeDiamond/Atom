@@ -137,6 +137,17 @@ public class DiscordCommandListener extends ListenerAdapter {
                     } else return;
                 }
 
+                if (!command.getChildren().isEmpty()) {
+                    if (event.getSubcommandName() != null) {
+                        // it might contain a subcommand. Let's check.
+                        for (CommandMetadata child : command.getChildren()) {
+                            if (child.getAliases().contains(event.getSubcommandName())) {
+                                command = child;
+                            }
+                        }
+                    }
+                }
+
                 // Args for compatibility's sake
                 String[] args = event.getOptions().stream().map(OptionMapping::getAsString).toArray(String[]::new);
 

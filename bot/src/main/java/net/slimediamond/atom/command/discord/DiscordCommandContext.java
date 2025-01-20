@@ -76,17 +76,14 @@ public class DiscordCommandContext implements CommandContext {
     }
 
     public void replyEmbeds(MessageEmbed... embeds) {
-        if (interactionEvent.isTextCommand()) {
-            interactionEvent.getChannel().sendMessageEmbeds(Arrays.asList(embeds)).queue();
-        } else {
-            interactionEvent.getSlashCommandInteractionEvent().replyEmbeds(Arrays.asList(embeds)).queue();
-        }
+        interactionEvent.replyEmbeds(embeds);
     }
 
     public void deferReply() {
         // do nothing on text commands
         if (!interactionEvent.isTextCommand()) {
             interactionEvent.getSlashCommandInteractionEvent().deferReply().queue();
+            interactionEvent.setDeferred(true);
         }
     }
 
