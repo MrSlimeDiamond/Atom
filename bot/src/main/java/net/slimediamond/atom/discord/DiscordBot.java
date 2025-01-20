@@ -96,6 +96,7 @@ public class DiscordBot {
                     String output = ctx.getArguments().get(0).getAsString();
                     ctx.reply(output);
                 })
+                .addWhitelistedGuilds(696218632618901504L)
                 .addArgument(new DiscordArgsBuilder()
                         .addAliases("string")
                         .setId(0)

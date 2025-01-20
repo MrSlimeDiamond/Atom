@@ -60,12 +60,18 @@ public class CommandManager {
                         }
                     }
 
-                    // TODO: Guild whitelisting. This currently puts it EVERYWHERE
                     CommandData commandData = new CommandDataImpl(metadata.getName(), metadata.getDescription())
                             .addOptions(options)
                             .addSubcommands(subcommands);
 
-                    jda.upsertCommand(commandData).queue();
+                    if (command.getWhitelistedGuilds().isEmpty()) {
+                        jda.upsertCommand(commandData).queue();
+                    } else {
+                        // Only add it to guilds in the whitelist
+                        command.getWhitelistedGuilds().forEach(guildId -> {
+                            jda.getGuildById(guildId).upsertCommand(commandData).queue();
+                        });
+                    }
                 }
             }
         }

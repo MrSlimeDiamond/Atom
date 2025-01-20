@@ -13,6 +13,7 @@ public class DiscordCommand {
     private ArrayList<DiscordArgumentMetadata> args = new ArrayList<>();
     private boolean slashCommand = true;
     private DiscordCommandExecutor commandExecutor;
+    private ArrayList<Long> whitelistedGuilds = new ArrayList<>();
 
     public DiscordCommand(CommandBuilder commandBuilder) {
         this.commandBuilder = commandBuilder;
@@ -45,6 +46,20 @@ public class DiscordCommand {
     public DiscordCommand setExecutor(Consumer<DiscordCommandContext> executor) {
         this.commandExecutor = executor::accept;
         return this;
+    }
+
+    public DiscordCommand addWhitelistedGuilds(long... guilds) {
+        for (long guild : guilds) {
+            whitelistedGuilds.add(guild);
+        }
+
+        return this;
+    }
+
+    // TODO: make this return an actual Guild object
+    // TOOD: hard to do atm due to the lack of the jda object
+    public ArrayList<Long> getWhitelistedGuilds() {
+        return this.whitelistedGuilds;
     }
 
     public DiscordCommandExecutor getCommandExecutor() {

@@ -76,6 +76,14 @@ public class DiscordCommandListener extends ListenerAdapter {
                         }
                     }
 
+                    if (!command.getDiscordCommand().getWhitelistedGuilds().isEmpty()) {
+                        if (event.isFromGuild()) {
+                            if (!command.getDiscordCommand().getWhitelistedGuilds().contains(event.getGuild().getIdLong())) {
+                                return;
+                            }
+                        } else return;
+                    }
+
                     DiscordCommandExecutor commandExecutor = command.getDiscordCommand().getCommandExecutor();
                     try {
                         commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager));
@@ -105,6 +113,14 @@ public class DiscordCommandListener extends ListenerAdapter {
                         event.reply("The database seems down! (SQLException occurred) - unable to determine whether you have admin permissions.").queue();
                         e.printStackTrace();
                     }
+                }
+
+                if (!command.getDiscordCommand().getWhitelistedGuilds().isEmpty()) {
+                    if (event.isFromGuild()) {
+                        if (!command.getDiscordCommand().getWhitelistedGuilds().contains(event.getGuild().getIdLong())) {
+                            return;
+                        }
+                    } else return;
                 }
 
                 // Args for compatibility's sake
