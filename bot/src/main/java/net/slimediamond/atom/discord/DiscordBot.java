@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.JDA;
 import net.slimediamond.atom.command.CommandBuilder;
 import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandPlatform;
+import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.command.discord.DiscordCommandListener;
 import net.slimediamond.atom.discord.commands.*;
 import net.slimediamond.atom.discord.commands.amplicity.AmplicityTimeplayed;
@@ -64,8 +65,9 @@ public class DiscordBot {
                 .addAliases("ping")
                 .setDescription("Replies with pong")
                 .setUsage("ping")
-                .setCommandPlatform(CommandPlatform.DISCORD)
+                .discord()
                 .setExecutor(ctx -> ctx.reply("Pong!"))
+                .then()
                 .build()
         );
 
@@ -74,14 +76,16 @@ public class DiscordBot {
                 .addAliases("parent")
                 .setDescription("test command: parent command and subcommand")
                 .setUsage("parent")
-                .setCommandPlatform(CommandPlatform.DISCORD)
+                .discord()
                 .setExecutor(context -> context.reply("parent command. args: " + Arrays.toString(context.getArgs())))
+                .then()
                 .addChild(new CommandBuilder()
                         .addAliases("child")
                         .setDescription("this is a child command of a parent")
                         .setUsage("parent child")
-                        .setCommandPlatform(CommandPlatform.DISCORD)
+                        .discord()
                         .setExecutor(context -> context.reply("child command. args: " + Arrays.toString(context.getArgs())))
+                        .then()
                         .build()
                 )
                 .build()

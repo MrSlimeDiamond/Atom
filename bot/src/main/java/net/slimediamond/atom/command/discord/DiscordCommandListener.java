@@ -1,14 +1,10 @@
 package net.slimediamond.atom.command.discord;
 
-import com.sun.jna.platform.win32.OaIdl;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandMetadata;
-import net.slimediamond.atom.command.CommandPlatform;
-import net.slimediamond.atom.command.irc.IRCCommandContext;
-import net.slimediamond.atom.command.irc.IRCCommandExecutor;
 import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.reference.DiscordReference;
 
@@ -43,7 +39,7 @@ public class DiscordCommandListener extends ListenerAdapter {
 
             for (CommandMetadata command : commandManager.getCommands()) {
                 // Only pay attention to Discord commands here
-                if (command.getCommandPlatform() != CommandPlatform.DISCORD) {
+                if (!command.hasDiscord()) {
                     continue;
                 }
 
@@ -78,7 +74,7 @@ public class DiscordCommandListener extends ListenerAdapter {
                         }
                     }
 
-                    DiscordCommandExecutor commandExecutor = (DiscordCommandExecutor) command.getCommandExecutor();
+                    DiscordCommandExecutor commandExecutor = command.getDiscordCommandExecutor();
                     try {
                         commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager));
                     } catch (Exception e) {

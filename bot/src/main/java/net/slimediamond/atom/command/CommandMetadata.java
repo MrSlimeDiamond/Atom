@@ -1,5 +1,8 @@
 package net.slimediamond.atom.command;
 
+import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
+import net.slimediamond.atom.command.irc.IRCCommandExecutor;
+
 import java.util.ArrayList;
 
 public interface CommandMetadata {
@@ -25,12 +28,6 @@ public interface CommandMetadata {
     String getDescription();
 
     /**
-     * Command platform
-     * @return command platform
-     */
-    CommandPlatform getCommandPlatform();
-
-    /**
      * Get the command usage
      * @return command usage
      */
@@ -49,8 +46,30 @@ public interface CommandMetadata {
     ArrayList<CommandMetadata> getChildren();
 
     /**
-     * Get the command executor
-     * @return command executor
+     * Get the Discord command executor
+     * @return Discord command executor
      */
-    CommandExecutor getCommandExecutor();
+    DiscordCommandExecutor getDiscordCommandExecutor();
+
+    /**
+     * Get the IRC command executor
+     * @return IRC command executor
+     */
+    IRCCommandExecutor getIRCCommandExecutor();
+
+    /**
+     * Whether the command is Discord-compatible
+     * @return has discord
+     */
+    default boolean hasDiscord() {
+        return getDiscordCommandExecutor() != null;
+    }
+
+    /**
+     * Whether the command is IRC-compatible
+     * @return has IRC
+     */
+    default boolean hasIRC() {
+        return getIRCCommandExecutor() != null;
+    }
 }

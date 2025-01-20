@@ -1,20 +1,20 @@
 package net.slimediamond.atom.command;
 
+import net.slimediamond.atom.command.discord.DiscordCommand;
 import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.command.exceptions.CommandBuildException;
 import net.slimediamond.atom.command.irc.IRCCommandExecutor;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 public class CommandBuilder {
     private final ArrayList<String> aliases = new ArrayList<>();
     private String description;
     private String usage;
-    private CommandPlatform platform;
     private boolean adminOnly = false;
     private final ArrayList<CommandMetadata> children = new ArrayList<>();
-    private CommandExecutor commandExecutor;
+    private DiscordCommand discordCommand;
+    private IRCCommandExecutor ircExecutor; // FIXME
 
     /**
      * Add one or more aliases to the command.
@@ -50,16 +50,6 @@ public class CommandBuilder {
     }
 
     /**
-     * Set the command's platform
-     * @param platform
-     * @return this
-     */
-    public CommandBuilder setCommandPlatform(CommandPlatform platform) {
-        this.platform = platform;
-        return this;
-    }
-
-    /**
      * Set whether the command is admin only
      * @param adminOnly
      * @return this
@@ -67,6 +57,11 @@ public class CommandBuilder {
     public CommandBuilder setAdminOnly(boolean adminOnly) {
         this.adminOnly = adminOnly;
         return this;
+    }
+
+    public DiscordCommand discord() {
+        this.discordCommand = new DiscordCommand(this);
+        return this.discordCommand;
     }
 
     /**
@@ -79,41 +74,15 @@ public class CommandBuilder {
         return this;
     }
 
-    /**
-     * Set the command's executor
-     * @param commandExecutor
-     * @return this
-     */
-    public CommandBuilder setExecutor(CommandExecutor commandExecutor) {
-        this.commandExecutor = commandExecutor;
-        return this;
-    }
-
-    public CommandBuilder setExecutor(Consumer<CommandContext> executor) {
-        if (platform == null) {
-            throw new CommandBuildException("Please set a command platform before setting its executor.");
-        }
-
-        if (platform == CommandPlatform.IRC) {
-            this.commandExecutor = (IRCCommandExecutor)executor::accept;
-        } else if (platform == CommandPlatform.DISCORD) {
-            this.commandExecutor = (DiscordCommandExecutor)executor::accept;
-        }
-
-        return this;
-    }
-
     public CommandMetadata build() {
         // Make sure everything is hunky-dory
         if (aliases.isEmpty()) {
             throw new CommandBuildException("Cannot create a command without any aliases");
         } else if (description == null) {
             throw new CommandBuildException("Cannot create a command without a description");
-        } else if (platform == null) {
-            throw new CommandBuildException("Cannot create a command without specifying the platform");
         } else if (usage == null) {
             throw new CommandBuildException("Cannot create a command without any usage hint");
-        } else if (commandExecutor == null) {
+        } else if (discordCommand == null && ircExecutor == null) {
             throw new CommandBuildException("Cannot create a command without an executor");
         } else {
             // I don't know if this is the best way of doing it
@@ -126,11 +95,6 @@ public class CommandBuilder {
                 @Override
                 public String getDescription() {
                     return description;
-                }
-
-                @Override
-                public CommandPlatform getCommandPlatform() {
-                    return platform;
                 }
 
                 @Override
@@ -149,8 +113,13 @@ public class CommandBuilder {
                 }
 
                 @Override
-                public CommandExecutor getCommandExecutor() {
-                    return commandExecutor;
+                public DiscordCommandExecutor getDiscordCommandExecutor() {
+                    return discordCommand.getCommandExecutor();
+                }
+
+                @Override
+                public IRCCommandExecutor getIRCCommandExecutor() {
+                    return ircExecutor;
                 }
             };
         }

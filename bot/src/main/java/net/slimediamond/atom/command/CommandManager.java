@@ -10,7 +10,15 @@ public class CommandManager {
     public void register(CommandMetadata metadata) {
         System.out.println("Registering command: " + metadata.getAliases().get(0));
         // allow @GetService
-        GetServiceProcessor.processAnnotations(metadata.getCommandExecutor());
+
+        if (metadata.hasIRC()) {
+            GetServiceProcessor.processAnnotations(metadata.getIRCCommandExecutor());
+        }
+
+        if (metadata.hasDiscord()) {
+            GetServiceProcessor.processAnnotations(metadata.getDiscordCommandExecutor());
+        }
+
         this.commands.add(metadata);
         // TODO: Specific stuff for Discord. (slash commands)
     }

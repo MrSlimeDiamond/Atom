@@ -54,7 +54,7 @@ public class IRCCommandListener {
 
             for (CommandMetadata command : commandManager.getCommands()) {
                 // Only pay attention to IRC commands here
-                if (command.getCommandPlatform() != CommandPlatform.IRC) {
+                if (!command.hasIRC()) {
                     continue;
                 }
 
@@ -84,7 +84,7 @@ public class IRCCommandListener {
                         }
                     }
 
-                    IRCCommandExecutor commandExecutor = (IRCCommandExecutor)command.getCommandExecutor();
+                    IRCCommandExecutor commandExecutor = (IRCCommandExecutor)command.getIRCCommandExecutor();
                     try {
                         commandExecutor.execute(new IRCCommandContext(event, command, mcobotParser, args, hidden, commandManager));
                     } catch (Exception e) {
