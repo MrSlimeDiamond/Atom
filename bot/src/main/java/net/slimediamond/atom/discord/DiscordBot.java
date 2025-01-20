@@ -10,6 +10,8 @@ import net.slimediamond.atom.command.discord.args.DiscordArgsBuilder;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.discord.commands.minecraftonline.*;
+import net.slimediamond.atom.reference.MCOReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,28 +86,16 @@ public class DiscordBot {
                         .then()
                         .build()
                 )
-                .build()
-        );
-
-        commandManager.register(new CommandBuilder()
-                .addAliases("test")
-                .setDescription("spit out a string you put in")
-                .setUsage("test <string>")
-                .discord()
-                .setExecutor(ctx -> {
-                    String output = ctx.getArguments().get(0).getAsString();
-                    ctx.reply(output);
-                })
-                .addWhitelistedGuilds(696218632618901504L)
-                .addArgument(new DiscordArgsBuilder()
-                        .addAliases("string")
-                        .setId(0)
-                        .setDescription("The string you want to have spit out")
-                        .setOptionType(OptionType.STRING)
-                        .setRequired(true)
+                .addChild(new CommandBuilder()
+                        .addAliases("child2")
+                        .setDescription("this is a child command of a parent")
+                        .setUsage("parent child2")
+                        .discord()
+                        .setExecutor(context -> context.reply("child2 command. args: " + Arrays.toString(context.getArgs())))
+                        .then()
                         .build()
                 )
-                .then().build()
+                .build()
         );
 
         commandManager.register(new CommandBuilder()
@@ -119,6 +109,97 @@ public class DiscordBot {
                     commandManager.refreshDiscordSlashCommands(jda);
                     ctx.reply("Reloaded slash commands!");
                 }).then().build()
+        );
+
+        // MINECRAFTONLINE COMMAND ROOT
+        commandManager.register(new CommandBuilder()
+                .addAliases("mco", "minecraftonline")
+                .setDescription("Commands for MinecraftOnline")
+                .setUsage("mco <firstseen|lastseen|playtime|bans|banwhy> [username]")
+                .discord()
+                .addWhitelistedGuilds(MCOReference.whitelistedDiscord)
+                .setExecutor(ctx -> {
+                    ctx.reply(ctx.getCommandMetadata().getCommandUsage());
+                })
+                .then()
+                .addChild(new CommandBuilder()
+                        .addAliases("firstseen", "fs", "fj")
+                        .setDescription("Get first join date of a user")
+                        .setUsage("mco firstseen [username]")
+                        .discord()
+                        .setExecutor(new FirstseenCommand())
+                        .addArgument(new DiscordArgsBuilder()
+                                .addAliases("username")
+                                .setId(0)
+                                .setDescription("The username to look up")
+                                .setOptionType(OptionType.STRING)
+                                .setRequired(false)
+                                .build()
+                        )
+                        .then()
+                        .build()
+                )
+                .addChild(new CommandBuilder()
+                        .addAliases("lastseen", "ls", "lj")
+                        .setDescription("Get last join date of a user")
+                        .setUsage("mco lastseen [username]")
+                        .discord()
+                        .setExecutor(new LastseenCommand())
+                        .addArgument(new DiscordArgsBuilder()
+                                .addAliases("username")
+                                .setId(0)
+                                .setDescription("The username to look up")
+                                .setOptionType(OptionType.STRING)
+                                .setRequired(false)
+                                .build()
+                        )
+                        .then()
+                        .build()
+                )
+                .addChild(new CommandBuilder()
+                        .addAliases("playtime", "pt", "tp", "timeplayed")
+                        .setDescription("Get hours played of a user")
+                        .setUsage("mco playtime [username]")
+                        .discord()
+                        .setExecutor(new PlaytimeCommand())
+                        .addArgument(new DiscordArgsBuilder()
+                                .addAliases("username")
+                                .setId(0)
+                                .setDescription("The username to look up")
+                                .setOptionType(OptionType.STRING)
+                                .setRequired(false)
+                                .build()
+                        )
+                        .then()
+                        .build()
+                )
+                .addChild(new CommandBuilder()
+                        .addAliases("bans")
+                        .setDescription("Get the amount of bans on MCO")
+                        .setUsage("mco bans")
+                        .discord()
+                        .setExecutor(new BansCommand())
+                        .then()
+                        .build()
+                )
+                .addChild(new CommandBuilder()
+                        .addAliases("banwhy", "why")
+                        .setDescription("Get a user's ban information")
+                        .setUsage("mco banwhy [username]")
+                        .discord()
+                        .setExecutor(new BanwhyCommand())
+                        .addArgument(new DiscordArgsBuilder()
+                                .addAliases("username")
+                                .setId(0)
+                                .setDescription("The username to look up")
+                                .setOptionType(OptionType.STRING)
+                                .setRequired(false)
+                                .build()
+                        )
+                        .then()
+                        .build()
+                )
+                .build()
         );
 
         // TODO: Automatically add guilds to the database

@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class CommandManager {
     private static final Logger log = LoggerFactory.getLogger("command manager");
@@ -69,7 +70,7 @@ public class CommandManager {
                     } else {
                         // Only add it to guilds in the whitelist
                         command.getWhitelistedGuilds().forEach(guildId -> {
-                            jda.getGuildById(guildId).upsertCommand(commandData).queue();
+                            Objects.requireNonNull(jda.getGuildById(guildId)).upsertCommand(commandData).queue();
                         });
                     }
                 }

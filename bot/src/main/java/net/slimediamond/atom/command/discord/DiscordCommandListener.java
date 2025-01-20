@@ -1,5 +1,6 @@
 package net.slimediamond.atom.command.discord;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -9,7 +10,10 @@ import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandMetadata;
 import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.reference.DiscordReference;
+import net.slimediamond.atom.util.EmbedUtil;
+import net.slimediamond.atom.util.UnknownPlayerException;
 
+import java.awt.*;
 import java.sql.SQLException;
 import java.util.Arrays;
 
@@ -56,13 +60,15 @@ public class DiscordCommandListener extends ListenerAdapter {
                         if (remaining != null) {
                             // it might contain a subcommand. Let's check.
                             for (CommandMetadata child : command.getChildren()) {
-                                if (child.getAliases().get(0).equalsIgnoreCase(remaining.split(" ")[0])) {
+                                if (child.getAliases().contains(remaining.split(" ")[0].toLowerCase())) {
                                     args = Arrays.copyOfRange(args, 1, args.length);
                                     command = child;
                                 }
                             }
                         }
                     }
+
+                    System.out.println(command.getName());
 
                     if (command.isAdminOnly()) {
                         try {
@@ -87,8 +93,16 @@ public class DiscordCommandListener extends ListenerAdapter {
                     DiscordCommandExecutor commandExecutor = command.getDiscordCommand().getCommandExecutor();
                     try {
                         commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager));
+                    } catch (UnknownPlayerException e) {
+                        event.getChannel().sendMessageEmbeds(EmbedUtil.expandedErrorEmbed("Could not find that player!")).queue();
                     } catch (Exception e) {
-                        event.getChannel().sendMessage("An error occurred: " + e.getMessage()).queue();
+                        event.getChannel().sendMessageEmbeds(new EmbedBuilder()
+                                .setColor(Color.red)
+                                .setAuthor("An error occurred!")
+                                .setTitle(e.getClass().getSimpleName())
+                                .setDescription(e.getMessage())
+                                .build()
+                        ).queue();
                         e.printStackTrace();
                     }
                     break;
@@ -129,8 +143,16 @@ public class DiscordCommandListener extends ListenerAdapter {
                 DiscordCommandExecutor commandExecutor = command.getDiscordCommand().getCommandExecutor();
                 try {
                     commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager));
+                } catch (UnknownPlayerException e) {
+                    event.replyEmbeds(EmbedUtil.expandedErrorEmbed("Could not find that player!")).queue();
                 } catch (Exception e) {
-                    event.reply("An error occurred! " + e.getMessage()).queue();
+                    event.replyEmbeds(new EmbedBuilder()
+                            .setColor(Color.red)
+                            .setAuthor("An error occurred!")
+                            .setTitle(e.getClass().getSimpleName())
+                            .setDescription(e.getMessage())
+                            .build()
+                    ).queue();
                     e.printStackTrace();
                 }
                 break;

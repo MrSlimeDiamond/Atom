@@ -1,5 +1,6 @@
 package net.slimediamond.atom.command.discord;
 
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.slimediamond.atom.command.*;
 import net.slimediamond.atom.command.discord.args.ArgumentList;
@@ -72,6 +73,21 @@ public class DiscordCommandContext implements CommandContext {
     @Override
     public void reply(String message) {
         interactionEvent.reply(message);
+    }
+
+    public void replyEmbeds(MessageEmbed... embeds) {
+        if (interactionEvent.isTextCommand()) {
+            interactionEvent.getChannel().sendMessageEmbeds(Arrays.asList(embeds)).queue();
+        } else {
+            interactionEvent.getSlashCommandInteractionEvent().replyEmbeds(Arrays.asList(embeds)).queue();
+        }
+    }
+
+    public void deferReply() {
+        // do nothing on text commands
+        if (!interactionEvent.isTextCommand()) {
+            interactionEvent.getSlashCommandInteractionEvent().deferReply().queue();
+        }
     }
 
     @Override

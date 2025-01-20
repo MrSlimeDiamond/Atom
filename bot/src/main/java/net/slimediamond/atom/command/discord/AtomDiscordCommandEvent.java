@@ -55,7 +55,7 @@ public class AtomDiscordCommandEvent {
         return guild;
     }
 
-    public Channel getChannel() {
+    public MessageChannel getChannel() {
         return channel;
     }
 
