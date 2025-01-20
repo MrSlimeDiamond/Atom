@@ -83,4 +83,8 @@ public class AtomDiscordCommandEvent {
             }
         }
     }
+
+    public boolean isTextCommand() {
+        return slashCommandInteractionEvent == null;
+    }
 }

@@ -74,7 +74,7 @@ public class DiscordCommandListener extends ListenerAdapter {
                         }
                     }
 
-                    DiscordCommandExecutor commandExecutor = command.getDiscordCommandExecutor();
+                    DiscordCommandExecutor commandExecutor = command.getDiscordCommand().getCommandExecutor();
                     try {
                         commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager));
                     } catch (Exception e) {

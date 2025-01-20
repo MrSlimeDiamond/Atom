@@ -1,6 +1,9 @@
 package net.slimediamond.atom.command.discord;
 
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.slimediamond.atom.command.*;
+import net.slimediamond.atom.command.discord.args.DiscordArgumentMetadata;
+import net.slimediamond.atom.command.exceptions.ArgumentException;
 
 public class DiscordCommandContext implements CommandContext {
     private AtomDiscordCommandEvent interactionEvent;
@@ -49,5 +52,26 @@ public class DiscordCommandContext implements CommandContext {
     public String getDesiredCommandUsername() {
         // TODO
         return getSender().getName();
+    }
+
+    public <T> T getArgument(int id) {
+        if (interactionEvent.isTextCommand()) {
+            // Take the arguments, then grab whichever index it's at
+            DiscordArgumentMetadata arg = metadata.getDiscordCommand().getArgs().get(id);
+            if (arg.getOptionType() == OptionType.STRING) {
+                return (T) args[id];
+            }
+        }
+
+        return null; // TODO: Support everything
+    }
+
+    public <T> T getArgument(String name) {
+        for (DiscordArgumentMetadata arg : metadata.getDiscordCommand().getArgs()) {
+            if (arg.getName().equalsIgnoreCase(name)) {
+                return getArgument(arg.getId());
+            }
+        }
+        throw new ArgumentException("Could not find an argument with that name");
     }
 }

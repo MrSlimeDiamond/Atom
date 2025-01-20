@@ -61,12 +61,16 @@ public class CommandBuilder {
     }
 
     public DiscordCommand discord() {
-        this.discordCommand = new DiscordCommand(this);
+        if (this.discordCommand == null) {
+            this.discordCommand = new DiscordCommand(this);
+        }
         return this.discordCommand;
     }
 
     public IRCCommand irc() {
-        this.ircCommand = new IRCCommand(this);
+        if (this.ircCommand == null) {
+            this.ircCommand = new IRCCommand(this);
+        }
         return this.ircCommand;
     }
 
@@ -119,17 +123,17 @@ public class CommandBuilder {
                 }
 
                 @Override
-                public DiscordCommandExecutor getDiscordCommandExecutor() {
+                public DiscordCommand getDiscordCommand() {
                     if (discordCommand != null) {
-                        return discordCommand.getCommandExecutor();
+                        return discordCommand;
                     }
                     return null;
                 }
 
                 @Override
-                public IRCCommandExecutor getIRCCommandExecutor() {
+                public IRCCommand getIRCCommand() {
                     if (ircCommand != null) {
-                        return ircCommand.getCommandExecutor();
+                        return ircCommand;
                     }
                     return null;
                 }

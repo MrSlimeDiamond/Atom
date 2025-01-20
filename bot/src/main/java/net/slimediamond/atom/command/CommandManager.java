@@ -12,11 +12,11 @@ public class CommandManager {
         // allow @GetService
 
         if (metadata.hasIRC()) {
-            GetServiceProcessor.processAnnotations(metadata.getIRCCommandExecutor());
+            GetServiceProcessor.processAnnotations(metadata.getIRCCommand().getCommandExecutor());
         }
 
         if (metadata.hasDiscord()) {
-            GetServiceProcessor.processAnnotations(metadata.getDiscordCommandExecutor());
+            GetServiceProcessor.processAnnotations(metadata.getDiscordCommand().getCommandExecutor());
         }
 
         this.commands.add(metadata);

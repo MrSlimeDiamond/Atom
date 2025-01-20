@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 public class DiscordCommand {
     private CommandBuilder commandBuilder;
-    private ArrayList<DiscordArgumentMetadata>args;
+    private ArrayList<DiscordArgumentMetadata> args = new ArrayList<>();
     private boolean slashCommand = false;
     private DiscordCommandExecutor commandExecutor;
 
@@ -19,9 +19,18 @@ public class DiscordCommand {
     }
 
     public DiscordCommand addArgument(DiscordArgumentMetadata discordArgumentMetadata) {
-        args.add(discordArgumentMetadata);
+        int index = discordArgumentMetadata.getId();
+
+        // Ensure the list is large enough to hold the element at the desired index
+        while (args.size() <= index) {
+            args.add(null); // Add null placeholders if needed
+        }
+
+        // Insert the discordArgumentMetadata at the correct index
+        args.set(index, discordArgumentMetadata);
         return this;
     }
+
 
     public DiscordCommand setSlashCommand(boolean slashCommand) {
         this.slashCommand = slashCommand;
@@ -47,5 +56,9 @@ public class DiscordCommand {
             throw new CommandBuildException("Cannot create a discord command without an executor");
         }
         return commandBuilder;
+    }
+
+    public ArrayList<DiscordArgumentMetadata> getArgs() {
+        return args;
     }
 }

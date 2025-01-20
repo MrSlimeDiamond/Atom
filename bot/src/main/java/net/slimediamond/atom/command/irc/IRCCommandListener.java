@@ -84,7 +84,7 @@ public class IRCCommandListener {
                         }
                     }
 
-                    IRCCommandExecutor commandExecutor = (IRCCommandExecutor)command.getIRCCommandExecutor();
+                    IRCCommandExecutor commandExecutor = (IRCCommandExecutor)command.getIRCCommand().getCommandExecutor();
                     try {
                         commandExecutor.execute(new IRCCommandContext(event, command, mcobotParser, args, hidden, commandManager));
                     } catch (Exception e) {

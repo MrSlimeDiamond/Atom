@@ -2,11 +2,13 @@ package net.slimediamond.atom.discord;
 
 import com.google.inject.Inject;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.slimediamond.atom.command.CommandBuilder;
 import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandPlatform;
 import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.command.discord.DiscordCommandListener;
+import net.slimediamond.atom.command.discord.args.DiscordArgsBuilder;
 import net.slimediamond.atom.discord.commands.*;
 import net.slimediamond.atom.discord.commands.amplicity.AmplicityTimeplayed;
 import net.slimediamond.atom.reference.DiscordReference;
@@ -89,6 +91,24 @@ public class DiscordBot {
                         .build()
                 )
                 .build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("test")
+                .setDescription("spit out a string you put in")
+                .setUsage("test <string>")
+                .discord()
+                .setExecutor(ctx -> {
+                    ctx.reply(ctx.getArgument(0));
+                })
+                .addArgument(new DiscordArgsBuilder()
+                        .addAliases("string")
+                        .setId(0)
+                        .setDescription("The string you want to have spit out")
+                        .setOptionType(OptionType.STRING)
+                        .build()
+                )
+                .then().build()
         );
 
         // TODO: Automatically add guilds to the database
