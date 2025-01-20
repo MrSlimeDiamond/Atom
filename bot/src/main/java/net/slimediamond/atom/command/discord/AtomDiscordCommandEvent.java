@@ -16,7 +16,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * Just a nice helper class so that both of those are on the same page.
  */
 public class AtomDiscordCommandEvent {
-    private DiscordCommandOrigin origin;
     private User user;
     private Guild guild;
     private MessageChannel channel;
@@ -26,7 +25,6 @@ public class AtomDiscordCommandEvent {
     @Nullable private SlashCommandInteractionEvent slashCommandInteractionEvent;
 
     public AtomDiscordCommandEvent(MessageReceivedEvent event) {
-        this.origin = DiscordCommandOrigin.TEXT;
         this.user = event.getAuthor();
         this.channel = event.getChannel();
         this.member = event.getMember();
@@ -39,7 +37,6 @@ public class AtomDiscordCommandEvent {
 
     public AtomDiscordCommandEvent(SlashCommandInteractionEvent event) {
         this.slashCommandInteractionEvent = event;
-        this.origin = DiscordCommandOrigin.SLASH;
         this.user = event.getUser();
         this.channel = event.getChannel();
         this.member = event.getMember();
@@ -48,10 +45,6 @@ public class AtomDiscordCommandEvent {
         if (event.isFromGuild()) {
             this.guild = event.getGuild();
         }
-    }
-
-    public DiscordCommandOrigin getOrigin() {
-        return origin;
     }
 
     public User getUser() {
@@ -75,9 +68,9 @@ public class AtomDiscordCommandEvent {
     }
 
     public void reply(String message) {
-        if (origin == DiscordCommandOrigin.TEXT) {
+        if (isTextCommand()) {
             channel.sendMessage(message).queue();
-        } else if (origin == DiscordCommandOrigin.SLASH) {
+        } else {
             if (slashCommandInteractionEvent != null) {
                 slashCommandInteractionEvent.reply(message).queue();
             }
