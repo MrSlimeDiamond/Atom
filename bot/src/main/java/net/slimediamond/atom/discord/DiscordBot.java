@@ -5,17 +5,11 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.slimediamond.atom.command.CommandBuilder;
 import net.slimediamond.atom.command.CommandManager;
-import net.slimediamond.atom.command.CommandPlatform;
-import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.command.discord.DiscordCommandListener;
 import net.slimediamond.atom.command.discord.args.DiscordArgsBuilder;
-import net.slimediamond.atom.discord.commands.*;
-import net.slimediamond.atom.discord.commands.amplicity.AmplicityTimeplayed;
-import net.slimediamond.atom.reference.DiscordReference;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
-import net.slimediamond.atom.discord.commands.minecraftonline.MCOCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,9 +92,7 @@ public class DiscordBot {
                 .setDescription("spit out a string you put in")
                 .setUsage("test <string>")
                 .discord()
-                .setExecutor(ctx -> {
-                    ctx.reply(ctx.getArgument(0));
-                })
+                .setExecutor(ctx -> ctx.reply(ctx.getArgument(0)))
                 .addArgument(new DiscordArgsBuilder()
                         .addAliases("string")
                         .setId(0)

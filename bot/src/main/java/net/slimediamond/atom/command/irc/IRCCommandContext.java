@@ -39,11 +39,6 @@ public class IRCCommandContext implements CommandContext {
     }
 
     @Override
-    public CommandPlatform getPlatform() {
-        return CommandPlatform.IRC;
-    }
-
-    @Override
     public CommandMetadata getCommandMetadata() {
         return this.metadata;
     }

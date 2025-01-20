@@ -14,12 +14,6 @@ public interface CommandContext {
     String[] getArgs();
 
     /**
-     * Get the command platform
-     * @return command platform
-     */
-    CommandPlatform getPlatform();
-
-    /**
      * Get command metadata
      * @return command metadata object
      */

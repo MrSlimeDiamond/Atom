@@ -29,11 +29,6 @@ public class DiscordCommandContext implements CommandContext {
     }
 
     @Override
-    public CommandPlatform getPlatform() {
-        return CommandPlatform.DISCORD;
-    }
-
-    @Override
     public CommandMetadata getCommandMetadata() {
         return this.metadata;
     }
