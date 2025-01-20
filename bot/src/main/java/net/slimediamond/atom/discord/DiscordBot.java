@@ -92,15 +92,32 @@ public class DiscordBot {
                 .setDescription("spit out a string you put in")
                 .setUsage("test <string>")
                 .discord()
-                .setExecutor(ctx -> ctx.reply(ctx.getArgument(0)))
+                .setExecutor(ctx -> {
+                    String output = ctx.getArguments().get(0).getAsString();
+                    ctx.reply(output);
+                })
                 .addArgument(new DiscordArgsBuilder()
                         .addAliases("string")
                         .setId(0)
                         .setDescription("The string you want to have spit out")
                         .setOptionType(OptionType.STRING)
+                        .setRequired(true)
                         .build()
                 )
                 .then().build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("commands", "cmds")
+                .setDescription("Command management")
+                .setUsage("commands reload")
+                .setAdminOnly(true)
+                .discord()
+                .setSlashCommand(false)
+                .setExecutor(ctx -> {
+                    commandManager.refreshDiscordSlashCommands(jda);
+                    ctx.reply("Reloaded slash commands!");
+                }).then().build()
         );
 
         // TODO: Automatically add guilds to the database
@@ -122,5 +139,10 @@ public class DiscordBot {
     public void shutdownService() {
         log.info("Shutting down bot...");
         jda.shutdownNow();
+    }
+
+    // fuck DI
+    public JDA getJDA() {
+        return jda;
     }
 }

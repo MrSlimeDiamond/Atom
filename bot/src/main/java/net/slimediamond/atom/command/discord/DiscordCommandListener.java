@@ -1,7 +1,9 @@
 package net.slimediamond.atom.command.discord;
 
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandMetadata;
@@ -69,7 +71,7 @@ public class DiscordCommandListener extends ListenerAdapter {
                                 return;
                             }
                         } catch (SQLException e) {
-                            event.getChannel().sendMessage("The database seems down! (SQLException occurred) - unable to determine whether you have admin permissions.");
+                            event.getChannel().sendMessage("The database seems down! (SQLException occurred) - unable to determine whether you have admin permissions.").queue();
                             e.printStackTrace();
                         }
                     }
@@ -78,11 +80,44 @@ public class DiscordCommandListener extends ListenerAdapter {
                     try {
                         commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager));
                     } catch (Exception e) {
-                        event.getChannel().sendMessage("An error occurred: " + e.getMessage());
+                        event.getChannel().sendMessage("An error occurred: " + e.getMessage()).queue();
                         e.printStackTrace();
                     }
                     break;
                 }
+            }
+        }
+    }
+
+    @Override
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        for (CommandMetadata command : commandManager.getCommands()) {
+            if (command.getAliases().contains(event.getName())) {
+                if (!command.hasDiscord()) continue;
+                // valid command from this bot
+
+                if (command.isAdminOnly()) {
+                    try {
+                        if (!database.isDiscordAdminByID(event.getUser().getIdLong())) {
+                            event.reply("You do not have permission to do this!");
+                        }
+                    } catch (SQLException e) {
+                        event.reply("The database seems down! (SQLException occurred) - unable to determine whether you have admin permissions.").queue();
+                        e.printStackTrace();
+                    }
+                }
+
+                // Args for compatibility's sake
+                String[] args = event.getOptions().stream().map(OptionMapping::getAsString).toArray(String[]::new);
+
+                DiscordCommandExecutor commandExecutor = command.getDiscordCommand().getCommandExecutor();
+                try {
+                    commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager));
+                } catch (Exception e) {
+                    event.reply("An error occurred! " + e.getMessage()).queue();
+                    e.printStackTrace();
+                }
+                break;
             }
         }
     }

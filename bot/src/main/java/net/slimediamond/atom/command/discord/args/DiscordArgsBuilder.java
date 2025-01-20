@@ -79,7 +79,7 @@ public class DiscordArgsBuilder {
 
             @Override
             public boolean isRequired() {
-                return isRequired();
+                return required;
             }
         };
     }

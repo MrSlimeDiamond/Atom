@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 public class DiscordCommand {
     private CommandBuilder commandBuilder;
     private ArrayList<DiscordArgumentMetadata> args = new ArrayList<>();
-    private boolean slashCommand = false;
+    private boolean slashCommand = true;
     private DiscordCommandExecutor commandExecutor;
 
     public DiscordCommand(CommandBuilder commandBuilder) {
@@ -60,5 +60,9 @@ public class DiscordCommand {
 
     public ArrayList<DiscordArgumentMetadata> getArgs() {
         return args;
+    }
+
+    public boolean isSlashCommand() {
+        return slashCommand;
     }
 }
