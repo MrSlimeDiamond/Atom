@@ -32,18 +32,6 @@ public interface CommandContext {
     CommandManager getCommandManager();
 
     /**
-     * Get the desired username of the sender.
-     *
-     * If ingame on MCO, this will be the player's username.
-     * Or if they are in Discord, Telegram, etc.
-     *
-     * Otherwise it's just the sender name
-     *
-     * @return desired command sender name
-     */
-    String getDesiredCommandUsername();
-
-    /**
      * Send the command usage
      */
     void sendUsage();

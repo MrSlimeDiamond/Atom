@@ -135,12 +135,6 @@ public class DiscordCommandContext  implements CommandContext {
     }
 
     @Override
-    public String getDesiredCommandUsername() {
-        // TODO
-        return getSender().getName();
-    }
-
-    @Override
     public void sendUsage() {
         this.replyEmbeds(new EmbedBuilder()
                 .setDescription("Usage: " + metadata.getCommandUsage())
