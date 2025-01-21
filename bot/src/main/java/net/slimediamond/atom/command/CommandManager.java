@@ -23,6 +23,15 @@ public class CommandManager {
         System.out.println("Registering command: " + metadata.getAliases().get(0));
         // allow @GetService
 
+        processAnnotations(metadata);
+        if (!metadata.getChildren().isEmpty()) {
+            metadata.getChildren().forEach(this::processAnnotations);
+        }
+
+        this.commands.add(metadata);
+    }
+
+    private void processAnnotations(CommandMetadata metadata) {
         if (metadata.hasIRC()) {
             GetServiceProcessor.processAnnotations(metadata.getIRCCommand().getCommandExecutor());
         }
@@ -30,8 +39,6 @@ public class CommandManager {
         if (metadata.hasDiscord()) {
             GetServiceProcessor.processAnnotations(metadata.getDiscordCommand().getCommandExecutor());
         }
-
-        this.commands.add(metadata);
     }
 
     public ArrayList<CommandMetadata> getCommands() {

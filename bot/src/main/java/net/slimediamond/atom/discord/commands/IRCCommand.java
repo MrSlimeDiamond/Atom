@@ -100,15 +100,9 @@ public class IRCCommand {
                 event.replyEmbeds(EmbedUtil.expandedErrorEmbed("This channel is not bridged"));
             }
         } else if (event.getSubcommandName().equals("whois")) {
-            String name = event.getStringOption("user");
-            event.deferReply();
-            commandEvent = event;
-            new WhoisCommand(IRC.client).target(name).execute();
+
         } else if (event.getSubcommandName().equals("restart")) {
-            event.deferReply();
-            IRC irc = Atom.getServiceManager().getInstance(IRC.class);
-            irc.reloadService();
-            event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Reloaded IRC service"));
+
         }
     }
 

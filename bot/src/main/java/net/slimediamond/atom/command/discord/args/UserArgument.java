@@ -1,13 +1,18 @@
 package net.slimediamond.atom.command.discord.args;
 
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.slimediamond.atom.command.discord.AtomDiscordCommandEvent;
+
 import java.util.Optional;
 
 public class UserArgument {
     private Object value;
+    private AtomDiscordCommandEvent interactionEvent;
     private DiscordArgumentMetadata metadata;
 
-    public UserArgument(Object value, DiscordArgumentMetadata metadata) {
+    public UserArgument(Object value, AtomDiscordCommandEvent interactionEvent, DiscordArgumentMetadata metadata) {
         this.value = value;
+        this.interactionEvent = interactionEvent;
         this.metadata = metadata;
     }
 
@@ -29,5 +34,9 @@ public class UserArgument {
 
     public boolean getAsBoolean() {
         return (boolean)value;
+    }
+
+    public GuildChannel getAsChannel() {
+        return (GuildChannel)value;
     }
 }

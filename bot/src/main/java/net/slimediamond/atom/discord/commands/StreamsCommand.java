@@ -72,8 +72,7 @@ public class StreamsCommand {
                 database.setServerStreamsChannel(event.getGuild(), null);
             }
         } else if (event.getSubcommandName().equals("add")) {
-            database.insertServerStreamer(event.getGuild(), event.getStringOption("login"));
-            event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Added streamer"));
+
         } else if (event.getSubcommandName().equals("remove")) {
             database.deleteServerStreamer(event.getGuild(), event.getStringOption("login"));
             event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Removed streamer"));

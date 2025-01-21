@@ -1,9 +1,6 @@
 package net.slimediamond.atom.command.discord;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -25,6 +22,7 @@ public class AtomDiscordCommandEvent {
     private Member member;
     private boolean isFromGuild;
     private boolean deferred;
+    private Message message;
 
     @Nullable private SlashCommandInteractionEvent slashCommandInteractionEvent;
 
@@ -33,6 +31,7 @@ public class AtomDiscordCommandEvent {
         this.channel = event.getChannel();
         this.member = event.getMember();
         this.isFromGuild = event.isFromGuild();
+        this.message = event.getMessage();
 
         if (event.isFromGuild()) {
             this.guild = event.getGuild();
@@ -73,6 +72,11 @@ public class AtomDiscordCommandEvent {
 
     public void setDeferred(boolean deferred) {
         this.deferred = deferred;
+    }
+
+    @Nullable
+    public Message getMessage() {
+        return this.message;
     }
 
     public void reply(String message) {

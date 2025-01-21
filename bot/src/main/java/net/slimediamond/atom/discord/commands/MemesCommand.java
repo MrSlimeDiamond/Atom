@@ -1,34 +1,31 @@
 package net.slimediamond.atom.discord.commands;
 
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.slimediamond.atom.command.discord.DiscordCommandContext;
+import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.database.Database;
-import net.slimediamond.atom.discord.CommandEvent;
-import net.slimediamond.atom.discord.annotations.Command;
 import net.slimediamond.atom.util.EmbedUtil;
 
 import java.sql.SQLException;
 
-public class MemesCommand {
+public class MemesCommand implements DiscordCommandExecutor {
     @GetService
     private Database database;
-    @Command(name = "memes", aliases = {"memevoting"}, slashCommand = false, description = "Manage memes voting service", adminOnly = true, usage = "memes channel <set|unset> [channel]")
-    public void memesCommand(CommandEvent event) throws SQLException {
-        String[] args = event.getCommandArgs();
-        if (args[0].equalsIgnoreCase("channel")) {
-            if (args[1].equalsIgnoreCase("set")) {
+
+    // this is always !a memes channel
+    public void execute(DiscordCommandContext context) throws SQLException {
+        String[] args = context.getArgs();
+            if (args[0].equalsIgnoreCase("set")) {
                 // try to parse a channel
-                GuildChannel channel = event.getMessage().getMentions().getChannels().get(0);
-                database.setServerMemesChannel(channel.getIdLong(), event.getGuild());
-                event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Set server memes channel"));
-            } else if (args[1].equalsIgnoreCase("unset")) {
-                database.unsetServerMemesChannel(event.getGuild());
-                event.replyEmbeds(EmbedUtil.genericSuccessEmbed("Unset server memes channel"));
+                GuildChannel channel = context.getInteractionEvent().getMessage().getMentions().getChannels().get(0);
+                database.setServerMemesChannel(channel.getIdLong(), channel.getGuild());
+                context.replyEmbeds(EmbedUtil.genericSuccessEmbed("Set server memes channel"));
+            } else if (args[0].equalsIgnoreCase("unset")) {
+                database.unsetServerMemesChannel(context.getGuild());
+                context.replyEmbeds(EmbedUtil.genericSuccessEmbed("Unset server memes channel"));
             } else {
-                event.sendUsage();
+                context.reply("Usage: " + context.getCommandMetadata().getCommandUsage());
             }
-        } else {
-            event.sendUsage();
         }
-    }
 }

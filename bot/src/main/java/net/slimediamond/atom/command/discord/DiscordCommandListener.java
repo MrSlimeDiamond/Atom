@@ -92,7 +92,7 @@ public class DiscordCommandListener extends ListenerAdapter {
 
                     DiscordCommandExecutor commandExecutor = command.getDiscordCommand().getCommandExecutor();
                     try {
-                        commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager));
+                        commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager, event.getJDA()));
                     } catch (UnknownPlayerException e) {
                         event.getChannel().sendMessageEmbeds(EmbedUtil.expandedErrorEmbed("Could not find that player!")).queue();
                     } catch (Exception e) {
@@ -153,7 +153,7 @@ public class DiscordCommandListener extends ListenerAdapter {
 
                 DiscordCommandExecutor commandExecutor = command.getDiscordCommand().getCommandExecutor();
                 try {
-                    commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager));
+                    commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager, event.getJDA()));
                 } catch (UnknownPlayerException e) {
                     event.replyEmbeds(EmbedUtil.expandedErrorEmbed("Could not find that player!")).queue();
                 } catch (Exception e) {
