@@ -56,21 +56,6 @@ public class IRC {
         client.getAuthManager().addProtocol(NickServ.builder(client).account(IRCReference.nickServUsername).password(IRCReference.nickServPassword).build());
         database.joinAllIRCChannels();
 
-//        CommandHandler commandHandler = new CommandHandler();
-//        commandHandler.registerCommand(new BotCommands());
-//        commandHandler.registerCommand(new BridgeCommand());
-//        commandHandler.registerCommand(new ChannelCommand());
-//        commandHandler.registerCommand(new MCOFirstseen());
-//        commandHandler.registerCommand(new MCOLastseen());
-//        commandHandler.registerCommand(new MCOPlaytime());
-//        commandHandler.registerCommand(new RefreshLastseen());
-//        commandHandler.registerCommand(new BansCommand());
-//        commandHandler.registerCommand(new GoodnightCommand());
-//        commandHandler.registerCommand(new RandomPlayerCommand());
-//
-//        client.getEventManager().registerEventListener(new IRCCommand());
-//        client.getEventManager().registerEventListener(new MCOEventHandler());
-
         IRCCommandListener ircCommandListener = new IRCCommandListener(commandManager);
         GetServiceProcessor.processAnnotations(ircCommandListener);
         client.getEventManager().registerEventListener(ircCommandListener);
@@ -82,24 +67,6 @@ public class IRC {
                 .irc()
                 .setExecutor(ctx -> ctx.reply("Pong!"))
                 .then()
-                .build()
-        );
-
-        // Mostly a debug command
-        commandManager.register(new CommandBuilder()
-                .addAliases("parent")
-                .setDescription("test command: parent command and subcommand")
-                .setUsage("parent")
-                .irc()
-                .setExecutor(context -> context.reply("parent command. args: " + Arrays.toString(context.getArgs()))).then()
-                .addChild(new CommandBuilder()
-                        .addAliases("child")
-                        .setDescription("this is a child command of a parent")
-                        .setUsage("parent child")
-                        .irc()
-                        .setExecutor(context -> context.reply("child command. args: " + Arrays.toString(context.getArgs())))
-                        .then().build()
-                )
                 .build()
         );
 

@@ -58,26 +58,6 @@ public class DiscordBot {
     public void startService() throws IOException, InterruptedException, SQLException {
         jda.awaitReady();
 
-//        CommandHandler commandHandler = new CommandHandler(jda, DiscordReference.prefix);
-
-//        if (AmplicityTimeplayed.PLAYERDATA_FILE.exists()) {
-//            commandHandler.registerCommand(new AmplicityTimeplayed());
-//        }
-
-//        commandHandler.registerCommand(new BotCommands());
-//        commandHandler.registerCommand(new InformationCommands());
-//        commandHandler.registerCommand(new LoggerCommand());
-//        commandHandler.registerCommand(new PinnerinoCommand());
-//        commandHandler.registerCommand(new IRCCommand());
-//        commandHandler.registerCommand(new BridgeCommand());
-//        commandHandler.registerCommand(new PortalCommands());
-//        commandHandler.registerCommand(new MCOCommands());
-//        commandHandler.registerCommand(new ReactionRolesCommand());
-//        commandHandler.registerCommand(new StreamsCommand());
-//        commandHandler.registerCommand(new MemesCommand());
-
-//        jda.addEventListener(commandHandler);
-
         DiscordCommandListener commandListener = new DiscordCommandListener(commandManager);
         jda.addEventListener(commandListener);
 
