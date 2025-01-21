@@ -597,6 +597,7 @@ public class DiscordBot {
                 .setDescription("Commands for MinecraftOnline")
                 .setUsage("mco <firstseen|lastseen|playtime|bans|banwhy> [username]")
                 .discord()
+                .setSlashCommand(true)
                 .addWhitelistedGuilds(MCOReference.whitelistedDiscord)
                 .setExecutor(ctx -> {
                     ctx.reply(ctx.getCommandMetadata().getCommandUsage());

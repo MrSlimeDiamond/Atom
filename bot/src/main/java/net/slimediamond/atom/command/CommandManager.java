@@ -76,7 +76,10 @@ public class CommandManager {
                     } else {
                         // Only add it to guilds in the whitelist
                         command.getWhitelistedGuilds().forEach(guildId -> {
-                            Objects.requireNonNull(jda.getGuildById(guildId)).upsertCommand(commandData).queue();
+                            Guild guild = jda.getGuildById(guildId);
+                            if (guild != null) {
+                                guild.upsertCommand(commandData).queue();
+                            }
                         });
                     }
                 }
