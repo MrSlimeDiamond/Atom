@@ -60,7 +60,7 @@ public class CommandManager {
 
                     addOptions(command, options);
                     for (CommandMetadata child : metadata.getChildren()) {
-                        if (child.hasDiscord()) {
+                        if (child.hasDiscord() && child.getDiscordCommand().isSlashCommand()) {
                             ArrayList<OptionData> childOptions = new ArrayList<>();
                             addOptions(child.getDiscordCommand(), childOptions);
                             subcommands.add(new SubcommandData(child.getName(), child.getDescription()).addOptions(childOptions));
@@ -72,7 +72,8 @@ public class CommandManager {
                             .addSubcommands(subcommands);
 
                     if (command.getWhitelistedGuilds().isEmpty()) {
-                        jda.upsertCommand(commandData).queue();
+                        //jda.upsertCommand(commandData).queue();
+                        jda.getGuilds().forEach(guild -> guild.upsertCommand(commandData).queue());
                     } else {
                         // Only add it to guilds in the whitelist
                         command.getWhitelistedGuilds().forEach(guildId -> {
