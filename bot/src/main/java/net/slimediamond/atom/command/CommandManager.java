@@ -20,7 +20,6 @@ public class CommandManager {
     private ArrayList<CommandMetadata> commands = new ArrayList<>();
 
     public void register(CommandMetadata metadata) {
-        System.out.println("Registering command: " + metadata.getAliases().get(0));
         // allow @GetService
 
         processAnnotations(metadata);

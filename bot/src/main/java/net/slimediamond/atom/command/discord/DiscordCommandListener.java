@@ -68,8 +68,6 @@ public class DiscordCommandListener extends ListenerAdapter {
                         }
                     }
 
-                    System.out.println(command.getName());
-
                     if (command.isAdminOnly()) {
                         try {
                             if (!database.isDiscordAdminByID(event.getAuthor().getIdLong())) {

@@ -5,7 +5,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.slimediamond.atom.command.CommandMetadata;
 import net.slimediamond.atom.command.discord.DiscordCommandContext;
 import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
-import net.slimediamond.atom.discord.AtomCommand;
 
 import java.awt.*;
 
