@@ -9,7 +9,7 @@ public class DiscordArgsBuilder {
     private OptionType optionType;
     private int id = -1;
     private String description;
-    private ArrayList<String> aliases = new ArrayList<>();
+    private String name;
     private boolean required = false;
 
 
@@ -33,18 +33,16 @@ public class DiscordArgsBuilder {
         return this;
     }
 
-    public DiscordArgsBuilder addAliases(String... aliases) {
-        for (String alias : aliases) {
-            this.aliases.add(alias);
-        }
+    public DiscordArgsBuilder setName(String name) {
+        this.name = name;
         return this;
     }
 
     public DiscordArgumentMetadata build() {
         if (id == -1) {
             throw new ArgumentException("Cannot create an argument without an id");
-        } else if (aliases.isEmpty()) {
-            throw new ArgumentException("Cannot crate an argument without any aliases");
+        } else if (name == null) {
+            throw new ArgumentException("Cannot crate an argument without a name");
         } else if (description == null) {
             throw new ArgumentException("Cannot create an argument without a description");
         } else if (optionType == null) {
@@ -64,17 +62,12 @@ public class DiscordArgsBuilder {
 
             @Override
             public String getName() {
-                return aliases.get(0);
+                return name;
             }
 
             @Override
             public String getDescription() {
                 return description;
-            }
-
-            @Override
-            public ArrayList<String> getAliases() {
-                return aliases;
             }
 
             @Override
