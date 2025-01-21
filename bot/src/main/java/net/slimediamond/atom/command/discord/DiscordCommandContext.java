@@ -64,7 +64,7 @@ public class DiscordCommandContext  implements CommandContext {
             } else {
                 // FIXME: This doesn't work btw
                 // FIXME: getOption(name) <-- we don't have the name
-                return interactionEvent.getSlashCommandInteractionEvent().getOption(arg).getAsChannel();
+                //return interactionEvent.getSlashCommandInteractionEvent().getOption(arg).getAsChannel();
             }
 
             try {
