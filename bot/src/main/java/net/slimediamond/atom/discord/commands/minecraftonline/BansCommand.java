@@ -10,6 +10,7 @@ import net.slimediamond.atom.util.MinecraftOnlineAPI;
 public class BansCommand implements DiscordCommandExecutor {
     @Override
     public void execute(DiscordCommandContext context) throws Exception {
+        context.deferReply();
         MinecraftOnlineAPI.getBanCount().ifPresentOrElse(bans -> {
             EmbedBuilder builder = new EmbedBuilder()
                     .setColor(0x00BEBE)
