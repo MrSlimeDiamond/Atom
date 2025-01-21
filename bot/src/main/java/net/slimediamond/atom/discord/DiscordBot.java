@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.command.CommandBuilder;
+import net.slimediamond.atom.command.CommandContext;
 import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandMetadata;
 import net.slimediamond.atom.command.discord.DiscordCommandListener;
@@ -119,7 +120,7 @@ public class DiscordBot {
                 .setUsage("bridge <set|unset|pipe>")
                 .discord()
                 .setSlashCommand(false)
-                .setExecutor(ctx -> ctx.reply("Usage: " + ctx.getCommandMetadata().getCommandUsage()))
+                .setExecutor(CommandContext::sendUsage)
                 .then().addChild(new CommandBuilder()
                         .addAliases("pipe")
                         .setDescription("Manage the bridge pipe")
@@ -158,7 +159,7 @@ public class DiscordBot {
                 .setDescription("Commands for IRC")
                 .setUsage("irc <names|whois>")
                 .discord()
-                .setExecutor(ctx -> ctx.reply("Usage: " + ctx.getCommandMetadata().getCommandUsage()))
+                .setExecutor(CommandContext::sendUsage)
                 .then()
                 .addChild(new CommandBuilder()
                         .addAliases("names", "list")
@@ -265,7 +266,7 @@ public class DiscordBot {
                 .setAdminOnly(true)
                 .discord()
                 .setSlashCommand(false)
-                .setExecutor(ctx -> ctx.reply("Usage: " + ctx.getCommandMetadata().getCommandUsage()))
+                .setExecutor(CommandContext::sendUsage)
                 .then().addChild(new CommandBuilder()
                         .addAliases("set")
                         .setDescription("Set the channel")
@@ -298,7 +299,7 @@ public class DiscordBot {
                 .setAdminOnly(true)
                 .discord()
                 .setSlashCommand(false)
-                .setExecutor(ctx -> ctx.reply("Usage: " + ctx.getCommandMetadata().getCommandUsage()))
+                .setExecutor(CommandContext::sendUsage)
                 .then()
                 .addChild(new CommandBuilder()
                         .addAliases("blacklist")
@@ -345,7 +346,7 @@ public class DiscordBot {
                 .setAdminOnly(true)
                 .discord()
                 .setSlashCommand(false)
-                .setExecutor(ctx -> ctx.reply("Usage: " + ctx.getCommandMetadata().getCommandUsage()))
+                .setExecutor(CommandContext::sendUsage)
                 .then()
                 .addChild(new CommandBuilder()
                         .addAliases("channel")
@@ -365,7 +366,7 @@ public class DiscordBot {
                 .setUsage("portal2 cm [username]")
                 .discord()
                 .addWhitelistedGuilds(696218632618901504L, 1004897099017637979L)
-                .setExecutor(ctx -> ctx.reply("Usage: " + ctx.getCommandMetadata().getCommandUsage()))
+                .setExecutor(CommandContext::sendUsage)
                 .then()
                 .addChild(new CommandBuilder()
                         .addAliases("cm")
@@ -405,7 +406,7 @@ public class DiscordBot {
                 .setUsage("streams <channel/add/remove>")
                 .discord()
                 .setSlashCommand(false)
-                .setExecutor(ctx -> ctx.reply("Usage: " + ctx.getCommandMetadata().getCommandUsage()))
+                .setExecutor(CommandContext::sendUsage)
                 .then()
                 .addChild(new CommandBuilder()
                         .addAliases("channel")

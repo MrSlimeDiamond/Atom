@@ -1,5 +1,6 @@
 package net.slimediamond.atom.command.discord;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
@@ -12,6 +13,7 @@ import net.slimediamond.atom.command.discord.args.ArgumentList;
 import net.slimediamond.atom.command.discord.args.DiscordArgumentMetadata;
 import net.slimediamond.atom.command.discord.args.UserArgument;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,6 +138,14 @@ public class DiscordCommandContext  implements CommandContext {
     public String getDesiredCommandUsername() {
         // TODO
         return getSender().getName();
+    }
+
+    @Override
+    public void sendUsage() {
+        this.replyEmbeds(new EmbedBuilder()
+                .setDescription("Usage: " + metadata.getCommandUsage())
+                .setColor(Color.RED)
+                .build());
     }
 
     public ArgumentList getArguments() {

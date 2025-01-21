@@ -65,6 +65,11 @@ public class IRCCommandContext implements CommandContext {
         }
     }
 
+    @Override
+    public void sendUsage() {
+        this.reply("Usage: " + metadata.getCommandUsage());
+    }
+
     public String getChannelName() {
         return event.getChannel().getName();
     }

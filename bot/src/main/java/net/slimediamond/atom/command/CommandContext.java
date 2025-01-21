@@ -42,4 +42,9 @@ public interface CommandContext {
      * @return desired command sender name
      */
     String getDesiredCommandUsername();
+
+    /**
+     * Send the command usage
+     */
+    void sendUsage();
 }
