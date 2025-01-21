@@ -85,14 +85,15 @@ public class DiscordCommandListener extends ListenerAdapter {
                     if (!command.getDiscordCommand().getWhitelistedGuilds().isEmpty()) {
                         if (event.isFromGuild()) {
                             if (!command.getDiscordCommand().getWhitelistedGuilds().contains(event.getGuild().getIdLong())) {
-                                return;
+                                continue;
                             }
-                        } else return;
+                        } else continue;
                     }
 
                     DiscordCommandExecutor commandExecutor = command.getDiscordCommand().getCommandExecutor();
                     try {
                         commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager, event.getJDA()));
+                        break;
                     } catch (UnknownPlayerException e) {
                         event.getChannel().sendMessageEmbeds(EmbedUtil.expandedErrorEmbed("Could not find that player!")).queue();
                     } catch (Exception e) {
