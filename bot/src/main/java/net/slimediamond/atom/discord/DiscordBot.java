@@ -12,6 +12,7 @@ import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.discord.commands.*;
+import net.slimediamond.atom.discord.commands.amplicity.AmplicityTimeplayed;
 import net.slimediamond.atom.discord.commands.bridge.BridgePipeCommand;
 import net.slimediamond.atom.discord.commands.bridge.BridgeSetCommand;
 import net.slimediamond.atom.discord.commands.info.InfoBotCommand;
@@ -478,6 +479,25 @@ public class DiscordBot {
                         .then().build()
                 )
                 .build()
+        );
+
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("timeplayed", "playtime", "pt", "tp")
+                .setDescription("Get a player's hour count on Amplicity")
+                .setUsage("timeplayed <player>")
+                .discord()
+                .addWhitelistedGuilds(1048920042655449138L)
+                .setExecutor(new AmplicityTimeplayed())
+                .addArgument(new DiscordArgsBuilder()
+                        .addAliases("username")
+                        .setId(0)
+                        .setDescription("The username to check")
+                        .setOptionType(OptionType.STRING)
+                        .setRequired(false)
+                        .build()
+                )
+                .then().build()
         );
 
         commandManager.register(new CommandBuilder()

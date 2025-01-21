@@ -1,13 +1,10 @@
 package net.slimediamond.atom.irc.commands;
 
-import net.slimediamond.atom.command.CommandContext;
 import net.slimediamond.atom.command.irc.IRCCommandContext;
 import net.slimediamond.atom.command.irc.IRCCommandExecutor;
 import net.slimediamond.atom.database.Database;
-import net.slimediamond.atom.irc.annotations.Command;
 import net.slimediamond.atom.irc.IRC;
 import net.slimediamond.atom.common.annotations.GetService;
-import net.slimediamond.atom.irc.CommandEvent;
 
 import java.sql.SQLException;
 
