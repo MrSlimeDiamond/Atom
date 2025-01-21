@@ -9,13 +9,14 @@ import net.slimediamond.atom.command.irc.IRCCommandExecutor;
 import java.util.ArrayList;
 
 public class CommandBuilder {
-    private final ArrayList<String> aliases = new ArrayList<>();
+    private ArrayList<String> aliases = new ArrayList<>();
     private String description;
     private String usage;
     private boolean adminOnly = false;
-    private final ArrayList<CommandMetadata> children = new ArrayList<>();
+    private ArrayList<CommandMetadata> children = new ArrayList<>();
     private DiscordCommand discordCommand;
     private IRCCommand ircCommand;
+    private CommandBuilder commandBuilder = this;
 
     /**
      * Add one or more aliases to the command.
@@ -27,6 +28,11 @@ public class CommandBuilder {
         for (String alias : aliases) {
             this.aliases.add(alias);
         }
+        return this;
+    }
+
+    public CommandBuilder setAliases(ArrayList<String> aliases) {
+        this.aliases = aliases;
         return this;
     }
 
@@ -67,11 +73,21 @@ public class CommandBuilder {
         return this.discordCommand;
     }
 
+    public CommandBuilder discord(DiscordCommand discordCommand) {
+        this.discordCommand = discordCommand;
+        return this;
+    }
+
     public IRCCommand irc() {
         if (this.ircCommand == null) {
             this.ircCommand = new IRCCommand(this);
         }
         return this.ircCommand;
+    }
+
+    public CommandBuilder irc(IRCCommand ircCommand) {
+        this.ircCommand = ircCommand;
+        return this;
     }
 
     /**
@@ -81,6 +97,11 @@ public class CommandBuilder {
      */
     public CommandBuilder addChild(CommandMetadata metadata) {
         children.add(metadata);
+        return this;
+    }
+
+    public CommandBuilder setChildren(ArrayList<CommandMetadata> children) {
+        this.children = children;
         return this;
     }
 

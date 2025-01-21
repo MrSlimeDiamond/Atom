@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class CommandManager {
     private static final Logger log = LoggerFactory.getLogger("command manager");
@@ -60,10 +59,14 @@ public class CommandManager {
 
                     addOptions(command, options);
                     for (CommandMetadata child : metadata.getChildren()) {
-                        if (child.hasDiscord() && child.getDiscordCommand().isSlashCommand()) {
-                            ArrayList<OptionData> childOptions = new ArrayList<>();
-                            addOptions(child.getDiscordCommand(), childOptions);
-                            subcommands.add(new SubcommandData(child.getName(), child.getDescription()).addOptions(childOptions));
+                        if (child.hasDiscord()) {
+                            System.out.println("Would add: " + child.getName());
+                            if (child.getDiscordCommand().isSlashCommand()) {
+                                System.out.println("Subcommand has slash: " + child.getName());
+                                ArrayList<OptionData> childOptions = new ArrayList<>();
+                                addOptions(child.getDiscordCommand(), childOptions);
+                                subcommands.add(new SubcommandData(child.getName(), child.getDescription()).addOptions(childOptions));
+                            }
                         }
                     }
 

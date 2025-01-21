@@ -32,6 +32,11 @@ public class DiscordCommand {
         return this;
     }
 
+    public DiscordCommand setArguments(ArrayList<DiscordArgumentMetadata> args) {
+        this.args = args;
+        return this;
+    }
+
 
     public DiscordCommand setSlashCommand(boolean slashCommand) {
         this.slashCommand = slashCommand;
@@ -63,8 +68,13 @@ public class DiscordCommand {
         return this;
     }
 
+    public DiscordCommand setWhitelistedGuilds(ArrayList<Long> guilds) {
+        this.whitelistedGuilds = guilds;
+        return this;
+    }
+
     // TODO: make this return an actual Guild object
-    // TOOD: hard to do atm due to the lack of the jda object
+    // TODO: hard to do atm due to the lack of the jda object
     public ArrayList<Long> getWhitelistedGuilds() {
         return this.whitelistedGuilds;
     }

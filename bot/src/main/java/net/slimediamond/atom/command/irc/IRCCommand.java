@@ -33,6 +33,11 @@ public class IRCCommand {
         return this;
     }
 
+    public IRCCommand setWhitelistedChannels(ArrayList<String> whitelistedChannels) {
+        this.whitelistedChannels = whitelistedChannels;
+        return this;
+    }
+
     public ArrayList<String> getWhitelistedChannels() {
         return this.whitelistedChannels;
     }

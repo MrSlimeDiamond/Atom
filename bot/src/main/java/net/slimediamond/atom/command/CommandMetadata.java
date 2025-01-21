@@ -74,4 +74,34 @@ public interface CommandMetadata {
     default boolean hasIRC() {
         return getIRCCommand() != null;
     }
+
+    // this is a super dumb way of making a clone of the object
+    default CommandBuilder toBuilder() {
+        CommandBuilder commandBuilder = new CommandBuilder()
+                .setAliases(getAliases())
+                .setDescription(getDescription())
+                .setUsage(getCommandUsage())
+                .setAdminOnly(isAdminOnly())
+                .setChildren(getChildren());
+
+        if (this.hasDiscord()) {
+            commandBuilder.discord(
+                    new DiscordCommand(commandBuilder)
+                            .setSlashCommand(getDiscordCommand().isSlashCommand())
+                            .setExecutor(getDiscordCommand().getCommandExecutor())
+                            .setArguments(getDiscordCommand().getArgs())
+                            .setWhitelistedGuilds(getDiscordCommand().getWhitelistedGuilds())
+            );
+        }
+
+        if (this.hasIRC()) {
+            commandBuilder.irc(
+                    new IRCCommand(commandBuilder)
+                            .setWhitelistedChannels(getIRCCommand().getWhitelistedChannels())
+                            .setExecutor(getIRCCommand().getCommandExecutor())
+            );
+        }
+
+        return commandBuilder;
+    }
 }

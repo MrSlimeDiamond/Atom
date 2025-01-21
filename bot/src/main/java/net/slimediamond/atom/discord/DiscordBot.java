@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.command.CommandBuilder;
 import net.slimediamond.atom.command.CommandManager;
+import net.slimediamond.atom.command.CommandMetadata;
 import net.slimediamond.atom.command.discord.DiscordCommandListener;
 import net.slimediamond.atom.command.discord.args.DiscordArgsBuilder;
 import net.slimediamond.atom.common.annotations.GetService;
@@ -524,11 +525,12 @@ public class DiscordBot {
         );
 
         // Define MCO commands
-        CommandBuilder firstseen = new CommandBuilder()
+        CommandMetadata firstseen = new CommandBuilder()
                 .addAliases("firstseen", "fs", "fj")
                 .setDescription("Get first join date of a user")
                 .setUsage("mco firstseen [username]")
                 .discord()
+                .setSlashCommand(true)
                 .setExecutor(new FirstseenCommand())
                 .addArgument(new DiscordArgsBuilder()
                         .setName("username")
@@ -538,13 +540,14 @@ public class DiscordBot {
                         .setRequired(false)
                         .build()
                 )
-                .then();
+                .then().build();
 
-        CommandBuilder lastseen = new CommandBuilder()
+        CommandMetadata lastseen = new CommandBuilder()
                 .addAliases("lastseen", "ls", "lj")
                 .setDescription("Get last join date of a user")
                 .setUsage("mco lastseen [username]")
                 .discord()
+                .setSlashCommand(true)
                 .setExecutor(new LastseenCommand())
                 .addArgument(new DiscordArgsBuilder()
                         .setName("username")
@@ -554,13 +557,14 @@ public class DiscordBot {
                         .setRequired(false)
                         .build()
                 )
-                .then();
+                .then().build();
 
-        CommandBuilder playtime = new CommandBuilder()
+        CommandMetadata playtime = new CommandBuilder()
                 .addAliases("playtime", "pt", "tp", "timeplayed")
                 .setDescription("Get hours played of a user")
                 .setUsage("mco playtime [username]")
                 .discord()
+                .setSlashCommand(true)
                 .setExecutor(new PlaytimeCommand())
                 .addArgument(new DiscordArgsBuilder()
                         .setName("username")
@@ -570,21 +574,23 @@ public class DiscordBot {
                         .setRequired(false)
                         .build()
                 )
-                .then();
+                .then().build();
 
-        CommandBuilder bancount = new CommandBuilder()
+        CommandMetadata bancount = new CommandBuilder()
                 .addAliases("bans")
                 .setDescription("Get the amount of bans on MCO")
                 .setUsage("mco bans")
                 .discord()
+                .setSlashCommand(true)
                 .setExecutor(new BansCommand())
-                .then();
+                .then().build();
 
-        CommandBuilder banwhy = new CommandBuilder()
+        CommandMetadata banwhy = new CommandBuilder()
                 .addAliases("banwhy", "why")
                 .setDescription("Get a user's ban information")
                 .setUsage("mco banwhy [username]")
                 .discord()
+                .setSlashCommand(true)
                 .setExecutor(new BanwhyCommand())
                 .addArgument(new DiscordArgsBuilder()
                         .setName("username")
@@ -594,7 +600,7 @@ public class DiscordBot {
                         .setRequired(false)
                         .build()
                 )
-                .then();
+                .then().build();
 
         // MINECRAFTONLINE COMMAND ROOT
         commandManager.register(new CommandBuilder()
@@ -604,25 +610,23 @@ public class DiscordBot {
                 .discord()
                 .setSlashCommand(true)
                 .addWhitelistedGuilds(MCOReference.whitelistedDiscord)
-                .setExecutor(ctx -> {
-                    ctx.reply(ctx.getCommandMetadata().getCommandUsage());
-                })
+                .setExecutor(ctx -> ctx.reply(ctx.getCommandMetadata().getCommandUsage()))
                 .then()
-                .addChild(firstseen.build())
-                .addChild(lastseen.build())
-                .addChild(playtime.build())
-                .addChild(bancount.build())
-                .addChild(banwhy.build())
+                .addChild(firstseen)
+                .addChild(lastseen)
+                .addChild(playtime)
+                .addChild(bancount)
+                .addChild(banwhy)
                 .build()
         );
         // MCO COMMAND ENDS
 
         // HACKHACK: Register subcommands of mco as non-subcommands and non-slash commands
-        commandManager.register(lastseen.discord().setSlashCommand(false).then().build());
-        commandManager.register(firstseen.discord().setSlashCommand(false).then().build());
-        commandManager.register(playtime.discord().setSlashCommand(false).then().build());
-        commandManager.register(bancount.discord().setSlashCommand(false).then().build());
-        commandManager.register(banwhy.discord().setSlashCommand(false).then().build());
+        commandManager.register(lastseen.toBuilder().discord().setSlashCommand(false).then().build());
+        commandManager.register(firstseen.toBuilder().discord().setSlashCommand(false).then().build());
+        commandManager.register(playtime.toBuilder().discord().setSlashCommand(false).then().build());
+        commandManager.register(bancount.toBuilder().discord().setSlashCommand(false).then().build());
+        commandManager.register(banwhy.toBuilder().discord().setSlashCommand(false).then().build());
 
         // TODO: Automatically add guilds to the database
         jda.getGuilds().forEach(guild -> {
