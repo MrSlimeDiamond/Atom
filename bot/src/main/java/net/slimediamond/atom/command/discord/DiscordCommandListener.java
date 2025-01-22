@@ -77,6 +77,7 @@ public class DiscordCommandListener extends ListenerAdapter {
                         } catch (SQLException e) {
                             event.getChannel().sendMessage("The database seems down! (SQLException occurred) - unable to determine whether you have admin permissions.").queue();
                             e.printStackTrace();
+                            return;
                         }
                     }
 
@@ -125,6 +126,7 @@ public class DiscordCommandListener extends ListenerAdapter {
                     } catch (SQLException e) {
                         event.reply("The database seems down! (SQLException occurred) - unable to determine whether you have admin permissions.").queue();
                         e.printStackTrace();
+                        return;
                     }
                 }
 

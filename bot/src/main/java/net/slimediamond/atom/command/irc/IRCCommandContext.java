@@ -55,7 +55,7 @@ public class IRCCommandContext implements CommandContext {
     public CommandManager getCommandManager() {
         return this.commandManager;
     }
-    
+
     public String getDesiredCommandUsername() {
         if (this.args.length == 0) {
             return this.getSender().getName();
