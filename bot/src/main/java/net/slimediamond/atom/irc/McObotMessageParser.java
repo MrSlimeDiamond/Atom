@@ -58,4 +58,28 @@ public class McObotMessageParser {
         Matcher commandMatcher = command.matcher(message);
         return commandMatcher.find();
     }
+
+    // Extract the sender username from a chat message
+    public String getSenderUsername() {
+        if (isChatMessage()) {
+            Pattern senderPattern = Pattern.compile("\\(MCS\\) <(.*?)> .*");
+            Matcher matcher = senderPattern.matcher(message);
+            if (matcher.find()) {
+                return matcher.group(1); // Return the sender username
+            }
+        }
+        return null;
+    }
+
+    // Extract the actual message content from a chat message
+    public String getMessageContent() {
+        if (isChatMessage()) {
+            Pattern messagePattern = Pattern.compile("\\(MCS\\) <.*?> (.*)");
+            Matcher matcher = messagePattern.matcher(message);
+            if (matcher.find()) {
+                return matcher.group(1); // Return the message content
+            }
+        }
+        return null;
+    }
 }

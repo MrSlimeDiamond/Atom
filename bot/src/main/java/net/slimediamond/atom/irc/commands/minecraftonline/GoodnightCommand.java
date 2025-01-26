@@ -1,12 +1,11 @@
 package net.slimediamond.atom.irc.commands.minecraftonline;
 
-import net.slimediamond.atom.irc.CommandEvent;
-import net.slimediamond.atom.irc.annotations.Command;
+import net.slimediamond.atom.command.irc.IRCCommandContext;
+import net.slimediamond.atom.command.irc.IRCCommandExecutor;
 
-public class GoodnightCommand {
-    @Command(name = "goodnight", aliases = "gn", description = "Says goodnight!", usage = "goodnight")
-    public void goodnightCommand(CommandEvent event) {
+public class GoodnightCommand implements IRCCommandExecutor {
+    public void execute(IRCCommandContext ctx) {
         // Special characters are funny
-        event.getChannel().sendMessage("\u0001ACTION says goodnight\u0001");
+        ctx.reply("\u0001ACTION says goodnight\u0001");
     }
 }

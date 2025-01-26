@@ -89,7 +89,6 @@ public class MinecraftOnlineAPI {
         HTTPUtil.getDataFromURL("https://minecraftonline.com/cgi-bin/getplayerinfo?" + username).ifPresent(info -> {
             String[] data = info.split(";");
             if (data.length == 0 || data.length == 1) {
-                System.out.println(Arrays.toString(data));
                 temp.set(null);
             } else {
                 temp.set(data[1]);

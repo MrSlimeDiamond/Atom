@@ -1,31 +1,25 @@
 package net.slimediamond.atom.irc.commands;
 
+import net.slimediamond.atom.command.irc.IRCCommandContext;
+import net.slimediamond.atom.command.irc.IRCCommandExecutor;
 import net.slimediamond.atom.database.Database;
-import net.slimediamond.atom.irc.annotations.Command;
 import net.slimediamond.atom.irc.IRC;
 import net.slimediamond.atom.common.annotations.GetService;
-import net.slimediamond.atom.irc.CommandEvent;
 
 import java.sql.SQLException;
 
-public class ChannelCommand {
+public class ChannelCommand implements IRCCommandExecutor {
     @GetService
     private Database database;
 
-    @Command(
-            name = "channel",
-            description = "Manage bot channels",
-            usage = "channel <add|modify|join|part> <channel>",
-            adminOnly = true
-    )
-    public void channelCommand(CommandEvent event) {
+    public void execute(IRCCommandContext event) {
         // channel add <channel>
-        if (event.getCommandArgs()[0].equals("add")) {
-            if (event.getCommandArgs().length == 1) {
+        if (event.getArgs()[0].equals("add")) {
+            if (event.getArgs().length == 1) {
                 event.reply("Usage: channel add <channel>");
             } else {
-                String channelName = event.getCommandArgs()[1];
-                if (!channelName.startsWith("#")) channelName = "#" + event.getCommandArgs()[2];
+                String channelName = event.getArgs()[1];
+                if (!channelName.startsWith("#")) channelName = "#" + event.getArgs()[2];
                 try {
                     database.addIRCChannel(channelName);
                     event.reply("Added channel!");
@@ -35,23 +29,23 @@ public class ChannelCommand {
                 }
 
             }
-        } else if (event.getCommandArgs()[0].equals("modify")) {
-            if (event.getCommandArgs().length == 1) {
+        } else if (event.getArgs()[0].equals("modify")) {
+            if (event.getArgs().length == 1) {
                 event.reply("Usage: channel modify <channel>");
                 return;
             } else {
-                String channelName = event.getCommandArgs()[1];
-                if (!channelName.startsWith("#")) channelName = "#" + event.getCommandArgs()[2];
+                String channelName = event.getArgs()[1];
+                if (!channelName.startsWith("#")) channelName = "#" + event.getArgs()[2];
 
-                if (event.getCommandArgs().length == 2) {
+                if (event.getArgs().length == 2) {
                     event.reply("Usage: channel modify <channel> <autojoin>");
                     return;
                 }
 
-                if (event.getCommandArgs()[2].equals("autojoin")) {
-                    if (event.getCommandArgs().length == 3) {
+                if (event.getArgs()[2].equals("autojoin")) {
+                    if (event.getArgs().length == 3) {
                         event.reply("Usage: channel modify <channel> autojoin on/off");
-                    } else if (event.getCommandArgs()[3].equals("on")) {
+                    } else if (event.getArgs()[3].equals("on")) {
                         try {
                             database.enableIRCAutojoin(channelName);
                             event.reply("Autojoin for " + channelName + " on");
@@ -71,21 +65,21 @@ public class ChannelCommand {
                 }
 
             }
-        } else if (event.getCommandArgs()[0].equals("join")) {
-            if (event.getCommandArgs().length == 1) {
+        } else if (event.getArgs()[0].equals("join")) {
+            if (event.getArgs().length == 1) {
                 event.reply("Usage: channel join <channel>");
             } else {
-                String channelName = event.getCommandArgs()[1];
-                if (!channelName.startsWith("#")) channelName = "#" + event.getCommandArgs()[2];
+                String channelName = event.getArgs()[1];
+                if (!channelName.startsWith("#")) channelName = "#" + event.getArgs()[2];
                 IRC.client.addChannel(channelName);
                 event.reply("Joined channel " + channelName);
             }
-        } else if (event.getCommandArgs()[0].equals("part")) {
-            if (event.getCommandArgs().length == 1) {
+        } else if (event.getArgs()[0].equals("part")) {
+            if (event.getArgs().length == 1) {
                 event.reply("Usage: channel part <channel>");
             } else {
-                String channelName = event.getCommandArgs()[1];
-                if (!channelName.startsWith("#")) channelName = "#" + event.getCommandArgs()[2];
+                String channelName = event.getArgs()[1];
+                if (!channelName.startsWith("#")) channelName = "#" + event.getArgs()[2];
                 IRC.client.removeChannel(channelName);
                 event.reply("Left channel " + channelName);
             }

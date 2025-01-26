@@ -11,7 +11,7 @@ import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-@Service("reaction roles")
+@Service(value = "reaction roles", enabled = false)
 public class ReactionRoleService extends ListenerAdapter {
     @Inject
     @Nullable

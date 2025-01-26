@@ -19,7 +19,7 @@ import net.slimediamond.atom.util.UserUtil;
 import javax.annotation.Nullable;
 import java.awt.*;
 
-@Service("discord logger")
+@Service(value = "discord logger", enabled = false)
 public class DiscordLoggerService extends ListenerAdapter {
     @Inject
     @Nullable

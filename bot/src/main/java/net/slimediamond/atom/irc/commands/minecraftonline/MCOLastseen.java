@@ -1,7 +1,8 @@
 package net.slimediamond.atom.irc.commands.minecraftonline;
 
-import net.slimediamond.atom.irc.annotations.Command;
-import net.slimediamond.atom.irc.CommandEvent;
+import net.slimediamond.atom.command.CommandContext;
+import net.slimediamond.atom.command.irc.IRCCommandContext;
+import net.slimediamond.atom.command.irc.IRCCommandExecutor;
 import net.slimediamond.atom.util.MCOPlayer;
 import net.slimediamond.atom.util.UnknownPlayerException;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -11,31 +12,24 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 
-public class MCOLastseen {
-    @Command(
-            name = "lastseen",
-            aliases = {"ls", "lastjoin", "lj"},
-            usage = "lastseen [player]",
-            description = "Get a MinecraftOnline player's lastseen data",
-            whitelistedChannels = {"#minecraftonline", "#narwhalbot", "#slimediamond"}
-    )
-    public void lastseenCommand(CommandEvent event) throws Exception {
-        String username = event.getDesiredCommandUsername();
+public class MCOLastseen implements IRCCommandExecutor {
+    public void execute(IRCCommandContext ctx) throws Exception {
+        String username = ctx.getDesiredCommandUsername();
 
         try {
             MCOPlayer player = new MCOPlayer(username);
 
             player.getLastseen().ifPresentOrElse(lastseen -> {
-                this.sendResponse(player.getName(), lastseen, event);
+                this.sendResponse(player.getName(), lastseen, ctx);
             }, () -> {
-                event.reply("Could not find that player!");
+                ctx.reply("Could not find that player!");
             });
         } catch (UnknownPlayerException e) {
-            event.reply("Could not find that player!");
+            ctx.reply("Could not find that player!");
         }
     }
 
-    private void sendResponse(String username, Date firstseenDate, CommandEvent event) {
+    private void sendResponse(String username, Date firstseenDate, CommandContext ctx) {
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss, d MMMMM yyyy");
         String lastseen = formatter.format(firstseenDate);
 
@@ -44,6 +38,6 @@ public class MCOLastseen {
         // TODO: Add years to duration
         String fromNow = DurationFormatUtils.formatDurationWords(firstseenDuration.toMillis(), true, true) + " ago";
 
-        event.reply(username + " last visited Freedonia at " + lastseen + " [" + fromNow + "]");
+        ctx.reply(username + " last visited Freedonia at " + lastseen + " [" + fromNow + "]");
     }
 }

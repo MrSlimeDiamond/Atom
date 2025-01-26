@@ -1,9 +1,8 @@
 package net.slimediamond.atom.discord.commands.amplicity;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.slimediamond.atom.discord.CommandEvent;
-import net.slimediamond.atom.discord.annotations.Command;
-import net.slimediamond.atom.reference.DiscordReference;
+import net.slimediamond.atom.command.discord.DiscordCommandContext;
+import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.reference.EmbedReference;
 import net.slimediamond.atom.util.EmbedUtil;
 import net.slimediamond.util.minecraft.MinecraftUtils;
@@ -14,35 +13,26 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class AmplicityTimeplayed {
+// TODO: Get a correct name from something which might be shortened
+// TODO: i.e. MrSlimeDia
+public class AmplicityTimeplayed implements DiscordCommandExecutor {
     // This is literally a sshfs mount on the bot's host system
     // Super dumb. And it's hard-coded
     // What could go wrong?
     public static File PLAYERDATA_FILE = new File("/home/atom/amplicity_players");
 
-    @Command(
-            name = "timeplayed",
-            aliases = {"playtime", "pt", "tp"},
-            description = "Get a player's hour count on Amplicity",
-            usage = "timeplayed <player>",
-            whitelistedGuilds = { 1048920042655449138L }
-    )
-    public void timeplayedCommand(CommandEvent event) throws IOException {
+    public void execute(DiscordCommandContext context) throws IOException {
         if (!PLAYERDATA_FILE.exists()) {
-            event.replyEmbeds(EmbedUtil.expandedErrorEmbed("Playerdata directory could not be found - it is likely the host system was rebooted."));
+            context.replyEmbeds(EmbedUtil.expandedErrorEmbed("Playerdata directory could not be found - it is likely the host system was rebooted."));
             return;
         }
 
-        String username;
-        event.sendIncorrectUsageForCommandArgs(false);
-        if (event.getCommandArgs() == null) {
-            username = event.getAuthor().getName();
-        } else {
-            username = event.getCommandArgs()[0];
-        }
+        AtomicReference<String> username = new AtomicReference();
+        context.getArguments().get("username").ifPresentOrElse(arg -> username.set(arg.getAsString()), () -> username.set(context.getSender().getName()));
 
-        MinecraftUtils.getPlayerUUID(username).ifPresentOrElse(uuid -> {
+        MinecraftUtils.getPlayerUUID(username.get()).ifPresentOrElse(uuid -> {
             // UUID is present, we may look at the directory now
 
             // Convert to UUID with dashes
@@ -77,20 +67,20 @@ public class AmplicityTimeplayed {
                     throw new RuntimeException(e);
                 }
 
-                event.replyEmbeds(new EmbedBuilder()
-                        .setAuthor(username, null, "https://mc-heads.net/avatar/" + username)
-                        .setDescription(username + " has " + hours + " hours on Amplicity.")
+                context.replyEmbeds(new EmbedBuilder()
+                        .setAuthor(username.get(), null, "https://mc-heads.net/avatar/" + username.get())
+                        .setDescription(username.get() + " has " + hours + " hours on Amplicity.")
                         .setFooter(EmbedReference.amplicityFooter, EmbedReference.amplicityIcon)
                         .setColor(Color.GREEN)
                         .build()
                 );
             } else {
-                event.replyEmbeds(EmbedUtil.expandedErrorEmbed("Could not find that player!"));
+                context.replyEmbeds(EmbedUtil.expandedErrorEmbed("Could not find that player!"));
             }
 
         }, () -> {
             // UUID was not present, the player probably doesn't exist in Minecraft
-            event.replyEmbeds(EmbedUtil.expandedErrorEmbed("Could not find that player!"));
+            context.replyEmbeds(EmbedUtil.expandedErrorEmbed("Could not find that player!"));
         });
 
     }

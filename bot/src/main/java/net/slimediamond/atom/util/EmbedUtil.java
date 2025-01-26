@@ -15,7 +15,7 @@ public class EmbedUtil {
     public static MessageEmbed genericErrorEmbed() {
         return new EmbedBuilder()
                 .setColor(Color.RED)
-                .setTitle("An error occured!")
+                .setTitle("An error occurred!")
                 .build();
     }
     public static MessageEmbed genericPermissionDeniedError() {
@@ -47,7 +47,7 @@ public class EmbedUtil {
     public static MessageEmbed expandedErrorEmbed(String message) {
         return new EmbedBuilder()
                 .setColor(Color.RED)
-                .setTitle("An error occured!")
+                .setTitle("An error occurred!")
                 .setDescription(message)
                 .build();
     }
