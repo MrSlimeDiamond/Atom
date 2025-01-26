@@ -54,7 +54,7 @@ public class MCOPlayer {
             if (!uuid.isPresent()) {
                 throw new UnknownPlayerException(this);
             }
-        } catch (IOException | SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
