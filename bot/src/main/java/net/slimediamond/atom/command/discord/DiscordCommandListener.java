@@ -29,6 +29,7 @@ public class DiscordCommandListener extends ListenerAdapter {
     // Just context commands for now
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+        if (event.getAuthor().isBot()) return;
         String message = event.getMessage().getContentDisplay();
         String prefix = DiscordReference.prefix;
 
