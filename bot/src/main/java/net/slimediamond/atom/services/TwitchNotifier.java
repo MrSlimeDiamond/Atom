@@ -51,7 +51,6 @@ public class TwitchNotifier {
     }
 
     public void refreshStreams() {
-        System.out.println("refreshing streams");
         jda.getGuilds().forEach(this::refreshStreams);
     }
 
@@ -59,18 +58,15 @@ public class TwitchNotifier {
         Thread.currentThread().setName("Twitch Refresh Thread");
         logger.info("Streams are being refreshed for " + guild.getName());
         database.getServerStreamers(guild).ifPresent(streamers -> {
-            System.out.println(streamers);
             StreamList streams = client.getHelix().getStreams(TwitchReference.API_TOKEN, null, null, null, null, null, null, streamers).execute();
             ArrayList<String> live = new ArrayList<>();
             streams.getStreams().forEach(stream -> {
-                System.out.println(stream.getUserLogin());
                 live.add(stream.getUserLogin());
                 try {
                     ArrayList<Long> messageIDs = database.getStreamerMessageIDs(stream.getUserLogin());
 
                     // if they were not live last time we checked
                     if (messageIDs.isEmpty()) {
-                        System.out.println(stream.getUserLogin() + " was not live last we checked.");
                         MessageCreateBuilder builder = new MessageCreateBuilder();
                         EmbedBuilder embedBuilder = new EmbedBuilder()
                                 .setDescription(stream.getTitle())
@@ -101,7 +97,6 @@ public class TwitchNotifier {
                 streamers.forEach(streamer -> {
                     // they are NOT live
                     if (!live.contains(streamer)) {
-                        System.out.println(streamer + " is no longer live");
                         try {
                             // delete any messages which are there
                             database.getStreamerMessageIDs(streamer).forEach(id -> {
