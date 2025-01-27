@@ -23,7 +23,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.concurrent.ExecutionException;
 
-@Service(value = "pinnerino", enabled = false)
+@Service(value = "pinnerino")
 public class Pinnerino extends ListenerAdapter {
     @Inject
     @Nullable

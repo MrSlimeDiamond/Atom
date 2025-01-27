@@ -15,7 +15,7 @@ import net.slimediamond.atom.database.Database;
 import javax.annotation.Nullable;
 import java.awt.*;
 
-@Service(value = "meme vote", enabled = false)
+@Service(value = "meme vote")
 public class MemeVoteService extends ListenerAdapter {
     @Inject
     @Nullable
