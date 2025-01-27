@@ -130,6 +130,9 @@ public class Database {
     private PreparedStatement getServerStreamers;
     private PreparedStatement insertServerStreamer;
     private PreparedStatement deleteServerStreamer;
+    private PreparedStatement addStreamerMessage;
+    private PreparedStatement deleteStreamerMessage;
+    private PreparedStatement getStreamerMessages;
 
     private PreparedStatement getServerMemesChannel;
     private PreparedStatement setServerMemesChannel;
@@ -242,6 +245,9 @@ public class Database {
         getServerStreamers = conn.prepareStatement("SELECT * FROM streamers WHERE GuildID = ?");
         insertServerStreamer = conn.prepareStatement("INSERT INTO streamers (GuildID, Login) VALUES (?, ?)");
         deleteServerStreamer = conn.prepareStatement("DELETE FROM streamers WHERE GuildID = ? AND Login = ?");
+        addStreamerMessage = conn.prepareStatement("INSERT INTO streamer_messages (Login, MessageID) VALUES (?, ?)");
+        deleteStreamerMessage = conn.prepareStatement("DELETE * FROM streamer_messages WHERE MessageID = ?");
+        getStreamerMessages = conn.prepareStatement("SELECT MessageID from streamer_messages WHERE Login = ?");
 
         getServerMemesChannel = conn.prepareStatement("SELECT MemesChannel FROM guilds WHERE GuildID = ?");
         setServerMemesChannel = conn.prepareStatement("UPDATE guilds SET MemesChannel = ? WHERE GuildID = ?");
@@ -839,6 +845,29 @@ public class Database {
         deleteServerStreamer.setLong(1, guild.getIdLong());
         deleteServerStreamer.setString(2, login);
         deleteServerStreamer.execute();
+    }
+
+    public void addStreamerMessage(String login, Long messageId) throws SQLException {
+        addStreamerMessage.setString(1, login);
+        addStreamerMessage.setLong(2, messageId);
+        addStreamerMessage.execute();
+    }
+
+    public void deleteStreamerMessage(Long messageId) throws SQLException {
+        deleteStreamerMessage.setLong(1, messageId);
+        deleteStreamerMessage.execute();
+    }
+
+    public ArrayList<Long> getStreamerMessageIDs(String login) throws SQLException {
+        ArrayList<Long> ids = new ArrayList<>();
+
+        getStreamerMessages.setString(1, login);
+        ResultSet rs = getStreamerMessages.executeQuery();
+        while (rs.next()) {
+            ids.add(rs.getLong(1));
+        }
+
+        return ids;
     }
 
     public Optional<TextChannel> getServerMemesChannel(Guild guild) {

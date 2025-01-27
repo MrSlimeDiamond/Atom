@@ -20,6 +20,7 @@ import net.slimediamond.atom.database.Database;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -28,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 @Service(value = "twitch notifier")
 public class TwitchNotifier {
     @Inject
-    @Nullable
     private JDA jda;
 
     @Inject
@@ -43,7 +43,6 @@ public class TwitchNotifier {
 
     @Service.Start
     public void startService() throws Exception {
-        if (jda == null) return;
         client = TwitchClientBuilder.builder()
                 .withEnableHelix(true)
                 .build();
@@ -52,6 +51,7 @@ public class TwitchNotifier {
     }
 
     public void refreshStreams() {
+        System.out.println("refreshing streams");
         jda.getGuilds().forEach(this::refreshStreams);
     }
 
@@ -59,40 +59,59 @@ public class TwitchNotifier {
         Thread.currentThread().setName("Twitch Refresh Thread");
         logger.info("Streams are being refreshed for " + guild.getName());
         database.getServerStreamers(guild).ifPresent(streamers -> {
+            System.out.println(streamers);
             StreamList streams = client.getHelix().getStreams(TwitchReference.API_TOKEN, null, null, null, null, null, null, streamers).execute();
-            MessageCreateBuilder builder = new MessageCreateBuilder();
-            StringJoiner joiner = new StringJoiner(", ");
+            ArrayList<String> live = new ArrayList<>();
             streams.getStreams().forEach(stream -> {
-                EmbedBuilder embedBuilder = new EmbedBuilder()
-                        .setDescription(stream.getTitle())
-                        .setTitle("Watch - twitch.tv/" + stream.getUserLogin(), "https://twitch.tv/" + stream.getUserLogin())
-                        .setFooter(stream.getGameName());
+                System.out.println(stream.getUserLogin());
+                live.add(stream.getUserLogin());
+                try {
+                    ArrayList<Long> messageIDs = database.getStreamerMessageIDs(stream.getUserLogin());
 
-                User user = client.getHelix().getUsers(TwitchReference.API_TOKEN, Arrays.asList(stream.getUserId()), null).execute().getUsers().get(0);
-                embedBuilder.setAuthor(user.getDisplayName(), "https://twitch.tv/" + user.getLogin(), user.getProfileImageUrl());
-                builder.addEmbeds(embedBuilder.build());
-                joiner.add("**" + user.getDisplayName() + "**");
+                    // if they were not live last time we checked
+                    if (messageIDs.isEmpty()) {
+                        System.out.println(stream.getUserLogin() + " was not live last we checked.");
+                        MessageCreateBuilder builder = new MessageCreateBuilder();
+                        EmbedBuilder embedBuilder = new EmbedBuilder()
+                                .setDescription(stream.getTitle())
+                                .setTitle("Watch - twitch.tv/" + stream.getUserLogin(), "https://twitch.tv/" + stream.getUserLogin())
+                                .setFooter(stream.getGameName());
+
+                        User user = client.getHelix().getUsers(TwitchReference.API_TOKEN, Arrays.asList(stream.getUserId()), null).execute().getUsers().get(0);
+                        embedBuilder.setAuthor(user.getDisplayName(), "https://twitch.tv/" + user.getLogin(), user.getProfileImageUrl());
+                        builder.addEmbeds(embedBuilder.build());
+
+                        database.getServerStreamsChannel(guild).ifPresent(channel -> {
+                            channel.sendMessage(builder.build()).queue(result -> {
+                                try { // FUUUUUCK
+                                    database.addStreamerMessage(stream.getUserLogin(), result.getIdLong());
+                                } catch (SQLException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
+
+                        });
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             });
 
             database.getServerStreamsChannel(guild).ifPresent(channel -> {
-                MessageHistory history = MessageHistory.getHistoryFromBeginning(channel).complete();
-                List<Message> messages = history.getRetrievedHistory();
-
-                Message message = messages.stream()
-                        .filter(msg -> msg.getAuthor() == jda.getSelfUser())
-                        .findFirst().orElseGet(() -> this.createStreamsMessage(channel));
-
-                if (joiner.length() == 0) {
-                    message.editMessage("**Nobody is live!**").setEmbeds().queue();
-                } else {
-                    builder.addContent(joiner + (builder.getEmbeds().size() == 1 ? " is" : " are") + " currently streaming!");
-                    message.editMessage(MessageEditBuilder.fromCreateData(builder.build()).build()).queue();
-                }
+                streamers.forEach(streamer -> {
+                    // they are NOT live
+                    if (!live.contains(streamer)) {
+                        System.out.println(streamer + " is no longer live");
+                        try {
+                            // delete any messages which are there
+                            database.getStreamerMessageIDs(streamer).forEach(id -> {
+//                                System.out.println(id);
+                                channel.deleteMessageById(id).queue();
+                            });
+                        } catch (Exception ignored) {} // don't care about it
+                    }
+                });
             });
         });
-    }
-
-    private Message createStreamsMessage(TextChannel channel) {
-        return channel.sendMessage("**Nobody is live!**").complete();
     }
 }

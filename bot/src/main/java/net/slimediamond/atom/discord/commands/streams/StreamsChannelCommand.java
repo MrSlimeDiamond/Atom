@@ -19,21 +19,17 @@ public class StreamsChannelCommand implements DiscordCommandExecutor {
     @Override
     public void execute(DiscordCommandContext context) throws Exception {
         if (context.getArgs()[0].equals("set")) {
+            // set streams channel
             List<GuildChannel> channels = context.getInteractionEvent().getMessage().getMentions().getChannels();
-            if (!channels.isEmpty()) {
-                Channel channel = channels.get(0);
-                if (!(channel instanceof TextChannel textChannel)) {
-                    context.replyEmbeds(EmbedUtil.expandedErrorEmbed("That is not a text channel!"));
-                    return;
-                }
-
-                database.setServerStreamsChannel(context.getGuild(), textChannel);
-                context.replyEmbeds(EmbedUtil.genericSuccessEmbed("Set streams channel"));
+            if (channels.isEmpty()) {
+                context.reply("You need to specify a channel to set");
                 return;
             }
+            GuildChannel channel = channels.get(0);
+            database.setServerStreamsChannel(context.getGuild(), (TextChannel) channel); // pray
+            context.replyEmbeds(EmbedUtil.genericSuccessEmbed("Set streams channel"));
+        } else {
+            context.replyEmbeds(EmbedUtil.genericIncorrectUsageEmbed("streams channel <set|unset> [<channel>]"));
         }
-        // unset
-        database.setServerStreamsChannel(context.getGuild(), null);
-        context.replyEmbeds(EmbedUtil.genericSuccessEmbed("Unset streams channel"));
     }
 }
