@@ -28,7 +28,7 @@ public class PlaytimeCommand implements DiscordCommandExecutor {
             context.replyEmbeds(new EmbedBuilder()
                     .setColor(Color.GREEN)
                     .setAuthor(player.getName(), null, "https://mc-heads.net/avatar/" + player.getName())
-                    .setDescription(player.getName() + " has played on Freedonia for " + hours.toString() + " hours")
+                    .setDescription(player.getName() + " has played on Freedonia for " + hours + " hours")
                     .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
                     .build()
             );

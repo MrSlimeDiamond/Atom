@@ -35,23 +35,21 @@ public class MCOPlayer {
         try {
             Optional<String> playerCorrectName = MinecraftOnlineAPI.getCorrectUsername(username);
             playerCorrectName.ifPresent(correctname -> this.username = correctname);
-
+            
             if (!playerCorrectName.isPresent()) {
                 throw new UnknownPlayerException(this);
             }
 
             // did not hit the beer sweet spot
-            Optional<String> uuid = database.getMCOuuid(username);
+            Optional<String> uuid = database.getMCOuuid(this.username);
             if (uuid.isPresent()) {
                 this.uuid = uuid.get();
             } else {
-                uuid = MinecraftUtils.getPlayerUUID(username);
-                if (uuid.isPresent()) {
-                    this.uuid = uuid.get();
-                }
+                uuid = MinecraftUtils.getPlayerUUID(this.username);
+                uuid.ifPresent(s -> this.uuid = s);
             }
 
-            if (!uuid.isPresent()) {
+            if (uuid.isEmpty()) {
                 throw new UnknownPlayerException(this);
             }
         } catch (Exception e) {

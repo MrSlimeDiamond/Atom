@@ -65,7 +65,7 @@ public class McObotMessageParser {
             Pattern senderPattern = Pattern.compile("\\(MCS\\) <(.*?)> .*");
             Matcher matcher = senderPattern.matcher(message);
             if (matcher.find()) {
-                return matcher.group(1); // Return the sender username
+                return matcher.group(1).strip(); // Return the sender username
             }
         }
         return null;
