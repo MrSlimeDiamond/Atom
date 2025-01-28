@@ -1,4 +1,6 @@
-package net.slimediamond.atom.util;
+package net.slimediamond.atom.util.minecraftonline.exceptions;
+
+import net.slimediamond.atom.util.minecraftonline.MCOPlayer;
 
 public class UnknownPlayerException extends Exception {
     public UnknownPlayerException(String msg) {

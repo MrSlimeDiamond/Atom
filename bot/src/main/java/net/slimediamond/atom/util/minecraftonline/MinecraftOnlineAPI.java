@@ -1,4 +1,7 @@
-package net.slimediamond.atom.util;
+package net.slimediamond.atom.util.minecraftonline;
+
+import net.slimediamond.atom.util.HTTPUtil;
+import net.slimediamond.atom.util.minecraftonline.exceptions.UnknownPlayerException;
 
 import java.io.IOException;
 import java.util.*;
@@ -103,6 +106,26 @@ public class MinecraftOnlineAPI {
         long time = Long.parseLong(data);
         Date date = new Date(time * 1000);
         return Optional.of(date);
+    }
+
+    public static Optional<MCOBan> getBan(String username) throws IOException, UnknownPlayerException {
+        Optional<String> data = HTTPUtil.getDataFromURL("https://minecraftonline.com/cgi-bin/getplayerinfo?" + username);
+        if (data.isPresent()) {
+            String[] info = data.get().split("\n");
+            if (data.get().contains("NOTFOUND")) {
+                throw new UnknownPlayerException(username);
+            } else if (data.get().contains("NOTBANNED")) {
+                return Optional.empty();
+            } else {
+                String banner = info[0];
+                Date date = new Date(info[1]);
+                String reason = info[2];
+
+                return Optional.of(new MCOBanImpl(new MCOPlayer(username), new MCOPlayer(banner), date, reason));
+            }
+        } else {
+            return Optional.empty();
+        }
     }
 
     public static Optional<List<String>> getOnlinePlayers() throws IOException {

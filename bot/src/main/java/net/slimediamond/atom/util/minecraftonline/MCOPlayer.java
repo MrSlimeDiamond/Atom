@@ -1,7 +1,8 @@
-package net.slimediamond.atom.util;
+package net.slimediamond.atom.util.minecraftonline;
 
 import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.util.minecraftonline.exceptions.UnknownPlayerException;
 import net.slimediamond.util.minecraft.MinecraftUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

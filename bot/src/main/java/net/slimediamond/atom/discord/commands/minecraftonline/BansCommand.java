@@ -5,7 +5,7 @@ import net.slimediamond.atom.command.discord.DiscordCommandContext;
 import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.reference.EmbedReference;
 import net.slimediamond.atom.util.EmbedUtil;
-import net.slimediamond.atom.util.MinecraftOnlineAPI;
+import net.slimediamond.atom.util.minecraftonline.MinecraftOnlineAPI;
 
 public class BansCommand implements DiscordCommandExecutor {
     @Override

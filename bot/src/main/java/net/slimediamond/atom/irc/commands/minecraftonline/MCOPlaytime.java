@@ -1,13 +1,9 @@
 package net.slimediamond.atom.irc.commands.minecraftonline;
 
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.slimediamond.atom.command.irc.IRCCommandContext;
 import net.slimediamond.atom.command.irc.IRCCommandExecutor;
-import net.slimediamond.atom.reference.EmbedReference;
-import net.slimediamond.atom.util.MCOPlayer;
-import net.slimediamond.atom.util.UnknownPlayerException;
+import net.slimediamond.atom.util.minecraftonline.MCOPlayer;
 
-import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;

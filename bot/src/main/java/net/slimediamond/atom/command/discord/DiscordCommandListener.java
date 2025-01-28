@@ -11,7 +11,7 @@ import net.slimediamond.atom.command.CommandMetadata;
 import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.reference.DiscordReference;
 import net.slimediamond.atom.util.EmbedUtil;
-import net.slimediamond.atom.util.UnknownPlayerException;
+import net.slimediamond.atom.util.minecraftonline.exceptions.UnknownPlayerException;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -179,7 +179,7 @@ public class DiscordCommandListener extends ListenerAdapter {
                             .setDescription(e.getMessage())
                             .build()
                     ).queue();
-                    
+
                     e.printStackTrace();
                     }
                 }

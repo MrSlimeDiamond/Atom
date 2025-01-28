@@ -3,8 +3,8 @@ package net.slimediamond.atom.irc.commands.minecraftonline;
 import net.slimediamond.atom.command.CommandContext;
 import net.slimediamond.atom.command.irc.IRCCommandContext;
 import net.slimediamond.atom.command.irc.IRCCommandExecutor;
-import net.slimediamond.atom.util.MCOPlayer;
-import net.slimediamond.atom.util.UnknownPlayerException;
+import net.slimediamond.atom.util.minecraftonline.MCOPlayer;
+import net.slimediamond.atom.util.minecraftonline.exceptions.UnknownPlayerException;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import java.text.SimpleDateFormat;

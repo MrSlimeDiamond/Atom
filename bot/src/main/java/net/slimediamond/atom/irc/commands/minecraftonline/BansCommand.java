@@ -2,7 +2,7 @@ package net.slimediamond.atom.irc.commands.minecraftonline;
 
 import net.slimediamond.atom.command.irc.IRCCommandContext;
 import net.slimediamond.atom.command.irc.IRCCommandExecutor;
-import net.slimediamond.atom.util.MinecraftOnlineAPI;
+import net.slimediamond.atom.util.minecraftonline.MinecraftOnlineAPI;
 
 import java.io.IOException;
 

@@ -7,7 +7,7 @@ import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.irc.McObotMessageParser;
 import net.slimediamond.atom.reference.IRCReference;
-import net.slimediamond.atom.util.UnknownPlayerException;
+import net.slimediamond.atom.util.minecraftonline.exceptions.UnknownPlayerException;
 import org.kitteh.irc.client.library.event.channel.ChannelMessageEvent;
 
 import java.sql.SQLException;
