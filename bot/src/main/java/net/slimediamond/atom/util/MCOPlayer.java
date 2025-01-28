@@ -35,7 +35,7 @@ public class MCOPlayer {
         try {
             Optional<String> playerCorrectName = MinecraftOnlineAPI.getCorrectUsername(username);
             playerCorrectName.ifPresent(correctname -> this.username = correctname);
-            
+
             if (!playerCorrectName.isPresent()) {
                 throw new UnknownPlayerException(this);
             }

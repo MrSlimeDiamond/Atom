@@ -7,6 +7,7 @@ import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.irc.McObotMessageParser;
 import net.slimediamond.atom.reference.IRCReference;
+import net.slimediamond.atom.util.UnknownPlayerException;
 import org.kitteh.irc.client.library.event.channel.ChannelMessageEvent;
 
 import java.sql.SQLException;
@@ -93,8 +94,12 @@ public class IRCCommandListener {
                     try {
                         commandExecutor.execute(new IRCCommandContext(event, command, mcobotParser, args, hidden, commandManager));
                     } catch (Exception e) {
-                        event.sendReply("An error occurred: " + e.getMessage());
-                        e.printStackTrace();
+                        if (e.getCause() instanceof UnknownPlayerException) {
+                            event.sendReply("Could not find that player!");
+                        } else {
+                            event.sendReply("An error occurred: " + e.getMessage());
+                        }
+                        return;
                     }
                     break;
                 }

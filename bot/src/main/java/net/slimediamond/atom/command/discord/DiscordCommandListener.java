@@ -97,14 +97,22 @@ public class DiscordCommandListener extends ListenerAdapter {
                     } catch (UnknownPlayerException e) {
                         event.getChannel().sendMessageEmbeds(EmbedUtil.expandedErrorEmbed("Could not find that player!")).queue();
                     } catch (Exception e) {
-                        event.getChannel().sendMessageEmbeds(new EmbedBuilder()
-                                .setColor(Color.red)
-                                .setAuthor("An error occurred!")
-                                .setTitle(e.getClass().getSimpleName())
-                                .setDescription(e.getMessage())
-                                .build()
-                        ).queue();
-                        e.printStackTrace();
+                        if (e.getCause() instanceof UnknownPlayerException) {
+                            event.getChannel().sendMessageEmbeds(new EmbedBuilder()
+                                    .setColor(Color.red)
+                                    .setDescription("Could not find that player!")
+                                    .build()
+                            ).queue();
+                        } else {
+                            event.getChannel().sendMessageEmbeds(new EmbedBuilder()
+                                    .setColor(Color.red)
+                                    .setAuthor("An error occurred!")
+                                    .setTitle(e.getClass().getSimpleName())
+                                    .setDescription(e.getMessage())
+                                    .build()
+                            ).queue();
+                            e.printStackTrace();
+                        }
                     }
                     break;
                 }
@@ -156,9 +164,14 @@ public class DiscordCommandListener extends ListenerAdapter {
                 DiscordCommandExecutor commandExecutor = command.getDiscordCommand().getCommandExecutor();
                 try {
                     commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager, event.getJDA()));
-                } catch (UnknownPlayerException e) {
-                    event.replyEmbeds(EmbedUtil.expandedErrorEmbed("Could not find that player!")).queue();
                 } catch (Exception e) {
+                    if (e.getCause() instanceof UnknownPlayerException) {
+                        event.replyEmbeds(new EmbedBuilder()
+                                .setColor(Color.red)
+                                .setDescription("Could not find that player!")
+                                .build()
+                        ).queue();
+                    } else {
                     event.replyEmbeds(new EmbedBuilder()
                             .setColor(Color.red)
                             .setAuthor("An error occurred!")
@@ -166,7 +179,9 @@ public class DiscordCommandListener extends ListenerAdapter {
                             .setDescription(e.getMessage())
                             .build()
                     ).queue();
+                    
                     e.printStackTrace();
+                    }
                 }
                 break;
             }
