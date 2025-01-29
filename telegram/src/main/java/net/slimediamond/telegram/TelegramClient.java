@@ -10,17 +10,36 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Optional;
+
+import static net.slimediamond.atom.common.util.HTTPUtil.getDataFromURL;
+import static net.slimediamond.atom.common.util.HTTPUtil.getJsonDataFromURL;
 
 public class TelegramClient {
     private String token;
     private String baseUrl;
     private long lastUpdateId = 0;
     private ArrayList<Listener> listeners;
+    private String username;
 
     public TelegramClient(String token) {
         this.token = token;
         this.baseUrl = "https://api.telegram.org/bot" + token;
         this.listeners = new ArrayList<>();
+
+        // get info about the bot (in this case, username)
+        String getMe = baseUrl + "/getMe";
+        try {
+            Optional<String> data = getDataFromURL(getMe);
+            if (data.isPresent()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonResponse = objectMapper.readTree(data.get());
+
+                this.username = jsonResponse.get("result.username").asText();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         // begin listening
         new Thread(() -> {
@@ -82,6 +101,10 @@ public class TelegramClient {
     public void sendMessage(long id, String message) throws IOException {
         String url = baseUrl + "/sendMessage?chat_id=" + id + "&text=" + URLEncoder.encode(message, StandardCharsets.UTF_8);
         HTTPUtil.getDataFromURL(url); // ignore output
+    }
+
+    public String getUsername() {
+        return this.username;
     }
 
     public void addListener(Listener listener) {
