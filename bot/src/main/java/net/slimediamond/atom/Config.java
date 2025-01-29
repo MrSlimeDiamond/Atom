@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+// this code is on life support
+// - Jan 29 2025
 public class Config {
     private static final Logger log = LoggerFactory.getLogger(Config.class);
     private Properties prop;
@@ -16,7 +18,9 @@ public class Config {
         File dbConfig = new File("./config/database.cfg");
         File ircConfig = new File("./config/irc.cfg");
         File twitchConfig = new File("./config/twitch.cfg");
+        File webConfig = new File("./config/web.cfg");
         Files.createDirectories(Paths.get("config/")); // Generate config directory, does nothing if it doesn't exist
+
         if (!botConfig.exists()) {
             log.info("Generating discord bot config");
             try (OutputStream output = Files.newOutputStream(Paths.get("./config/discordbot.cfg"))) {
@@ -75,6 +79,14 @@ public class Config {
             } catch(IOException e) {
                 e.printStackTrace();
             }
+        } if (!webConfig.exists()) {
+            try (OutputStream output = Files.newOutputStream(Paths.get("./config/web.cfg"))) {
+                prop = new Properties();
+
+                prop.setProperty("port", "7070");
+
+                prop.store(output, null);
+            }
         }
     }
 
@@ -98,5 +110,9 @@ public class Config {
 
     public Properties twitch() throws IOException {
         return getPropertiesFile("twitch");
+    }
+
+    public Properties web() throws IOException {
+        return getPropertiesFile("web");
     }
 }
