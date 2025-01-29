@@ -28,6 +28,10 @@ public class TelegramCommandSender implements CommandSender {
         return false;
     }
 
+    public long getId() {
+        return sender.getId();
+    }
+
     public MessageSender getRaw() {
         return this.sender;
     }

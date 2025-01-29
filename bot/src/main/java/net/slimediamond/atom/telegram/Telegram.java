@@ -6,6 +6,7 @@ import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.telegram.TelegramMessageListener;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.reference.TelegramReference;
+import net.slimediamond.atom.telegram.commands.DebugCommand;
 import net.slimediamond.atom.telegram.commands.minecraftonline.*;
 import net.slimediamond.telegram.TelegramClient;
 
@@ -14,9 +15,11 @@ public class Telegram {
     @Inject
     CommandManager commandManager;
 
+    private static TelegramClient client;
+
     @Service.Start
     public void onStart() {
-        TelegramClient client = new TelegramClient(TelegramReference.token);
+        client = new TelegramClient(TelegramReference.token);
         client.addListener(new TelegramMessageListener(commandManager));
 
         commandManager.register(new CommandBuilder()
@@ -72,5 +75,17 @@ public class Telegram {
                 .setExecutor(new RandomPlayerCommand())
                 .then().build()
         );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("debug")
+                .setDescription("Debug command")
+                .setUsage("debug")
+                .telegram().setExecutor(new DebugCommand())
+                .then().build()
+        );
+    }
+
+    public static TelegramClient getClient() {
+        return client;
     }
 }
