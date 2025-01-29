@@ -8,6 +8,6 @@ public class UnknownPlayerException extends Exception {
     }
 
     public UnknownPlayerException(MCOPlayer player) {
-        super(player.username + " is not a MinecraftOnline player");
+        super(player.getName() + " is not a MinecraftOnline player");
     }
 }

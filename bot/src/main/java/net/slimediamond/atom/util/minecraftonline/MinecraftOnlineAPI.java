@@ -109,19 +109,20 @@ public class MinecraftOnlineAPI {
     }
 
     public static Optional<MCOBan> getBan(String username) throws IOException, UnknownPlayerException {
-        Optional<String> data = HTTPUtil.getDataFromURL("https://minecraftonline.com/cgi-bin/getplayerinfo?" + username);
+        MCOPlayer player = new MCOPlayer(username);
+        Optional<String> data = HTTPUtil.getDataFromURL("https://minecraftonline.com/cgi-bin/getplayerinfo?" + player.getName());
         if (data.isPresent()) {
-            String[] info = data.get().split("\n");
+            String[] info = data.get().split("\n")[3].split(";");
             if (data.get().contains("NOTFOUND")) {
-                throw new UnknownPlayerException(username);
+                throw new UnknownPlayerException(player.getName());
             } else if (data.get().contains("NOTBANNED")) {
                 return Optional.empty();
             } else {
                 String banner = info[0];
-                Date date = new Date(info[1]);
+                Date date = new Date(Long.parseLong(info[1]) * 1000);
                 String reason = info[2];
 
-                return Optional.of(new MCOBanImpl(new MCOPlayer(username), new MCOPlayer(banner), date, reason));
+                return Optional.of(new MCOBanImpl(player, new MCOPlayer(banner), date, reason));
             }
         } else {
             return Optional.empty();
