@@ -1,4 +1,4 @@
-package net.slimediamond.atom.telegram.commands;
+package net.slimediamond.atom.telegram.commands.minecraftonline;
 
 import net.slimediamond.atom.command.telegram.TelegramCommandContext;
 import net.slimediamond.atom.command.telegram.TelegramCommandExecutor;

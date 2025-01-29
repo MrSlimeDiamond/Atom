@@ -6,7 +6,7 @@ import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.telegram.TelegramMessageListener;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.reference.TelegramReference;
-import net.slimediamond.atom.telegram.commands.*;
+import net.slimediamond.atom.telegram.commands.minecraftonline.*;
 import net.slimediamond.telegram.TelegramClient;
 
 @Service("telegram")
