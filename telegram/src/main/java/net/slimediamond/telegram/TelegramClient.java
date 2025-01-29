@@ -48,7 +48,7 @@ public class TelegramClient {
             while (true) {
                 try {
                     pollApi();
-                    Thread.sleep(1000);
+                    Thread.sleep(20);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

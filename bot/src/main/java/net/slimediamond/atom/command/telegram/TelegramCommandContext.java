@@ -4,6 +4,7 @@ import net.slimediamond.atom.command.CommandContext;
 import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandMetadata;
 import net.slimediamond.telegram.Chat;
+import net.slimediamond.telegram.TelegramClient;
 
 public class TelegramCommandContext implements CommandContext {
     private TelegramCommandSender sender;
@@ -11,13 +12,15 @@ public class TelegramCommandContext implements CommandContext {
     private CommandMetadata commandMetadata;
     private CommandManager commandManager;
     private Chat chat;
+    private TelegramClient client;
 
-    public TelegramCommandContext(TelegramCommandSender sender, String[] args, CommandMetadata commandMetadata, CommandManager commandManager, Chat chat) {
+    public TelegramCommandContext(TelegramCommandSender sender, String[] args, CommandMetadata commandMetadata, CommandManager commandManager, Chat chat, TelegramClient client) {
         this.sender = sender;
         this.args = args;
         this.commandMetadata = commandMetadata;
         this.commandManager = commandManager;
         this.chat = chat;
+        this.client = client;
     }
 
     @Override
@@ -57,5 +60,9 @@ public class TelegramCommandContext implements CommandContext {
         } else {
             return this.args[0]; // probably
         }
+    }
+
+    public TelegramClient getClient() {
+        return this.client;
     }
 }

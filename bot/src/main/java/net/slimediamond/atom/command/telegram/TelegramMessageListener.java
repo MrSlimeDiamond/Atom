@@ -61,7 +61,7 @@ public class TelegramMessageListener implements Listener {
                     // command execution
                     try {
                         TelegramCommandSender sender = new TelegramCommandSender(event.getSender());
-                        command.getTelegramCommand().getCommandExecutor().execute(new TelegramCommandContext(sender, args, command, commandManager, event.getChat()));
+                        command.getTelegramCommand().getCommandExecutor().execute(new TelegramCommandContext(sender, args, command, commandManager, event.getChat(), event.getClient()));
                     } catch (Exception e) {
                         event.getChat().sendMessage("An error occurred: " + e.getMessage());
                     }
