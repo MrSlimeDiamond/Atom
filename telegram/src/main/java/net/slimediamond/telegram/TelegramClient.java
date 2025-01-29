@@ -35,7 +35,7 @@ public class TelegramClient {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonResponse = objectMapper.readTree(data.get());
 
-                this.username = jsonResponse.get("result.username").asText();
+                this.username = jsonResponse.get("result").get("username").asText();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
