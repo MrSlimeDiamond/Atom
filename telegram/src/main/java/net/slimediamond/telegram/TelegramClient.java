@@ -38,7 +38,6 @@ public class TelegramClient {
 
     protected void pollApi() throws IOException {
         String url = baseUrl + "/getUpdates?offset=" + (lastUpdateId + 1);
-        //System.out.println("would call to: " + url);
 
         HTTPUtil.getDataFromURL(url).ifPresent(data -> {
             try {
@@ -82,7 +81,6 @@ public class TelegramClient {
 
     public void sendMessage(long id, String message) throws IOException {
         String url = baseUrl + "/sendMessage?chat_id=" + id + "&text=" + URLEncoder.encode(message, StandardCharsets.UTF_8);
-        HTTPUtil.getDataFromURL(url).ifPresent(System.out::println);
     }
 
     public void addListener(Listener listener) {
