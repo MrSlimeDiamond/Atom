@@ -4,7 +4,7 @@ import net.slimediamond.telegram.Chat;
 import net.slimediamond.telegram.MessageSender;
 import net.slimediamond.telegram.TelegramClient;
 
-public class MessageReceivedEvent {
+public class MessageReceivedEvent implements GenericEvent {
     private MessageSender sender;
     private Chat chat;
     private String text;
