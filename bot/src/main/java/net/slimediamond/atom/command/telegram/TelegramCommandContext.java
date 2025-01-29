@@ -49,4 +49,13 @@ public class TelegramCommandContext implements CommandContext {
     public void sendUsage() {
         this.reply("Usage: " + commandMetadata.getCommandUsage());
     }
+
+    public String getDesiredCommandUsername() {
+        // copied from IRCCommandContext
+        if (this.args.length == 0) {
+            return this.getSender().getName();
+        } else {
+            return this.args[0]; // probably
+        }
+    }
 }

@@ -6,7 +6,7 @@ import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.telegram.TelegramMessageListener;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.reference.TelegramReference;
-import net.slimediamond.atom.telegram.commands.BansCommand;
+import net.slimediamond.atom.telegram.commands.*;
 import net.slimediamond.telegram.TelegramClient;
 
 @Service("telegram")
@@ -34,6 +34,42 @@ public class Telegram {
                 .setDescription("Get ban count for MinecraftOnline")
                 .setUsage("bans")
                 .telegram().setExecutor(new BansCommand())
+                .then().build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("firstseen", "firstjoin", "fs", "fj")
+                .setDescription("Get the first join date of a MinecraftOnline player")
+                .setUsage("firstseen [player]")
+                .telegram()
+                .setExecutor(new MCOFirstseen())
+                .then().build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("lastseen", "lastjoin", "ls", "lj")
+                .setDescription("Get the last join date of a MinecraftOnline player")
+                .setUsage("lastseen [player]")
+                .telegram()
+                .setExecutor(new MCOLastseen())
+                .then().build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("playtime", "timeplayed", "tp", "pt")
+                .setDescription("Get the hour count of a MinecraftOnline player")
+                .setUsage("playtime [player]")
+                .telegram()
+                .setExecutor(new MCOPlaytime())
+                .then().build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("randomplayer", "rp")
+                .setDescription("Get a random player who is currently online on MCO")
+                .setUsage("randomplayer")
+                .telegram()
+                .setExecutor(new RandomPlayerCommand())
                 .then().build()
         );
     }
