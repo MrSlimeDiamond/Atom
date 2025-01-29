@@ -5,6 +5,7 @@ import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.command.exceptions.CommandBuildException;
 import net.slimediamond.atom.command.irc.IRCCommand;
 import net.slimediamond.atom.command.irc.IRCCommandExecutor;
+import net.slimediamond.atom.command.telegram.TelegramCommand;
 
 import java.util.ArrayList;
 
@@ -16,6 +17,7 @@ public class CommandBuilder {
     private ArrayList<CommandMetadata> children = new ArrayList<>();
     private DiscordCommand discordCommand;
     private IRCCommand ircCommand;
+    private TelegramCommand telegramCommand;
     private CommandBuilder commandBuilder = this;
 
     /**
@@ -90,6 +92,13 @@ public class CommandBuilder {
         return this;
     }
 
+    public TelegramCommand telegram() {
+        if (this.telegramCommand == null) {
+            this.telegramCommand = new TelegramCommand(this);
+        }
+        return this.telegramCommand;
+    }
+
     /**
      * Add a child command (subcommand)
      * @param metadata
@@ -113,7 +122,7 @@ public class CommandBuilder {
             throw new CommandBuildException("Cannot create a command without a description");
         } else if (usage == null) {
             throw new CommandBuildException("Cannot create a command without any usage hint");
-        } else if (discordCommand == null && ircCommand == null) {
+        } else if (discordCommand == null && ircCommand == null && telegramCommand == null) {
             throw new CommandBuildException("Cannot create a command without an executor");
         } else {
             // I don't know if this is the best way of doing it
@@ -155,6 +164,14 @@ public class CommandBuilder {
                 public IRCCommand getIRCCommand() {
                     if (ircCommand != null) {
                         return ircCommand;
+                    }
+                    return null;
+                }
+
+                @Override
+                public TelegramCommand getTelegramCommand() {
+                    if (telegramCommand != null) {
+                        return telegramCommand;
                     }
                     return null;
                 }

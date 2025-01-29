@@ -1,13 +1,13 @@
-package net.slimediamond.atom.irc.commands.minecraftonline;
+package net.slimediamond.atom.telegram.commands.minecraftonline;
 
-import net.slimediamond.atom.command.irc.IRCCommandContext;
-import net.slimediamond.atom.command.irc.IRCCommandExecutor;
+import net.slimediamond.atom.command.telegram.TelegramCommandContext;
+import net.slimediamond.atom.command.telegram.TelegramCommandExecutor;
 import net.slimediamond.atom.shared.CommandResponses;
 import net.slimediamond.atom.util.minecraftonline.MCOPlayer;
 import net.slimediamond.atom.util.minecraftonline.exceptions.UnknownPlayerException;
 
-public class MCOLastseen implements IRCCommandExecutor {
-    public void execute(IRCCommandContext ctx) throws Exception {
+public class MCOLastseen implements TelegramCommandExecutor {
+    public void execute(TelegramCommandContext ctx) throws Exception {
         String username = ctx.getDesiredCommandUsername();
 
         try {

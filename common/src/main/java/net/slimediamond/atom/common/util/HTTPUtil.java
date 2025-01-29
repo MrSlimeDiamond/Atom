@@ -1,4 +1,4 @@
-package net.slimediamond.atom.util;
+package net.slimediamond.atom.common.util;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;

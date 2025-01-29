@@ -6,7 +6,7 @@ import net.slimediamond.atom.command.discord.DiscordCommandContext;
 import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.command.discord.args.UserArgument;
 import net.slimediamond.atom.reference.EmbedReference;
-import net.slimediamond.atom.util.HTTPUtil;
+import net.slimediamond.atom.common.util.HTTPUtil;
 import net.slimediamond.util.portal2.Portal2Util;
 import org.json.JSONObject;
 

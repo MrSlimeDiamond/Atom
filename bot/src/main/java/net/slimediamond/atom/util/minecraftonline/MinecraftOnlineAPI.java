@@ -1,6 +1,6 @@
 package net.slimediamond.atom.util.minecraftonline;
 
-import net.slimediamond.atom.util.HTTPUtil;
+import net.slimediamond.atom.common.util.HTTPUtil;
 import net.slimediamond.atom.util.minecraftonline.exceptions.UnknownPlayerException;
 
 import java.io.IOException;

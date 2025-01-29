@@ -4,6 +4,7 @@ import net.slimediamond.atom.command.discord.DiscordCommand;
 import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.command.irc.IRCCommand;
 import net.slimediamond.atom.command.irc.IRCCommandExecutor;
+import net.slimediamond.atom.command.telegram.TelegramCommand;
 
 import java.util.ArrayList;
 
@@ -60,6 +61,12 @@ public interface CommandMetadata {
     IRCCommand getIRCCommand();
 
     /**
+     * Get telegram command
+     * @return Telegram command
+     */
+    TelegramCommand getTelegramCommand();
+
+    /**
      * Whether the command is Discord-compatible
      * @return has discord
      */
@@ -73,6 +80,14 @@ public interface CommandMetadata {
      */
     default boolean hasIRC() {
         return getIRCCommand() != null;
+    }
+
+    /**
+     * Whether the command is Telegram-compatible
+     * @return has Telegram
+     */
+    default boolean hasTelegram() {
+        return getTelegramCommand() != null;
     }
 
     // this is a super dumb way of making a clone of the object
