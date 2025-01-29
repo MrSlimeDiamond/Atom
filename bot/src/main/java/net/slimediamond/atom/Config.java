@@ -19,6 +19,7 @@ public class Config {
         File ircConfig = new File("./config/irc.cfg");
         File twitchConfig = new File("./config/twitch.cfg");
         File webConfig = new File("./config/web.cfg");
+        File telegramConfig = new File("./config/telegram.cfg");
         Files.createDirectories(Paths.get("config/")); // Generate config directory, does nothing if it doesn't exist
 
         if (!botConfig.exists()) {
@@ -87,6 +88,14 @@ public class Config {
 
                 prop.store(output, null);
             }
+        } if (!telegramConfig.exists()) {
+            try (OutputStream output = Files.newOutputStream(Paths.get("./config/telegram.cfg"))) {
+                prop = new Properties();
+
+                prop.setProperty("token", "PUT_TOKEN_HERE");
+
+                prop.store(output, null);
+            }
         }
     }
 
@@ -114,5 +123,9 @@ public class Config {
 
     public Properties web() throws IOException {
         return getPropertiesFile("web");
+    }
+
+    public Properties telegram() throws IOException {
+        return getPropertiesFile("telegram");
     }
 }

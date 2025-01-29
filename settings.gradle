@@ -1,4 +1,5 @@
 rootProject.name = 'Atom'
 include 'common'
 include 'bot'
+include 'telegram'
 

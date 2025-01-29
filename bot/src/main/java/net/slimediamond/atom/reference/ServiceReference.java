@@ -10,5 +10,6 @@ public class ServiceReference {
         SERVICES_PACKAGES.add("net.slimediamond.atom.discord");
         SERVICES_PACKAGES.add("net.slimediamond.atom.irc");
         SERVICES_PACKAGES.add("net.slimediamond.atom.services");
+        SERVICES_PACKAGES.add("net.slimediamond.atom.telegram");
     }
 }
