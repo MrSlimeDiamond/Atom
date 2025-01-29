@@ -29,7 +29,7 @@ public class Config {
                 prop = new Properties();
 
                 prop.setProperty("token", "BOT_TOKEN_HERE");
-                prop.setProperty("prefix", "!a ");
+                prop.setProperty("prefix", "!a");
 
                 prop.store(output, null);
             } catch (IOException e) {
@@ -64,7 +64,7 @@ public class Config {
                 prop.setProperty("username", "atom-bot");
                 prop.setProperty("nickserv-username", "atom");
                 prop.setProperty("nickserv-password", "abc1234");
-                prop.setProperty("prefix", "!a ");
+                prop.setProperty("prefix", "!a");
 
                 prop.store(output, null);
             } catch(IOException e) {
@@ -93,6 +93,7 @@ public class Config {
                 prop = new Properties();
 
                 prop.setProperty("token", "PUT_TOKEN_HERE");
+                prop.setProperty("prefix", "!a");
 
                 prop.store(output, null);
             }
