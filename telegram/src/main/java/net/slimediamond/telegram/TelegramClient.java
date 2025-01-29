@@ -1,5 +1,7 @@
 package net.slimediamond.telegram;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.slimediamond.atom.common.util.HTTPUtil;
@@ -10,20 +12,19 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static net.slimediamond.atom.common.util.HTTPUtil.getDataFromURL;
 import static net.slimediamond.atom.common.util.HTTPUtil.getJsonDataFromURL;
 
 public class TelegramClient {
-    private String token;
     private String baseUrl;
     private long lastUpdateId = 0;
     private ArrayList<Listener> listeners;
     private String username;
 
     public TelegramClient(String token) {
-        this.token = token;
         this.baseUrl = "https://api.telegram.org/bot" + token;
         this.listeners = new ArrayList<>();
 
@@ -105,6 +106,28 @@ public class TelegramClient {
 
     public String getUsername() {
         return this.username;
+    }
+
+    public List<File> getUserProfilePhotos(long userId) throws IOException {
+        String url = baseUrl + "/getUserProfilePhotos?user_id=" + userId;
+        ArrayList<File> files = new ArrayList<>();
+        HTTPUtil.getDataFromURL(url).ifPresent(data -> {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonResponse = objectMapper.readTree(data);
+
+                JsonNode photos = jsonResponse.get("result").get("photos");
+                for (JsonNode photo : photos) {
+                    // just add the largest one for now, which is located at index [2]
+                    JsonNode file = photo.get(2);
+                    files.add(new File(file.get("file_id").asText(), file.get("file_unique_id").asText(), file.get("file_size").asLong(), file.get("width").asInt(), file.get("height").asInt()));
+                }
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return files;
     }
 
     public void addListener(Listener listener) {
