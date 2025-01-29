@@ -88,7 +88,7 @@ public class TelegramClient {
                             MessageSender sender = new MessageSender(firstName, lastName, username, userId);
                             Chat chat = new GenericChat(this, chatId);
 
-                            MessageReceivedEvent event = new MessageReceivedEvent(sender, chat, text);
+                            MessageReceivedEvent event = new MessageReceivedEvent(sender, chat, text, this);
                             this.getListeners().forEach(listener -> listener.onMessage(event));
                         }
                     }
