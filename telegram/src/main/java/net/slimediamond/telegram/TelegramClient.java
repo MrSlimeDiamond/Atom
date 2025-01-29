@@ -81,6 +81,7 @@ public class TelegramClient {
 
     public void sendMessage(long id, String message) throws IOException {
         String url = baseUrl + "/sendMessage?chat_id=" + id + "&text=" + URLEncoder.encode(message, StandardCharsets.UTF_8);
+        HTTPUtil.getDataFromURL(url); // ignore output
     }
 
     public void addListener(Listener listener) {
