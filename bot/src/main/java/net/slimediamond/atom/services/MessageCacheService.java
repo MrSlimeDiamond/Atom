@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 
 import java.sql.SQLException;
 
-@Service(value = "discord message cache")
+@Service(value = "discord content cache")
 public class MessageCacheService extends ListenerAdapter {
     @Inject
     @Nullable
@@ -37,7 +37,7 @@ public class MessageCacheService extends ListenerAdapter {
         try {
             database.addMessage(event.getMessageIdLong(), event.getGuild().getIdLong(), event.getAuthor().getIdLong(), event.getMessage().getContentDisplay());
         } catch (SQLException e) {
-            logger.error("SQLException when caching message, is the database down?");
+            logger.error("SQLException when caching content, is the database down?");
             e.printStackTrace();
         }
     }

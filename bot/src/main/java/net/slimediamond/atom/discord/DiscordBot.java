@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 @Service(value = "discord", priority = 999, enabled = true)
 public class DiscordBot {
@@ -179,7 +178,7 @@ public class DiscordBot {
                             IRC irc = Atom.getServiceManager().getInstance(IRC.class);
                             try {
                                 irc.reloadService();
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }
                             ctx.replyEmbeds(EmbedUtil.genericSuccessEmbed("Reloaded IRC service"));

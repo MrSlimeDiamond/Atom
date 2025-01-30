@@ -24,7 +24,7 @@ public class WebServer {
     @Service.Start
     public void onStart() {
         Javalin app = Javalin.create().start(WebReference.PORT);
-        app.error(404, ctx -> ctx.json("{\"message\": \"404 not found\"}"));
+        app.error(404, ctx -> ctx.json("{\"content\": \"404 not found\"}"));
 
         app.get("/discord/picture/{name}", ctx -> {
             List<Member> members = new ArrayList<>();

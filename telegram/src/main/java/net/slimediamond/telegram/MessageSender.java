@@ -1,16 +1,20 @@
 package net.slimediamond.telegram;
 
+import java.util.List;
+
 public class MessageSender {
     private String firstName;
     private String lastName;
     private String username;
     private long id;
+    private TelegramClient client;
 
-    public MessageSender(String firstName, String lastName, String username, long id) {
+    public MessageSender(String firstName, String lastName, String username, long id, TelegramClient client) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.id = id;
+        this.client = client;
     }
 
     public String getFirstName() {
@@ -27,5 +31,21 @@ public class MessageSender {
 
     public long getId() {
         return id;
+    }
+
+    public List<File> getProfilePhotos() {
+        try {
+            return client.getUserProfilePhotos(this.id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public File getProfilePhoto() {
+        try {
+            return client.getProfilePhoto(this.id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

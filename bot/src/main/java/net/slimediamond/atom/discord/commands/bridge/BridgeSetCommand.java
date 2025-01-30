@@ -15,16 +15,6 @@ public class BridgeSetCommand implements DiscordCommandExecutor {
 
     @Override
     public void execute(DiscordCommandContext context) throws Exception {
-        String channel;
-        Optional<UserArgument> arg = context.getArguments().get("channel");
-        if (arg.isPresent()) {
-            channel = arg.get().getAsString();
-        } else {
-            context.reply("Usage: " + context.getCommandMetadata().getCommandUsage());
-            return;
-        }
-        if (!channel.startsWith("#")) channel = "#" + channel;
-        database.setIRCDiscordBridgeChannelID(channel, context.getChannel().getIdLong());
-        context.replyEmbeds(EmbedUtil.genericSuccessEmbed("Set IRC bridge channel"));
+        context.reply("TODO");
     }
 }

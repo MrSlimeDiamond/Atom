@@ -1,6 +1,8 @@
 package net.slimediamond.atom.irc;
 
 import jakarta.inject.Inject;
+import net.slimediamond.atom.Atom;
+import net.slimediamond.atom.chatbridge.irc.IRCBridgeEndpoint;
 import net.slimediamond.atom.command.CommandBuilder;
 import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.irc.IRCCommandListener;
@@ -176,7 +178,7 @@ public class IRC {
     }
 
     @Service.Reload
-    public void reloadService() throws SQLException {
+    public void reloadService() throws Exception {
         client.reconnect("Service reloading!");
         database.joinAllIRCChannels();
     }
