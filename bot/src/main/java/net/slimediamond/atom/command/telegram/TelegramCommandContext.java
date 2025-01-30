@@ -65,4 +65,8 @@ public class TelegramCommandContext implements CommandContext {
     public TelegramClient getClient() {
         return this.client;
     }
+
+    public Chat getChat() {
+        return this.chat;
+    }
 }

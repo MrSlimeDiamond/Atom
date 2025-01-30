@@ -1,14 +1,11 @@
 package net.slimediamond.telegram;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.slimediamond.atom.common.util.HTTPUtil;
 import net.slimediamond.telegram.events.MessageReceivedEvent;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -17,7 +14,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static net.slimediamond.atom.common.util.HTTPUtil.getDataFromURL;
-import static net.slimediamond.atom.common.util.HTTPUtil.getJsonDataFromURL;
 
 public class TelegramClient {
     private String telegramApi;
@@ -181,7 +177,14 @@ public class TelegramClient {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonResponse = objectMapper.readTree(data);
 
-                JsonNode photo = jsonResponse.get("result").get("photos").get(0);
+                JsonNode photos = jsonResponse.get("result").get("photos");
+
+                if (photos.isEmpty()) {
+                    result.set(null);
+                    return;
+                }
+
+                JsonNode photo = photos.get(0); // top result
 
                 JsonNode file = photo.get(2);
 
@@ -198,6 +201,49 @@ public class TelegramClient {
                                 file.get("width").asInt(),
                                 file.get("height").asInt(),
                                 filePath,
+                                this
+                        ));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return result.get();
+    }
+
+    public File getChatPhoto(long groupId) throws IOException {
+        String url = baseUrl + "/getChat?chat_id=" + groupId;
+        AtomicReference<File> result = new AtomicReference<>();
+        HTTPUtil.getDataFromURL(url).ifPresent(data -> {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonResponse = objectMapper.readTree(data);
+
+                JsonNode photo = jsonResponse.get("result").get("photo");
+
+                if (photo.isEmpty()) {
+                    result.set(null);
+                    return;
+                }
+
+                HTTPUtil.getDataFromURL(baseUrl + "/getFile?file_id=" + photo.get("big_file_id").asText()).ifPresent(fileData -> {
+                    try {
+                        ObjectMapper objectMapper1 = new ObjectMapper();
+                        JsonNode jsonResponse1 = objectMapper1.readTree(fileData);
+                        JsonNode jsonResult = jsonResponse1.get("result");
+                        System.out.println(jsonResult);
+
+                        result.set(new File(
+                                photo.get("big_file_id").asText(),
+                                photo.get("big_file_unique_id").asText(),
+                                jsonResult.get("file_size").asLong(),
+                                -1,
+                                -1,
+                                jsonResult.get("file_path").asText(),
                                 this
                         ));
                     } catch (Exception e) {

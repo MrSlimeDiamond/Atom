@@ -6,4 +6,5 @@ public interface Chat {
     String getName();
     long getId();
     ChatType getType();
+    File getPhoto();
 }

@@ -17,6 +17,7 @@ import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.reference.TelegramReference;
 import net.slimediamond.atom.telegram.Telegram;
+import net.slimediamond.telegram.File;
 import net.slimediamond.telegram.Listener;
 import org.kitteh.irc.client.library.event.channel.ChannelCtcpEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelJoinEvent;
@@ -221,7 +222,16 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
                 .filter(endpoint -> identifier.equals(endpoint.getUniqueIdentifier()))
                 .findFirst() // Returns an Optional<BridgeEndpoint>
                 .orElseThrow(() -> new RuntimeException("No matching endpoint found for identifier: " + identifier));
-        String avatarUrl = event.getSender().getProfilePhoto().download();
-        chat.sendMessage(new BridgeMessage(event.getSender().getUsername(), avatarUrl, event.getText()), source);
+        File avatar = event.getSender().getProfilePhoto();
+        String avatarUrl;
+        if (avatar != null) {
+            avatarUrl = avatar.download();
+        } else {
+            avatarUrl = event.getChat().getPhoto().download();
+        }
+
+        String name = event.getSender().getFirstName() + " " + event.getSender().getLastName();
+
+        chat.sendMessage(new BridgeMessage(name, avatarUrl, event.getText()), source);
     }
 }
