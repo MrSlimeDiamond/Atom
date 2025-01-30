@@ -36,9 +36,4 @@ public class BridgedChat {
             }
         }
     }
-
-
-    public void sendReconnectMessage() {
-        endpoints.forEach(BridgeEndpoint::sendReconnectMessage);
-    }
 }

@@ -68,9 +68,15 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
     public void sendUpdate(EventType eventType, String username, BridgeEndpoint source, String comment) {
         // Chat bridge connection
         if (eventType == EventType.CONNECT) {
-            channel.sendMessage("Chat bridge to **" + source.getChannelName() + "** connected.").queue();
+            channel.sendMessageEmbeds(new EmbedBuilder()
+                    .setColor(Color.GREEN)
+                    .setAuthor("Chat bridge connected")
+                    .build()).queue();
         } else if (eventType == EventType.DISCONNECT) {
-            channel.sendMessage("Chat bridge to **" + source.getChannelName() + "** disconnected.").queue();
+            channel.sendMessageEmbeds(new EmbedBuilder()
+                    .setColor(Color.RED)
+                    .setAuthor("Chat bridge disconnected")
+                    .build()).queue();
         } else if (eventType == EventType.JOIN) {
             queueUpdate(source, new EmbedBuilder()
                     .setDescription("**" + username + "** joined")
@@ -155,11 +161,6 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
                 forceSendUpdate(source);
             }
         });
-    }
-
-    @Override
-    public void sendReconnectMessage() {
-        sendMessage(new BridgeMessage("Status", null, "Chat bridge reconnected"), null);
     }
 
     @Override

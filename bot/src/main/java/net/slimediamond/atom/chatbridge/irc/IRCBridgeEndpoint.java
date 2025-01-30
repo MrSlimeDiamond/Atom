@@ -41,12 +41,6 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
 
     }
 
-
-    @Override
-    public void sendReconnectMessage() {
-        // nothing here
-    }
-
     @Override
     public String getName() {
         return "IRC";

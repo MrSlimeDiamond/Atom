@@ -15,6 +15,7 @@ import net.slimediamond.atom.reference.IRCReference;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.reference.TelegramReference;
 import net.slimediamond.atom.telegram.Telegram;
 import net.slimediamond.telegram.Listener;
 import org.kitteh.irc.client.library.event.channel.ChannelCtcpEvent;
@@ -58,11 +59,18 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
 
             BridgeStore.getChats().put(chatId, chat);
         });
+
+        // send our connection messages
+        BridgeStore.getChats().forEach((id, chat) -> {
+            chat.sendUpdate(EventType.CONNECT, null, null, null);
+        });
     }
 
     @Service.Shutdown
     public void shutdownService() {
-        // TODO: Disconnect content
+        BridgeStore.getChats().forEach((id, chat) -> {
+            chat.sendUpdate(EventType.DISCONNECT, null, null, null);
+        });
     }
 
     // Discord content event
@@ -203,6 +211,7 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
     // Telegram content event
     @Override
     public void onMessage(net.slimediamond.telegram.events.MessageReceivedEvent event) throws SQLException {
+        if (event.getText().startsWith(TelegramReference.prefix)) return;
         BridgedChat chat = BridgeStore.getChats().get(database.getBridgedChatID(database.getBridgedEndpointId(String.valueOf(event.getChat().getId()))));
         if (chat == null) {
             return;

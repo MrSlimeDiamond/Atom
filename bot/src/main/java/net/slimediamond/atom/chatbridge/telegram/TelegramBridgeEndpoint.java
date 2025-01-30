@@ -22,7 +22,11 @@ public class TelegramBridgeEndpoint implements BridgeEndpoint {
 
     @Override
     public void sendUpdate(EventType eventType, String username, BridgeEndpoint source, String comment) {
-        if (eventType == EventType.JOIN) {
+        if (eventType == EventType.CONNECT) {
+            chat.sendMessage("Chat bridge reconnected.");
+        } else if (eventType == EventType.DISCONNECT) {
+            chat.sendMessage("Chat bridge disconnected");
+        } else if (eventType == EventType.JOIN) {
             chat.sendMessage("[" + source.getShortName() + "] " + username + " joined " + source.getChannelName());
         } else if (eventType == EventType.LEAVE) {
             chat.sendMessage("[" + source.getShortName() + "] " + username + " left " + source.getChannelName());
@@ -37,11 +41,6 @@ public class TelegramBridgeEndpoint implements BridgeEndpoint {
     public void sendActionMessage(BridgeMessage message, BridgeEndpoint source) {
         chat.sendMessage("[" + source.getShortName() + "] * " + message.username() + " " + message.content());
 
-    }
-
-    @Override
-    public void sendReconnectMessage() {
-        chat.sendMessage("Chat bridge reconnected");
     }
 
     @Override
