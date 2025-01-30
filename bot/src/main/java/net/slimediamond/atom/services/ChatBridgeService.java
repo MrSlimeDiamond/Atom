@@ -21,6 +21,7 @@ import org.kitteh.irc.client.library.event.channel.ChannelCtcpEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelJoinEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelMessageEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelPartEvent;
+import org.kitteh.irc.client.library.event.user.UserNickChangeEvent;
 import org.kitteh.irc.client.library.event.user.UserQuitEvent;
 
 import javax.annotation.Nullable;
@@ -181,6 +182,22 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
             String avatarUrl = database.getBridgedEndpointAvatar(source.getId());
             chat.sendActionMessage(new BridgeMessage(event.getActor().getNick(), avatarUrl, event.getMessage().substring(7)), source);
         }
+    }
+
+    @Handler
+    public void onNicknameChange(UserNickChangeEvent event) {
+        event.getOldUser().getChannels().forEach(channel -> {
+            try {
+                BridgedChat chat = BridgeStore.getChats().get(database.getBridgedChatID(database.getBridgedEndpointId(channel)));
+                BridgeEndpoint source = chat.getEndpoints().stream()
+                        .filter(endpoint -> channel.equals(endpoint.getUniqueIdentifier()))
+                        .findFirst().orElse(null);
+
+                chat.sendUpdate(EventType.NAME_CHANGE, event.getOldUser().getNick(), source, event.getNewUser().getNick());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     // Telegram content event

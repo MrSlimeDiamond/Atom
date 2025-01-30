@@ -6,5 +6,6 @@ public enum EventType {
     QUIT, // IRC only
     OTHER,
     CONNECT,
-    DISCONNECT
+    DISCONNECT,
+    NAME_CHANGE
 }

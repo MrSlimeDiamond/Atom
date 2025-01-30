@@ -30,6 +30,8 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
             channel.sendMessage("[" + source.getShortName() + "] " + username + " left " + source.getChannelName());
         } else if (eventType == EventType.QUIT) {
             channel.sendMessage("[" + source.getShortName() + "] " + username + " quit (" + comment + ")");
+        } else if (eventType == EventType.NAME_CHANGE) {
+            channel.sendMessage("[" + source.getShortName() + "] " + username + " is now known as " + comment);
         }
     }
 

@@ -28,6 +28,8 @@ public class TelegramBridgeEndpoint implements BridgeEndpoint {
             chat.sendMessage("[" + source.getShortName() + "] " + username + " left " + source.getChannelName());
         } else if (eventType == EventType.QUIT) {
             chat.sendMessage("[" + source.getShortName() + "] " + username + " quit (" + comment + ")");
+        } else if (eventType == EventType.NAME_CHANGE) {
+            chat.sendMessage("[" + source.getShortName() + "] " + username + " is now known as " + comment);
         }
     }
 

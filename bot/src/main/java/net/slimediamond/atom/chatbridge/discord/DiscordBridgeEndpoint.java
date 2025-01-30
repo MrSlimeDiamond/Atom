@@ -83,6 +83,10 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
             queueUpdate(source, new EmbedBuilder()
                     .setDescription("**" + username + "** quit (" + comment + ")")
                     .build());
+        } else if (eventType == EventType.NAME_CHANGE) {
+            queueUpdate(source, new EmbedBuilder()
+                    .setDescription("**" + username + "** is now known as **" + comment + "**")
+                    .build());
         }
     }
 
