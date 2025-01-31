@@ -1,11 +1,8 @@
 package net.slimediamond.atom.chatbridge;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 public class Netsplit {
-    private boolean active;
-    private boolean rejoinsHappened;
     private BridgeEndpoint source;
     private String[] servers;
 
@@ -16,17 +13,7 @@ public class Netsplit {
 
     public Netsplit(BridgeEndpoint source, String[] servers) {
         this.source = source;
-        this.active = true;
-        this.rejoinsHappened = false;
         this.servers = servers;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public boolean isRejoinsHappened() {
-        return rejoinsHappened;
     }
 
     public BridgeEndpoint getSource() {
@@ -43,14 +30,6 @@ public class Netsplit {
 
     public ArrayList<String> getJoins() {
         return joins;
-    }
-
-    public void setRejoinsHappened(boolean rejoinsHappened) {
-        this.rejoinsHappened = rejoinsHappened;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public void addQuit(String username) {
