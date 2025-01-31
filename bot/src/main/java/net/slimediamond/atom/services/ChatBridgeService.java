@@ -101,7 +101,6 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
     @Handler
     public void onChannelMessage(ChannelMessageEvent event) throws SQLException {
         if (event.getActor().getNick().equals(IRCReference.nickname)) return;
-        System.out.println(database.getBridgedChatID(database.getBridgedEndpointId(event.getChannel().getName())));
         BridgedChat chat = BridgeStore.getChats().get(database.getBridgedChatID(database.getBridgedEndpointId(event.getChannel().getName())));
         if (chat == null) {
             return;
@@ -177,7 +176,6 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
     public void onAction(ChannelCtcpEvent event) throws SQLException {
         if (event.getCommand().equals("ACTION")) {
             if (event.getActor().getNick().equals(IRCReference.nickname)) return;
-            System.out.println(database.getBridgedChatID(database.getBridgedEndpointId(event.getChannel().getName())));
             BridgedChat chat = BridgeStore.getChats().get(database.getBridgedChatID(database.getBridgedEndpointId(event.getChannel().getName())));
             if (chat == null) {
                 return;

@@ -278,7 +278,6 @@ public class TelegramClient {
                         ObjectMapper objectMapper1 = new ObjectMapper();
                         JsonNode jsonResponse1 = objectMapper1.readTree(fileData);
                         JsonNode jsonResult = jsonResponse1.get("result");
-                        System.out.println(jsonResult);
 
                         result.set(new File(
                                 photo.get("big_file_id").asText(),
