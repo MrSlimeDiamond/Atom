@@ -143,9 +143,10 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
 
                         scheduler.schedule(() -> chat.netsplitJoins(netsplit, source), Netsplit.NETSPLIT_WAIT_TIME, TimeUnit.SECONDS);
                     }
+
+                    netsplit.addJoin(event.getActor().getNick());
+                    return;
                 }
-                netsplit.addJoin(event.getActor().getNick());
-                return;
             }
 
             if (event.getActor().getNick().equals(IRCReference.nickname)) {
