@@ -141,10 +141,17 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
                     if (!joinsActive) {
                         joinsActive = true;
 
-                        scheduler.schedule(() -> chat.netsplitJoins(netsplit, source), Netsplit.NETSPLIT_WAIT_TIME, TimeUnit.SECONDS);
+                        scheduler.schedule(() -> this.netsplitJoins(chat, netsplit, source), Netsplit.NETSPLIT_WAIT_TIME, TimeUnit.SECONDS);
                     }
 
                     netsplit.addJoin(event.getActor().getNick());
+
+                    // Mark a netsplit as completed when everyone has rejoined
+                    if (netsplit.getQuits().equals(netsplit.getJoins())) {
+                        System.out.println("netsplit completed");
+                        this.netsplitJoins(chat, netsplit, source);
+                    }
+
                     return;
                 }
             }
@@ -155,6 +162,15 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
             }
             chat.sendUpdate(EventType.JOIN, event.getActor().getNick(), source, null);
         }
+    }
+
+    private void netsplitJoins(BridgedChat chat, Netsplit netsplit, BridgeEndpoint source) {
+        System.out.println("netsplit joins method called");
+        if (netsplitActive) {
+            System.out.println("calling chat.netsplitJoins");
+            chat.netsplitJoins(netsplit, source);
+        }
+        netsplitActive = false;
     }
 
     @Handler
