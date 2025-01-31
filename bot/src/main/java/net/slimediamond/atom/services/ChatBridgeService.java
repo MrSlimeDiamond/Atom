@@ -28,6 +28,10 @@ import org.kitteh.irc.client.library.event.user.UserQuitEvent;
 
 import javax.annotation.Nullable;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service(value = "chat bridge", priority = 1)
 public class ChatBridgeService extends ListenerAdapter implements Listener {
@@ -37,6 +41,12 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
 
     @GetService
     private Database database;
+
+    private boolean netsplitActive = false;
+    private boolean joinsActive = false;
+    private Netsplit netsplit;
+
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     @Service.Start
     public void startService() throws Exception {
@@ -126,6 +136,18 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
                 .findFirst().orElse(null);
 
         if (source != null) {
+            if (netsplitActive && netsplit != null) {
+                if (netsplit.getQuits().contains(event.getActor().getNick())) {
+                    if (!joinsActive) {
+                        joinsActive = true;
+
+                        scheduler.schedule(() -> chat.netsplitJoins(netsplit, source), Netsplit.NETSPLIT_WAIT_TIME, TimeUnit.SECONDS);
+                    }
+                }
+                netsplit.addJoin(event.getActor().getNick());
+                return;
+            }
+
             if (event.getActor().getNick().equals(IRCReference.nickname)) {
                 chat.sendUpdate(EventType.CONNECT, event.getChannel().getName(), source, null);
                 return;
@@ -160,6 +182,26 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
                 BridgeEndpoint source = chat.getEndpoints().stream()
                         .filter(endpoint -> channel.equals(endpoint.getUniqueIdentifier()))
                         .findFirst().orElse(null);
+
+                if (source == null) return;
+
+                if (event.getMessage().startsWith("*.net") || event.getMessage().startsWith(IRC.client.getServerInfo().getAddress().get())) {
+                    if (!netsplitActive) {
+                        netsplitActive = true;
+                        // make a new netsplit object
+                        String[] netsplitServers = new String[2];
+
+                        netsplitServers[0] = event.getMessage().split(" ")[0];
+                        netsplitServers[1] = event.getMessage().split(" ")[1];
+
+                        netsplit = new Netsplit(source, netsplitServers);
+
+                        scheduler.schedule(() -> chat.netsplitQuits(netsplit, source), Netsplit.NETSPLIT_WAIT_TIME, TimeUnit.SECONDS);
+                    }
+
+                    netsplit.addQuit(event.getUser().getNick());
+                    return;
+                }
 
                 if (event.getActor().getNick().equals(IRCReference.nickname)) {
                     chat.sendUpdate(EventType.DISCONNECT, channel, source, null);

@@ -10,18 +10,16 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.slimediamond.atom.chatbridge.BridgeEndpoint;
 import net.slimediamond.atom.chatbridge.BridgeMessage;
 import net.slimediamond.atom.chatbridge.EventType;
-import net.slimediamond.atom.irc.IRC;
+import net.slimediamond.atom.chatbridge.Netsplit;
 import net.slimediamond.atom.util.DiscordUtil;
 
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class DiscordBridgeEndpoint implements BridgeEndpoint {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -31,13 +29,6 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
     private int id;
 
     private final HashMap<BridgeEndpoint, ArrayList<MessageEmbed>> queuedUpdates = new HashMap<>();
-    private final ArrayList<String> netsplitQuits = new ArrayList<>();
-    private final ArrayList<String> netsplitJoins = new ArrayList<>();
-    private boolean netsplit = false;
-    private boolean netsplitRejoins = false;
-    private String[] netsplitServers = new String[2];
-
-    private static final int NETSPLIT_WAIT_TIME = 10;
 
     public DiscordBridgeEndpoint(TextChannel channel, String identifier, int id) {
         this.channel = channel;
@@ -87,15 +78,6 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
                     .setAuthor("Chat bridge disconnected")
                     .build()).queue();
         } else if (eventType == EventType.JOIN) {
-            if (netsplit && netsplitQuits.contains(username)) {
-                // If this is the first rejoin
-                if (!netsplitRejoins) {
-                    netsplitRejoins = true;
-                    scheduler.schedule(() -> this.netsplitJoinFinish(source), NETSPLIT_WAIT_TIME, TimeUnit.SECONDS);
-                }
-                netsplitJoins.add(username);
-                return;
-            }
             String msg = "**" + username + "** joined";
             if (comment != null) {
                 msg = "**" + username + "** was added by **" + comment + "**";
@@ -112,20 +94,6 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
                     .setDescription(msg)
                     .build());
         } else if (eventType == EventType.QUIT) { // IRC only
-            if (comment.startsWith("*.net") || comment.startsWith(IRC.client.getServerInfo().getAddress().get())) {
-                // Netsplit! Lets add users to a list.
-                System.out.println(Arrays.toString(comment.split(" ")));
-                netsplitServers[0] = comment.split(" ")[0];
-                netsplitServers[1] = comment.split(" ")[1];
-                netsplitQuits.add(username);
-
-                if (!netsplit) {
-                    netsplit = true;
-                    scheduler.schedule(() -> this.netsplitQuitFinish(source), NETSPLIT_WAIT_TIME, TimeUnit.SECONDS);
-                }
-
-                return;
-            }
             queueUpdate(source, new EmbedBuilder()
                     .setDescription("**" + username + "** quit (" + comment + ")")
                     .build());
@@ -134,25 +102,6 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
                     .setDescription("**" + username + "** is now known as **" + comment + "**")
                     .build());
         }
-    }
-
-    public void netsplitQuitFinish(BridgeEndpoint source) {
-        String quits = String.join(", ", netsplitQuits);
-        MessageEmbed embed = new EmbedBuilder()
-                .setAuthor("Netsplit")
-                .setTitle(DiscordUtil.removeFormatting(netsplitServers[0] + " <-> " + netsplitServers[1]))
-                .setDescription("**Quits:** " + DiscordUtil.removeFormatting(quits))
-                .build();
-        queueUpdate(source, embed);
-    }
-
-    public void netsplitJoinFinish(BridgeEndpoint source) {
-        String joins = String.join(", ", netsplitJoins);
-        MessageEmbed embed = new EmbedBuilder()
-                .setAuthor("Netsplit over")
-                .setDescription("**Joins:** " + DiscordUtil.removeFormatting(joins))
-                .build();
-        queueUpdate(source, embed);
     }
 
     public void awaitEmptyQueue() {
@@ -171,6 +120,27 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
     public void sendActionMessage(BridgeMessage message, BridgeEndpoint source) {
         this.sendMessage(new BridgeMessage(message.username(), message.avatarUrl(),"*" + message.content() + "*"), source);
 
+    }
+
+    @Override
+    public void netsplitQuits(Netsplit netsplit, BridgeEndpoint source) {
+        String quits = String.join(", ", netsplit.getQuits());
+        MessageEmbed embed = new EmbedBuilder()
+                .setAuthor("Netsplit")
+                .setTitle(DiscordUtil.removeFormatting(netsplit.getServers()[0] + " <-> " + netsplit.getServers()[1]))
+                .setDescription("**Quits:** " + DiscordUtil.removeFormatting(quits))
+                .build();
+        queueUpdate(source, embed);
+    }
+
+    @Override
+    public void netsplitJoins(Netsplit netsplit, BridgeEndpoint source) {
+        String joins = String.join(", ", netsplit.getJoins());
+        MessageEmbed embed = new EmbedBuilder()
+                .setAuthor("Netsplit over")
+                .setDescription("**Joins:** " + DiscordUtil.removeFormatting(joins))
+                .build();
+        queueUpdate(source, embed);
     }
 
     @Override

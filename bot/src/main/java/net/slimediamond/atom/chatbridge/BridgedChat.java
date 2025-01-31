@@ -36,4 +36,20 @@ public class BridgedChat {
             }
         }
     }
+
+    public void netsplitQuits(Netsplit netsplit, BridgeEndpoint source) {
+        for (BridgeEndpoint endpoint : endpoints) {
+            if (endpoint != source) {
+                endpoint.netsplitQuits(netsplit, source);
+            }
+        }
+    }
+
+    public void netsplitJoins(Netsplit netsplit, BridgeEndpoint source) {
+        for (BridgeEndpoint endpoint : endpoints) {
+            if (endpoint != source) {
+                endpoint.netsplitJoins(netsplit, source);
+            }
+        }
+    }
 }

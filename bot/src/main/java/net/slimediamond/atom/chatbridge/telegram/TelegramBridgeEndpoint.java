@@ -3,6 +3,7 @@ package net.slimediamond.atom.chatbridge.telegram;
 import net.slimediamond.atom.chatbridge.BridgeEndpoint;
 import net.slimediamond.atom.chatbridge.BridgeMessage;
 import net.slimediamond.atom.chatbridge.EventType;
+import net.slimediamond.atom.chatbridge.Netsplit;
 import net.slimediamond.telegram.Chat;
 
 public class TelegramBridgeEndpoint implements BridgeEndpoint {
@@ -41,6 +42,18 @@ public class TelegramBridgeEndpoint implements BridgeEndpoint {
     public void sendActionMessage(BridgeMessage message, BridgeEndpoint source) {
         chat.sendMessage("[" + source.getShortName() + "] * " + message.username() + " " + message.content());
 
+    }
+
+    @Override
+    public void netsplitQuits(Netsplit netsplit, BridgeEndpoint source) {
+        String quits = String.join(", ", netsplit.getQuits());
+        chat.sendMessage("[" + source.getShortName() + "] Netsplit quits: " + quits);
+    }
+
+    @Override
+    public void netsplitJoins(Netsplit netsplit, BridgeEndpoint source) {
+        String joins = String.join(", ", netsplit.getJoins());
+        chat.sendMessage("[" + source.getShortName() + "] Netsplit over, joins: " + joins);
     }
 
     @Override
