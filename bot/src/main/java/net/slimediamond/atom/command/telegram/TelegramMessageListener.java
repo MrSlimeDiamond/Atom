@@ -4,7 +4,7 @@ import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandMetadata;
 import net.slimediamond.atom.reference.TelegramReference;
 import net.slimediamond.telegram.Listener;
-import net.slimediamond.telegram.events.MessageReceivedEvent;
+import net.slimediamond.telegram.event.MessageReceivedEvent;
 
 import java.util.Arrays;
 

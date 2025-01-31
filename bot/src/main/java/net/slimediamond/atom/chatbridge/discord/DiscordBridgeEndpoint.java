@@ -78,12 +78,20 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
                     .setAuthor("Chat bridge disconnected")
                     .build()).queue();
         } else if (eventType == EventType.JOIN) {
+            String msg = "**" + username + "** joined";
+            if (comment != null) {
+                msg = "**" + username + "** was added by **" + comment + "**";
+            }
             queueUpdate(source, new EmbedBuilder()
-                    .setDescription("**" + username + "** joined")
+                    .setDescription(msg)
                     .build());
         } else if (eventType == EventType.LEAVE) {
+            String msg = "**" + username + "** left";
+            if (comment != null) {
+                msg = "**" + username + "** was removed by **" + comment + "**";
+            }
             queueUpdate(source, new EmbedBuilder()
-                    .setDescription("**" + username + "** left")
+                    .setDescription(msg)
                     .build());
         } else if (eventType == EventType.QUIT) {
             queueUpdate(source, new EmbedBuilder()
@@ -100,6 +108,11 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
     public void sendActionMessage(BridgeMessage message, BridgeEndpoint source) {
         this.sendMessage(new BridgeMessage(message.username(), message.avatarUrl(),"*" + message.content() + "*"), source);
 
+    }
+
+    @Override
+    public String getAvatarUrl() {
+        return channel.getGuild().getIconUrl();
     }
 
     private void queueUpdate(BridgeEndpoint source, MessageEmbed embed) {
@@ -125,22 +138,18 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
                 if (webhook.getName().toLowerCase().contains("atom") || webhook.getName().toLowerCase().contains("bridge")) {
                     // Use the webhook if it matches the criteria
                     useEmbed = false;
-                    try {
-                        String avatarUrl = database.getBridgedEndpointAvatar(this.id);
-                        if (avatarUrl == null) {
-                            avatarUrl = channel.getGuild().getIconUrl();
-                        }
-                        WebhookClient client = WebhookClient.withUrl(webhook.getUrl());
-                        WebhookMessageBuilder builder = new WebhookMessageBuilder()
-                                .setUsername(source.getChannelName() + " [" + source.getShortName() + "]")
-                                .setAvatarUrl(avatarUrl);
-
-                        // Send queued updates as webhook embeds
-                        embeds.forEach(embed -> builder.addEmbeds(WebhookEmbedBuilder.fromJDA(embed).build()));
-                        client.send(builder.build());
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                    String avatarUrl = source.getAvatarUrl();
+                    if (avatarUrl == null) {
+                        avatarUrl = this.getAvatarUrl();
                     }
+                    WebhookClient client = WebhookClient.withUrl(webhook.getUrl());
+                    WebhookMessageBuilder builder = new WebhookMessageBuilder()
+                            .setUsername(source.getChannelName() + " [" + source.getShortName() + "]")
+                            .setAvatarUrl(avatarUrl);
+
+                    // Send queued updates as webhook embeds
+                    embeds.forEach(embed -> builder.addEmbeds(WebhookEmbedBuilder.fromJDA(embed).build()));
+                    client.send(builder.build());
                 }
             }
             if (useEmbed) {

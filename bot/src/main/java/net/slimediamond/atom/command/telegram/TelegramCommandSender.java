@@ -1,14 +1,14 @@
 package net.slimediamond.atom.command.telegram;
 
 import net.slimediamond.atom.command.CommandSender;
-import net.slimediamond.telegram.MessageSender;
+import net.slimediamond.telegram.User;
 
 import java.sql.SQLException;
 
 public class TelegramCommandSender implements CommandSender {
-    private MessageSender sender;
+    private User sender;
 
-    public TelegramCommandSender(MessageSender sender) {
+    public TelegramCommandSender(User sender) {
         this.sender = sender;
     }
 
@@ -32,7 +32,7 @@ public class TelegramCommandSender implements CommandSender {
         return sender.getId();
     }
 
-    public MessageSender getRaw() {
+    public User getRaw() {
         return this.sender;
     }
 }

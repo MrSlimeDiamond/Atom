@@ -6,9 +6,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.engio.mbassy.listener.Handler;
-import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.chatbridge.*;
-import net.slimediamond.atom.chatbridge.irc.IRCBridgeEndpoint;
 import net.slimediamond.atom.irc.IRC;
 import net.slimediamond.atom.reference.DiscordReference;
 import net.slimediamond.atom.reference.IRCReference;
@@ -19,6 +17,8 @@ import net.slimediamond.atom.reference.TelegramReference;
 import net.slimediamond.atom.telegram.Telegram;
 import net.slimediamond.telegram.File;
 import net.slimediamond.telegram.Listener;
+import net.slimediamond.telegram.event.UserAddedToChatEvent;
+import net.slimediamond.telegram.event.UserRemovedFromChatEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelCtcpEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelJoinEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelMessageEvent;
@@ -211,7 +211,7 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
 
     // Telegram content event
     @Override
-    public void onMessage(net.slimediamond.telegram.events.MessageReceivedEvent event) throws SQLException {
+    public void onMessage(net.slimediamond.telegram.event.MessageReceivedEvent event) throws SQLException {
         if (event.getText().startsWith(TelegramReference.prefix)) return;
         BridgedChat chat = BridgeStore.getChats().get(database.getBridgedChatID(database.getBridgedEndpointId(String.valueOf(event.getChat().getId()))));
         if (chat == null) {
@@ -233,5 +233,35 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
         String name = event.getSender().getFirstName() + " " + event.getSender().getLastName();
 
         chat.sendMessage(new BridgeMessage(name, avatarUrl, event.getText()), source);
+    }
+
+    @Override
+    public void onUserJoinChat(UserAddedToChatEvent event) throws SQLException {
+        BridgedChat chat = BridgeStore.getChats().get(database.getBridgedChatID(database.getBridgedEndpointId(String.valueOf(event.getChat().getId()))));
+        if (chat == null) {
+            return;
+        }
+        String identifier = String.valueOf(event.getChat().getId());
+        BridgeEndpoint source = chat.getEndpoints().stream()
+                .filter(endpoint -> identifier.equals(endpoint.getUniqueIdentifier()))
+                .findFirst() // Returns an Optional<BridgeEndpoint>
+                .orElseThrow(() -> new RuntimeException("No matching endpoint found for identifier: " + identifier));
+
+        chat.sendUpdate(EventType.JOIN, event.getNewUser().getFullName(), source, event.getUser().getFullName());
+    }
+
+    @Override
+    public void onUserLeaveChat(UserRemovedFromChatEvent event) throws SQLException {
+        BridgedChat chat = BridgeStore.getChats().get(database.getBridgedChatID(database.getBridgedEndpointId(String.valueOf(event.getChat().getId()))));
+        if (chat == null) {
+            return;
+        }
+        String identifier = String.valueOf(event.getChat().getId());
+        BridgeEndpoint source = chat.getEndpoints().stream()
+                .filter(endpoint -> identifier.equals(endpoint.getUniqueIdentifier()))
+                .findFirst() // Returns an Optional<BridgeEndpoint>
+                .orElseThrow(() -> new RuntimeException("No matching endpoint found for identifier: " + identifier));
+
+        chat.sendUpdate(EventType.LEAVE, event.getNewUser().getFullName(), source, event.getUser().getFullName());
     }
 }

@@ -3,7 +3,9 @@ package net.slimediamond.telegram;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.slimediamond.atom.common.util.HTTPUtil;
-import net.slimediamond.telegram.events.MessageReceivedEvent;
+import net.slimediamond.telegram.event.MessageReceivedEvent;
+import net.slimediamond.telegram.event.UserAddedToChatEvent;
+import net.slimediamond.telegram.event.UserRemovedFromChatEvent;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -57,6 +59,7 @@ public class TelegramClient {
         }).start();
     }
 
+    // TODO: Remove code duplication in this
     protected void pollApi() throws IOException {
         String url = baseUrl + "/getUpdates?offset=" + (lastUpdateId + 1);
 
@@ -86,7 +89,7 @@ public class TelegramClient {
                             String username = from.has("username") ? from.get("username").asText() : null;
                             Long userId = from.has("id") ? from.get("id").asLong() : null;
 
-                            MessageSender sender = new MessageSender(firstName, lastName, username, userId, this);
+                            User sender = new User(firstName, lastName, username, userId, this);
 
                             JsonNode chat = message.get("chat");
                             ChatType type = ChatType.fromName(chat.get("type").asText());
@@ -100,7 +103,47 @@ public class TelegramClient {
 
                             Chat chatImpl = new GenericChat(this, name, chatId, type);
 
-                            MessageReceivedEvent event = new MessageReceivedEvent(sender, chatImpl, text, this);
+                            if (message.has("new_chat_participant")) {
+                                JsonNode participant = message.get("new_chat_participant");
+                                firstName = participant.has("first_name") ? participant.get("first_name").asText() : null;
+                                lastName = participant.has("last_name") ? participant.get("last_name").asText() : null;
+                                username = participant.has("username") ? participant.get("username").asText() : null;
+                                userId = participant.has("id") ? participant.get("id").asLong() : null;
+                                User newUser = new User(firstName, lastName, username, userId, this);
+
+                                UserAddedToChatEvent event = new UserAddedToChatEvent(this, chatImpl, sender, newUser);
+                                this.getListeners().forEach(listener -> {
+                                    try {
+                                        listener.onUserJoinChat(event);
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                });
+
+                                return;
+                            }
+
+                            if (message.has("left_chat_participant")) {
+                                JsonNode participant = message.get("left_chat_participant");
+                                firstName = participant.has("first_name") ? participant.get("first_name").asText() : null;
+                                lastName = participant.has("last_name") ? participant.get("last_name").asText() : null;
+                                username = participant.has("username") ? participant.get("username").asText() : null;
+                                userId = participant.has("id") ? participant.get("id").asLong() : null;
+                                User newUser = new User(firstName, lastName, username, userId, this);
+
+                                UserRemovedFromChatEvent event = new UserRemovedFromChatEvent(this, chatImpl, sender, newUser);
+                                this.getListeners().forEach(listener -> {
+                                    try {
+                                        listener.onUserLeaveChat(event);
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                });
+
+                                return;
+                            }
+
+                            MessageReceivedEvent event = new MessageReceivedEvent(this, sender, chatImpl, text);
                             this.getListeners().forEach(listener -> {
                                 try {
                                     listener.onMessage(event);

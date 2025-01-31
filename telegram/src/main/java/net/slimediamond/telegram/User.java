@@ -2,14 +2,14 @@ package net.slimediamond.telegram;
 
 import java.util.List;
 
-public class MessageSender {
+public class User {
     private String firstName;
     private String lastName;
     private String username;
     private long id;
     private TelegramClient client;
 
-    public MessageSender(String firstName, String lastName, String username, long id, TelegramClient client) {
+    public User(String firstName, String lastName, String username, long id, TelegramClient client) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -27,6 +27,10 @@ public class MessageSender {
 
     public String getUsername() {
         return username;
+    }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 
     public long getId() {

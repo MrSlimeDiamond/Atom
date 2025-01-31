@@ -44,6 +44,11 @@ public class TelegramBridgeEndpoint implements BridgeEndpoint {
     }
 
     @Override
+    public String getAvatarUrl() {
+        return chat.getPhoto().download();
+    }
+
+    @Override
     public String getName() {
         return "Telegram";
     }
