@@ -7,11 +7,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.chatbridge.BridgeEndpoint;
 import net.slimediamond.atom.chatbridge.BridgeMessage;
 import net.slimediamond.atom.chatbridge.EventType;
-import net.slimediamond.atom.database.Database;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -25,15 +23,13 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private TextChannel channel;
-    private Database database;
     private String identifier;
     private int id;
 
-    private HashMap<BridgeEndpoint, ArrayList<MessageEmbed>> queuedUpdates = new HashMap<>();
+    private final HashMap<BridgeEndpoint, ArrayList<MessageEmbed>> queuedUpdates = new HashMap<>();
 
     public DiscordBridgeEndpoint(TextChannel channel, String identifier, int id) {
         this.channel = channel;
-        this.database = Atom.getServiceManager().getInstance(Database.class);
         this.identifier = identifier;
         this.id = id;
 
@@ -43,6 +39,7 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
     @Override
     public void sendMessage(BridgeMessage message, BridgeEndpoint source) {
         forceSendUpdate();
+        awaitEmptyQueue();
         channel.retrieveWebhooks().queue(webhooks -> {
             String avatarUrl = message.avatarUrl();
             if (avatarUrl == null) {
@@ -64,6 +61,7 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
         });
     }
 
+    // TODO: rework this so it's less garbage
     @Override
     public void sendUpdate(EventType eventType, String username, BridgeEndpoint source, String comment) {
         // Chat bridge connection
@@ -101,6 +99,18 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
             queueUpdate(source, new EmbedBuilder()
                     .setDescription("**" + username + "** is now known as **" + comment + "**")
                     .build());
+        }
+    }
+
+    public void awaitEmptyQueue() {
+        try {
+            synchronized (queuedUpdates) {
+                while (!queuedUpdates.isEmpty()) {
+                    queuedUpdates.wait();
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -149,17 +159,34 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
 
                     // Send queued updates as webhook embeds
                     embeds.forEach(embed -> builder.addEmbeds(WebhookEmbedBuilder.fromJDA(embed).build()));
-                    client.send(builder.build());
+                    client.send(builder.build()).thenAccept(msg -> {
+                        // after we confirm that message has sent, we can remove it
+                        // and also possibly notify things which are
+                        // waiting on it
+                        synchronized (queuedUpdates) {
+                            queuedUpdates.remove(source);
+                            if (queuedUpdates.isEmpty()) {
+                                queuedUpdates.notifyAll();
+                            }
+                        }
+                    });
                 }
             }
             if (useEmbed) {
                 // If no webhook matched, send as embeds in the channel
-                channel.sendMessageEmbeds(embeds).queue();
+                channel.sendMessageEmbeds(embeds).queue(msg -> {
+                    // after we confirm that message has sent, we can remove it
+                    // and also possibly notify things which are
+                    // waiting on it
+                    synchronized (queuedUpdates) {
+                        queuedUpdates.remove(source);
+                        if (queuedUpdates.isEmpty()) {
+                            queuedUpdates.notifyAll();
+                        }
+                    }
+                });
             }
         });
-
-        // Clear the updates after sending
-        queuedUpdates.remove(source);
     }
 
     private void forceSendUpdate() {
