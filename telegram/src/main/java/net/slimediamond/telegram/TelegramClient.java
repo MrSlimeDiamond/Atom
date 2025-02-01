@@ -194,8 +194,6 @@ public class TelegramClient {
                                     file.get("file_id").asText(),
                                     file.get("file_unique_id").asText(),
                                     file.get("file_size").asLong(),
-                                    file.get("width").asInt(),
-                                    file.get("height").asInt(),
                                     filePath,
                                     this
                             ));
@@ -228,28 +226,10 @@ public class TelegramClient {
                 }
 
                 JsonNode photo = photos.get(0); // top result
-
                 JsonNode file = photo.get(2);
+                result.set(this.getFileById(file.get("file_id").asText()));
 
-                HTTPUtil.getDataFromURL(baseUrl + "/getFile?file_id=" + file.get("file_id").asText()).ifPresent(fileData -> {
-                    try {
-                        ObjectMapper objectMapper1 = new ObjectMapper();
-                        JsonNode jsonResponse1 = objectMapper1.readTree(fileData);
-                        String filePath = jsonResponse1.get("result").get("file_path").asText();
 
-                        result.set(new File(
-                                file.get("file_id").asText(),
-                                file.get("file_unique_id").asText(),
-                                file.get("file_size").asLong(),
-                                file.get("width").asInt(),
-                                file.get("height").asInt(),
-                                filePath,
-                                this
-                        ));
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -283,8 +263,6 @@ public class TelegramClient {
                                 photo.get("big_file_id").asText(),
                                 photo.get("big_file_unique_id").asText(),
                                 jsonResult.get("file_size").asLong(),
-                                -1,
-                                -1,
                                 jsonResult.get("file_path").asText(),
                                 this
                         ));
@@ -325,6 +303,32 @@ public class TelegramClient {
         }
 
         return null;
+    }
+
+    public File getFileById(String id) {
+        AtomicReference<File> result = new AtomicReference<>();
+        try {
+            HTTPUtil.getDataFromURL(baseUrl + "/getFile?file_id=" + id).ifPresent(fileData -> {
+                try {
+                    ObjectMapper objectMapper1 = new ObjectMapper();
+                    JsonNode response = objectMapper1.readTree(fileData);
+
+                    result.set(new File(
+                            response.get("file_id").asText(),
+                            response.get("file_unique_id").asText(),
+                            response.get("file_size").asLong(),
+                            response.get("file_path").asText(),
+                            this
+                    ));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result.get();
     }
 
     public void addListener(Listener listener) {
