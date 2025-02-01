@@ -1,7 +1,7 @@
 package net.slimediamond.atom.command.telegram;
 
 import net.slimediamond.atom.command.CommandSender;
-import net.slimediamond.telegram.User;
+import net.slimediamond.telegram.entity.User;
 
 import java.sql.SQLException;
 

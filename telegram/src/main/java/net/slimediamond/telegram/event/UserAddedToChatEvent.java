@@ -1,8 +1,8 @@
 package net.slimediamond.telegram.event;
 
-import net.slimediamond.telegram.Chat;
+import net.slimediamond.telegram.entity.Chat;
 import net.slimediamond.telegram.TelegramClient;
-import net.slimediamond.telegram.User;
+import net.slimediamond.telegram.entity.User;
 
 public class UserAddedToChatEvent extends ChatEvent {
     private User adder;

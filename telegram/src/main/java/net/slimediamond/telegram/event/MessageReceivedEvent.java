@@ -1,36 +1,37 @@
 package net.slimediamond.telegram.event;
 
-import net.slimediamond.telegram.Chat;
-import net.slimediamond.telegram.User;
+import net.slimediamond.telegram.entity.Chat;
+import net.slimediamond.telegram.entity.Message;
+import net.slimediamond.telegram.entity.User;
 import net.slimediamond.telegram.TelegramClient;
 
 public class MessageReceivedEvent extends ChatEvent {
     private User sender;
     private Chat chat;
-    private String text;
+    private Message message;
     private TelegramClient client;
 
-    public MessageReceivedEvent(TelegramClient client, User sender, Chat chat, String text) {
+    public MessageReceivedEvent(TelegramClient client, User sender, Chat chat, Message message) {
         super(client, chat);
         this.client = client;
         this.sender = sender;
         this.chat = chat;
-        this.text = text;
+        this.message = message;
     }
 
     public User getSender() {
-        return sender;
+        return this.sender;
     }
 
     public Chat getChat() {
-        return chat;
+        return this.chat;
     }
 
-    public String getText() {
-        return text;
+    public Message getMessage() {
+        return this.message;
     }
 
     public TelegramClient getClient() {
-        return client;
+        return this.client;
     }
 }

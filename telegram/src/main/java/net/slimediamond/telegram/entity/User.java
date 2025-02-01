@@ -1,4 +1,6 @@
-package net.slimediamond.telegram;
+package net.slimediamond.telegram.entity;
+
+import net.slimediamond.telegram.TelegramClient;
 
 import java.util.List;
 

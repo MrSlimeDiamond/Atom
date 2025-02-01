@@ -1,5 +1,8 @@
 package net.slimediamond.atom.chatbridge;
 
+import net.slimediamond.atom.chatbridge.discord.DiscordBridgeEndpoint;
+import net.slimediamond.telegram.entity.File;
+
 import java.util.ArrayList;
 
 public class BridgedChat {

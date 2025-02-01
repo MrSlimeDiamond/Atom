@@ -7,6 +7,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.utils.FileUpload;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.slimediamond.atom.chatbridge.BridgeEndpoint;
 import net.slimediamond.atom.chatbridge.BridgeMessage;
 import net.slimediamond.atom.chatbridge.EventType;
@@ -14,6 +16,7 @@ import net.slimediamond.atom.chatbridge.Netsplit;
 import net.slimediamond.atom.util.DiscordUtil;
 
 import java.awt.*;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,23 +46,26 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
         forceSendUpdate();
         awaitEmptyQueue();
         channel.retrieveWebhooks().queue(webhooks -> {
-            String avatarUrl = message.avatarUrl();
+            String avatarUrl = message.getAvatarUrl();
             if (avatarUrl == null) {
                 avatarUrl = channel.getGuild().getIconUrl();
             }
+
+            ArrayList<File> files = message.getFiles();
+
             boolean useEmbed = true;
             for (Webhook webhook : webhooks) {
                 if (webhook.getName().toLowerCase().contains("atom") || webhook.getName().toLowerCase().contains("bridge")) {
                     // Use the webhook, else use embeds.
                     useEmbed = false;
                     try {
-                        sendWebhook(webhook.getUrl(), message.username(), DiscordUtil.removeFormatting(message.content()), avatarUrl, source.getShortName());
+                        sendWebhook(webhook.getUrl(), message.getUsername(), DiscordUtil.removeFormatting(message.getContent()), avatarUrl, source.getShortName(), files);
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
                 }
             }
-            if (useEmbed) sendEmbed(channel, DiscordUtil.removeFormatting(message.username()), DiscordUtil.removeFormatting(message.content()), source.getShortName());
+            if (useEmbed) sendEmbed(channel, DiscordUtil.removeFormatting(message.getUsername()), DiscordUtil.removeFormatting(message.getContent()), source.getShortName(), files);
         });
     }
 
@@ -118,7 +124,7 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
 
     @Override
     public void sendActionMessage(BridgeMessage message, BridgeEndpoint source) {
-        this.sendMessage(new BridgeMessage(message.username(), message.avatarUrl(),"*" + message.content() + "*"), source);
+        this.sendMessage(new BridgeMessage(message.getUsername(), message.getAvatarUrl(),"*" + message.getContent() + "*"), source);
 
     }
 
@@ -252,21 +258,28 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
         return this.id;
     }
 
-    private void sendEmbed(TextChannel channel, String nickname, String content, String source) {
+    private void sendEmbed(TextChannel channel, String nickname, String content, String source, ArrayList<File> files) {
+        MessageCreateBuilder builder = new MessageCreateBuilder();
+
         MessageEmbed embed = new EmbedBuilder()
                 .setAuthor(nickname + "[" + source + "]")
                 .setDescription(content)
                 .setColor(Color.GREEN)
                 .build();
+
+        builder.addEmbeds(embed);
+        files.forEach(file -> builder.addFiles(FileUpload.fromData(file)));
         channel.sendMessageEmbeds(embed).queue();
     }
 
-    private void sendWebhook(String url, String nickname, String content, String avatarUrl, String source) throws SQLException {
+    private void sendWebhook(String url, String nickname, String content, String avatarUrl, String source, ArrayList<File> files) throws SQLException {
         WebhookClient client = WebhookClient.withUrl(url);
         WebhookMessageBuilder builder = new WebhookMessageBuilder()
                 .setUsername(nickname + " [" + source + "]")
                 .setContent(content)
                 .setAvatarUrl(avatarUrl);
+
+        files.forEach(builder::addFile);
         client.send(builder.build());
     }
 }

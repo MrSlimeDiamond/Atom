@@ -3,7 +3,7 @@ package net.slimediamond.atom.command.telegram;
 import net.slimediamond.atom.command.CommandContext;
 import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandMetadata;
-import net.slimediamond.telegram.Chat;
+import net.slimediamond.telegram.entity.Chat;
 import net.slimediamond.telegram.TelegramClient;
 
 public class TelegramCommandContext implements CommandContext {

@@ -1,4 +1,4 @@
-package net.slimediamond.telegram;
+package net.slimediamond.telegram.entity;
 
 public enum ChatType {
     PRIVATE("private"),

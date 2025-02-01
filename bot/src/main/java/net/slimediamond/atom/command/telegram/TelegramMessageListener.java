@@ -17,7 +17,7 @@ public class TelegramMessageListener implements Listener {
 
     @Override
     public void onMessage(MessageReceivedEvent event) {
-        String message = event.getText().toLowerCase();
+        String message = event.getMessage().getContent().toLowerCase();
         String prefix = TelegramReference.prefix;
         boolean hidden = false;
 

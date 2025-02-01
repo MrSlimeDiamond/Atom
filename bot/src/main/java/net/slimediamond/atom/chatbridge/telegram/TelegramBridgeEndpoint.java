@@ -4,7 +4,7 @@ import net.slimediamond.atom.chatbridge.BridgeEndpoint;
 import net.slimediamond.atom.chatbridge.BridgeMessage;
 import net.slimediamond.atom.chatbridge.EventType;
 import net.slimediamond.atom.chatbridge.Netsplit;
-import net.slimediamond.telegram.Chat;
+import net.slimediamond.telegram.entity.Chat;
 
 public class TelegramBridgeEndpoint implements BridgeEndpoint {
     private Chat chat;
@@ -17,7 +17,7 @@ public class TelegramBridgeEndpoint implements BridgeEndpoint {
 
     @Override
     public void sendMessage(BridgeMessage message, BridgeEndpoint source) {
-        chat.sendMessage("[" + source.getShortName() + "] " + message.username() + ": " + message.content());
+        chat.sendMessage("[" + source.getShortName() + "] " + message.getUsername() + ": " + message.getContent());
 
     }
 
@@ -40,7 +40,7 @@ public class TelegramBridgeEndpoint implements BridgeEndpoint {
 
     @Override
     public void sendActionMessage(BridgeMessage message, BridgeEndpoint source) {
-        chat.sendMessage("[" + source.getShortName() + "] * " + message.username() + " " + message.content());
+        chat.sendMessage("[" + source.getShortName() + "] * " + message.getUsername() + " " + message.getContent());
 
     }
 

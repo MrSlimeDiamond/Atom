@@ -3,6 +3,7 @@ package net.slimediamond.telegram;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.slimediamond.atom.common.util.HTTPUtil;
+import net.slimediamond.telegram.entity.*;
 import net.slimediamond.telegram.event.MessageReceivedEvent;
 import net.slimediamond.telegram.event.UserAddedToChatEvent;
 import net.slimediamond.telegram.event.UserRemovedFromChatEvent;
@@ -79,7 +80,15 @@ public class TelegramClient {
                         if (updateId > lastUpdateId) {
                             lastUpdateId = updateId; // Update offset to avoid duplicate processing
                             long chatId = message.get("chat").get("id").asLong();
-                            String text = message.has("text") ? message.get("text").asText() : "";
+
+                            String text;
+                            if (message.has("text")) {
+                                text = message.get("text").asText();
+                            } else if (message.has("caption")) {
+                                text = message.get("caption").asText();
+                            } else {
+                                text = "";
+                            }
 
                             JsonNode from = message.get("from");
 
@@ -102,6 +111,13 @@ public class TelegramClient {
                             }
 
                             Chat chatImpl = new GenericChat(this, name, chatId, type);
+
+                            Message messageEntity = new Message(text);
+                            if (message.has("photo")) {
+                                JsonNode photo = message.get("photo").get(2); // high quality
+                                File photoFile = this.getFileById(photo.get("file_id").asText());
+                                messageEntity.setPhoto(photoFile);
+                            }
 
                             if (message.has("new_chat_participant")) {
                                 JsonNode participant = message.get("new_chat_participant");
@@ -143,7 +159,7 @@ public class TelegramClient {
                                 return;
                             }
 
-                            MessageReceivedEvent event = new MessageReceivedEvent(this, sender, chatImpl, text);
+                            MessageReceivedEvent event = new MessageReceivedEvent(this, sender, chatImpl, messageEntity);
                             this.getListeners().forEach(listener -> {
                                 try {
                                     listener.onMessage(event);
@@ -311,7 +327,7 @@ public class TelegramClient {
             HTTPUtil.getDataFromURL(baseUrl + "/getFile?file_id=" + id).ifPresent(fileData -> {
                 try {
                     ObjectMapper objectMapper1 = new ObjectMapper();
-                    JsonNode response = objectMapper1.readTree(fileData);
+                    JsonNode response = objectMapper1.readTree(fileData).get("result");
 
                     result.set(new File(
                             response.get("file_id").asText(),

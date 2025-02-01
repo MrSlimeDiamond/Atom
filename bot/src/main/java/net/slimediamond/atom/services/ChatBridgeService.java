@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.engio.mbassy.listener.Handler;
 import net.slimediamond.atom.chatbridge.*;
+import net.slimediamond.atom.common.util.HTTPUtil;
 import net.slimediamond.atom.irc.IRC;
 import net.slimediamond.atom.reference.DiscordReference;
 import net.slimediamond.atom.reference.IRCReference;
@@ -16,7 +17,7 @@ import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.reference.TelegramReference;
 import net.slimediamond.atom.telegram.Telegram;
-import net.slimediamond.telegram.File;
+import net.slimediamond.telegram.entity.File;
 import net.slimediamond.telegram.Listener;
 import net.slimediamond.telegram.event.UserAddedToChatEvent;
 import net.slimediamond.telegram.event.UserRemovedFromChatEvent;
@@ -28,8 +29,8 @@ import org.kitteh.irc.client.library.event.user.UserNickChangeEvent;
 import org.kitteh.irc.client.library.event.user.UserQuitEvent;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -276,8 +277,8 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
 
     // Telegram content event
     @Override
-    public void onMessage(net.slimediamond.telegram.event.MessageReceivedEvent event) throws SQLException {
-        if (event.getText().startsWith(TelegramReference.prefix)) return;
+    public void onMessage(net.slimediamond.telegram.event.MessageReceivedEvent event) throws SQLException, IOException {
+        if (event.getMessage().getContent().startsWith(TelegramReference.prefix)) return;
         BridgedChat chat = BridgeStore.getChats().get(database.getBridgedChatID(database.getBridgedEndpointId(String.valueOf(event.getChat().getId()))));
         if (chat == null) {
             return;
@@ -297,7 +298,13 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
 
         String name = event.getSender().getFirstName() + " " + event.getSender().getLastName();
 
-        chat.sendMessage(new BridgeMessage(name, avatarUrl, event.getText()), source);
+        BridgeMessage message = new BridgeMessage(name, avatarUrl, event.getMessage().getContent());
+
+        if (event.getMessage().getPhoto() != null) {
+            message.addFile(HTTPUtil.downloadFile(event.getMessage().getPhoto().download(), event.getMessage().getPhoto().filePath().split("/")[1]));
+        }
+
+        chat.sendMessage(message, source);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package net.slimediamond.telegram.event;
 
-import net.slimediamond.telegram.Chat;
+import net.slimediamond.telegram.entity.Chat;
 import net.slimediamond.telegram.TelegramClient;
 
 public class ChatEvent extends GenericEvent {

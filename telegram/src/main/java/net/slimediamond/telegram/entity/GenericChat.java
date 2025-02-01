@@ -1,6 +1,7 @@
-package net.slimediamond.telegram;
+package net.slimediamond.telegram.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import net.slimediamond.telegram.TelegramClient;
 
 import java.io.IOException;
 

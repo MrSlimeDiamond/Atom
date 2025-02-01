@@ -14,4 +14,5 @@ dependencies {
     implementation 'com.google.inject:guice:7.0.0'
     implementation 'org.apache.httpcomponents:httpclient:4.5' // Needs 5.0
     implementation 'org.json:json:20230618'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 }

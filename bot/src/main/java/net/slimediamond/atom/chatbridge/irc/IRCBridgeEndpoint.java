@@ -25,7 +25,7 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
 
     @Override
     public void sendMessage(BridgeMessage message, BridgeEndpoint source) {
-        channel.sendMessage("[" + source.getShortName() + "] " + message.username() + ": " + message.content());
+        channel.sendMessage("[" + source.getShortName() + "] " + message.getUsername() + ": " + message.getContent());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
 
     @Override
     public void sendActionMessage(BridgeMessage message, BridgeEndpoint source) {
-        channel.sendMessage("[" + source.getShortName() + "] * " + message.username() + " " + message.content());
+        channel.sendMessage("[" + source.getShortName() + "] * " + message.getUsername() + " " + message.getContent());
 
     }
 
