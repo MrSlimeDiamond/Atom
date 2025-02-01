@@ -2,6 +2,7 @@ package net.slimediamond.atom.services;
 
 import com.google.inject.Inject;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
@@ -104,7 +105,14 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
                 .filter(endpoint -> identifier.equals(endpoint.getUniqueIdentifier()))
                 .findFirst() // Returns an Optional<BridgeEndpoint>
                 .orElseThrow(() -> new RuntimeException("No matching endpoint found for identifier: " + identifier));
-        chat.sendMessage(new BridgeMessage(event.getAuthor().getEffectiveName(), event.getAuthor().getEffectiveAvatarUrl(), event.getMessage().getContentDisplay()), source);
+
+        if (!event.getMessage().getContentDisplay().isEmpty()) {
+            chat.sendMessage(new BridgeMessage(event.getAuthor().getEffectiveName(), event.getAuthor().getEffectiveAvatarUrl(), event.getMessage().getContentDisplay()), source);
+        }
+
+        for (Message.Attachment attachment : event.getMessage().getAttachments()) {
+            chat.sendMessage(new BridgeMessage(event.getAuthor().getEffectiveName(), event.getAuthor().getEffectiveAvatarUrl(), attachment.getUrl()), source);
+        }
     }
 
     // IRC Message event
