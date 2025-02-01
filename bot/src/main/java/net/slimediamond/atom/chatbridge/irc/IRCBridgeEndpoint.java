@@ -25,7 +25,11 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
 
     @Override
     public void sendMessage(BridgeMessage message, BridgeEndpoint source) {
-        channel.sendMessage("[" + source.getShortName() + "] " + message.getUsername() + ": " + message.getContent());
+        String text = message.getContent();
+        if (!message.getFiles().isEmpty()) {
+            text = "[file] " + message.getContent();
+        }
+        channel.sendMessage("[" + source.getShortName() + "] " + message.getUsername() + ": " + text);
     }
 
     @Override
