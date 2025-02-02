@@ -37,7 +37,10 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
                 text = "[file] " + message.getContent();
             }
         }
-        channel.sendMessage("[" + source.getShortName() + "] " + message.getUsername() + ": " + text);
+
+        for (String line : text.split("\n")) {
+            channel.sendMessage("[" + source.getShortName() + "] " + message.getUsername() + ": " + line);
+        }
     }
 
     @Override
