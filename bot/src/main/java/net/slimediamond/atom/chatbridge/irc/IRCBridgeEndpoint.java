@@ -16,16 +16,19 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
     private String identifier;
     private int id;
     private Database database;
+    private boolean isEnabled;
 
-    public IRCBridgeEndpoint(Channel channel, String identifier, int id) {
+    public IRCBridgeEndpoint(Channel channel, String identifier, int id, boolean isEnabled) {
         this.channel = channel;
         this.identifier = identifier;
         this.id = id;
+        this.isEnabled = isEnabled;
         this.database = Atom.getServiceManager().getInstance(Database.class);
     }
 
     @Override
     public void sendMessage(BridgeMessage message, BridgeEndpoint source) {
+        if (!this.isEnabled) return;
         String text = message.getContent();
         if (!message.getFiles().isEmpty()) {
             String[] imageExtensions = {".png", ".jpg", ".jpeg", ".bmp"};
@@ -45,6 +48,7 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
 
     @Override
     public void sendUpdate(EventType eventType, String username, BridgeEndpoint source, String comment) {
+        if (!this.isEnabled) return;
         if (eventType == EventType.JOIN) {
             String msg = username + " joined" + source.getChannelName();
             if (comment != null) {
@@ -66,18 +70,21 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
 
     @Override
     public void sendActionMessage(BridgeMessage message, BridgeEndpoint source) {
+        if (!this.isEnabled) return;
         channel.sendMessage("[" + source.getShortName() + "] * " + message.getUsername() + " " + message.getContent());
 
     }
 
     @Override
     public void netsplitQuits(Netsplit netsplit, BridgeEndpoint source) {
+        if (!this.isEnabled) return;
         String quits = String.join(", ", netsplit.getQuits());
         channel.sendMessage("[" + source.getShortName() + "] Netsplit quits: " + quits);
     }
 
     @Override
     public void netsplitJoins(Netsplit netsplit, BridgeEndpoint source) {
+        if (!this.isEnabled) return;
         String joins = String.join(", ", netsplit.getJoins());
         channel.sendMessage("[" + source.getShortName() + "] Netsplit over, joins: " + joins);
     }
@@ -119,5 +126,10 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
     @Override
     public int getId() {
         return this.id;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.isEnabled;
     }
 }

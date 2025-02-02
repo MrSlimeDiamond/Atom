@@ -9,20 +9,24 @@ import net.slimediamond.telegram.entity.Chat;
 public class TelegramBridgeEndpoint implements BridgeEndpoint {
     private Chat chat;
     private int id;
+    private boolean isEnabled;
 
-    public TelegramBridgeEndpoint(Chat chat, int id) {
+    public TelegramBridgeEndpoint(Chat chat, int id, boolean isEnabled) {
         this.chat = chat;
         this.id = id;
+        this.isEnabled = isEnabled;
     }
 
     @Override
     public void sendMessage(BridgeMessage message, BridgeEndpoint source) {
+        if (!this.isEnabled) return;
         chat.sendMessage("[" + source.getShortName() + "] " + message.getUsername() + ": " + message.getContent());
 
     }
 
     @Override
     public void sendUpdate(EventType eventType, String username, BridgeEndpoint source, String comment) {
+        if (!this.isEnabled) return;
         if (eventType == EventType.CONNECT) {
             chat.sendMessage("Chat bridge reconnected.");
         } else if (eventType == EventType.DISCONNECT) {
@@ -40,18 +44,21 @@ public class TelegramBridgeEndpoint implements BridgeEndpoint {
 
     @Override
     public void sendActionMessage(BridgeMessage message, BridgeEndpoint source) {
+        if (!this.isEnabled) return;
         chat.sendMessage("[" + source.getShortName() + "] * " + message.getUsername() + " " + message.getContent());
 
     }
 
     @Override
     public void netsplitQuits(Netsplit netsplit, BridgeEndpoint source) {
+        if (!this.isEnabled) return;
         String quits = String.join(", ", netsplit.getQuits());
         chat.sendMessage("[" + source.getShortName() + "] Netsplit quits: " + quits);
     }
 
     @Override
     public void netsplitJoins(Netsplit netsplit, BridgeEndpoint source) {
+        if (!this.isEnabled) return;
         String joins = String.join(", ", netsplit.getJoins());
         chat.sendMessage("[" + source.getShortName() + "] Netsplit over, joins: " + joins);
     }
@@ -89,5 +96,10 @@ public class TelegramBridgeEndpoint implements BridgeEndpoint {
     @Override
     public int getId() {
         return id;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.isEnabled;
     }
 }

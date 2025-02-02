@@ -13,4 +13,5 @@ public interface BridgeEndpoint {
     String getChannelName();
     String getUniqueIdentifier();
     int getId();
+    boolean isEnabled();
 }

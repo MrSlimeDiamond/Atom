@@ -120,6 +120,7 @@ public class Database {
     private PreparedStatement setBridgedEndpointAvatar;
     private PreparedStatement disableBridgedEndpoint;
     private PreparedStatement isBridgedEndpointEnabled;
+    private PreparedStatement isBridgedChatEnabled;
     private PreparedStatement getBridgedEndpointId;
     private PreparedStatement getBridgedEndpointAvatar;
     private PreparedStatement getBridgedEndpointIdentifier;
@@ -219,16 +220,17 @@ public class Database {
         getServerMemesChannel = conn.prepareStatement("SELECT MemesChannel FROM guilds WHERE GuildID = ?");
         setServerMemesChannel = conn.prepareStatement("UPDATE guilds SET MemesChannel = ? WHERE GuildID = ?");
 
-        insertBridgedRoom = conn.prepareStatement("INSERT INTO bridged_chats DEFAULT VALUES");
+        insertBridgedRoom = conn.prepareStatement("INSERT INTO bridged_chats (Name) VALUES (?)");
         removeBridgedRoom = conn.prepareStatement("DELETE FROM bridged_chats WHERE ChatID = ?");
         insertBridgeEndpoint = conn.prepareStatement(
                 "INSERT INTO endpoints (ChatID, Type, UniqueIdentifier, IsEnabled) " +
                         "VALUES (?, ?, ?, ?)"
         );
-        removeBridgedEndpoint = conn.prepareStatement("DELETE FROM endpoints WHERE EndpointID = ?");
+        removeBridgedEndpoint = conn.prepareStatement("DELETE FROM endpoints WHERE EndpointID = ?"); // FIXME: endpoints must also be deleted
         setBridgedEndpointAvatar = conn.prepareStatement("UPDATE endpoints SET CustomAvatarURL = ? WHERE EndpointID = ?");
         disableBridgedEndpoint = conn.prepareStatement("UPDATE endpoints SET IsEnabled = FALSE WHERE EndpointID = ?");
         isBridgedEndpointEnabled = conn.prepareStatement("SELECT IsEnabled FROM endpoints WHERE EndpointID = ?");
+        isBridgedChatEnabled = conn.prepareStatement("SELECT IsEnabled FROM bridged_chats WHERE ChatID = ?");
         getBridgedEndpointId = conn.prepareStatement("SELECT EndpointID from endpoints WHERE UniqueIdentifier = ?");
         getBridgedEndpointAvatar = conn.prepareStatement("SELECT CustomAvatarURL FROM endpoints WHERE EndpointID = ?");
         getBridgedEndpointIdentifier = conn.prepareStatement("SELECT UniqueIdentifier FROM endpoints WHERE EndpointID = ?");
@@ -766,7 +768,8 @@ public class Database {
         setServerMemesChannel.execute();
     }
 
-    public void insertBridgedRoom() throws SQLException {
+    public void insertBridgedRoom(String name) throws SQLException {
+        insertBridgedRoom.setString(1, name);
         insertBridgedRoom.executeUpdate();
     }
 
@@ -804,6 +807,12 @@ public class Database {
         try (ResultSet rs = isBridgedEndpointEnabled.executeQuery()) {
             return rs.next() && rs.getBoolean(1);
         }
+    }
+
+    public boolean isBridgedChatEnabled(int chatId) throws SQLException {
+        isBridgedChatEnabled.setInt(1, chatId);
+        ResultSet rs = isBridgedChatEnabled.executeQuery();
+        return rs.next() && rs.getBoolean(1);
     }
 
     public int getBridgedEndpointId(String uniqueIdentifier) throws SQLException {
@@ -861,10 +870,10 @@ public class Database {
 
             switch (type) {
                 case "discord" ->
-                        endpoints.add(new DiscordBridgeEndpoint(jda.getTextChannelById(unique), unique, endpointId));
+                        endpoints.add(new DiscordBridgeEndpoint(jda.getTextChannelById(unique), unique, endpointId, (isEnabled == 1)));
                 case "irc" ->
-                        endpoints.add(new IRCBridgeEndpoint(IRC.client.getChannel(unique).get(), unique, endpointId));
-                case "telegram" -> endpoints.add(new TelegramBridgeEndpoint(Telegram.getClient().getChatById(Long.parseLong(unique)), chatId));
+                        endpoints.add(new IRCBridgeEndpoint(IRC.client.getChannel(unique).get(), unique, endpointId, (isEnabled == 1)));
+                case "telegram" -> endpoints.add(new TelegramBridgeEndpoint(Telegram.getClient().getChatById(Long.parseLong(unique)), chatId, (isEnabled == 1)));
             }
         }
 

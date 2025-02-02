@@ -30,19 +30,22 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
     private TextChannel channel;
     private String identifier;
     private int id;
+    private boolean isEnabled;
 
     private final HashMap<BridgeEndpoint, ArrayList<MessageEmbed>> queuedUpdates = new HashMap<>();
 
-    public DiscordBridgeEndpoint(TextChannel channel, String identifier, int id) {
+    public DiscordBridgeEndpoint(TextChannel channel, String identifier, int id, boolean isEnabled) {
         this.channel = channel;
         this.identifier = identifier;
         this.id = id;
+        this.isEnabled = isEnabled;
 
         scheduler.scheduleAtFixedRate(this::forceSendUpdate, 60, 60, TimeUnit.SECONDS);
     }
 
     @Override
     public void sendMessage(BridgeMessage message, BridgeEndpoint source) {
+        if (!this.isEnabled) return;
         forceSendUpdate();
         awaitEmptyQueue();
         channel.retrieveWebhooks().queue(webhooks -> {
@@ -72,6 +75,7 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
     // TODO: rework this so it's less garbage
     @Override
     public void sendUpdate(EventType eventType, String username, BridgeEndpoint source, String comment) {
+        if (!this.isEnabled) return;
         // Chat bridge connection
         if (eventType == EventType.CONNECT) {
             channel.sendMessageEmbeds(new EmbedBuilder()
@@ -124,12 +128,14 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
 
     @Override
     public void sendActionMessage(BridgeMessage message, BridgeEndpoint source) {
+        if (!this.isEnabled) return;
         this.sendMessage(new BridgeMessage(message.getUsername(), message.getAvatarUrl(),"*" + message.getContent() + "*"), source);
 
     }
 
     @Override
     public void netsplitQuits(Netsplit netsplit, BridgeEndpoint source) {
+        if (!this.isEnabled) return;
         String quits = String.join(", ", netsplit.getQuits());
         MessageEmbed embed = new EmbedBuilder()
                 .setAuthor("Netsplit")
@@ -141,6 +147,7 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
 
     @Override
     public void netsplitJoins(Netsplit netsplit, BridgeEndpoint source) {
+        if (!this.isEnabled) return;
         String joins = String.join(", ", netsplit.getJoins());
         MessageEmbed embed = new EmbedBuilder()
                 .setAuthor("Netsplit over")
@@ -256,6 +263,11 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
     @Override
     public int getId() {
         return this.id;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.isEnabled;
     }
 
     private void sendEmbed(TextChannel channel, String nickname, String content, String source, ArrayList<File> files) {

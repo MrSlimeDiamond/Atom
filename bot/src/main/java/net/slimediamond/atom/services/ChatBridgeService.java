@@ -57,20 +57,21 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
         IRC.client.getEventManager().registerEventListener(this);
         Telegram.getClient().addListener(this);
 
+        // not the best solution
         while (IRC.client.getChannels().size() != database.getIRCChannels().size()) {
             Thread.sleep(500);
         }
 
         // Add endpoints and chat rooms to the storage
         database.getAllChatIds().forEach(chatId -> {
-            BridgedChat chat = new BridgedChat();
             try {
+                BridgedChat chat = new BridgedChat(database.isBridgedChatEnabled(chatId));
                 database.getEndpoints(chatId).forEach(chat::addEndpoint);
+
+                BridgeStore.getChats().put(chatId, chat);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-
-            BridgeStore.getChats().put(chatId, chat);
         });
 
         // send our connection messages

@@ -1,12 +1,14 @@
 package net.slimediamond.atom.chatbridge;
 
-import net.slimediamond.atom.chatbridge.discord.DiscordBridgeEndpoint;
-import net.slimediamond.telegram.entity.File;
-
 import java.util.ArrayList;
 
 public class BridgedChat {
     private ArrayList<BridgeEndpoint> endpoints = new ArrayList<>();
+    private boolean isEnabled;
+
+    public BridgedChat(boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
 
     public void addEndpoint(BridgeEndpoint endpoint) {
         this.endpoints.add(endpoint);
@@ -17,6 +19,7 @@ public class BridgedChat {
     }
 
     public void sendMessage(BridgeMessage message, BridgeEndpoint source) {
+        if (!isEnabled) return;
         for (BridgeEndpoint endpoint : endpoints) {
             if (endpoint != source) {
                 endpoint.sendMessage(message, source);
@@ -25,6 +28,7 @@ public class BridgedChat {
     }
 
     public void sendActionMessage(BridgeMessage message, BridgeEndpoint source) {
+        if (!isEnabled) return;
         for (BridgeEndpoint endpoint : endpoints) {
             if (endpoint != source) {
                 endpoint.sendActionMessage(message, source);
@@ -33,6 +37,7 @@ public class BridgedChat {
     }
 
     public void sendUpdate(EventType eventType, String username, BridgeEndpoint source, String comment) {
+        if (!isEnabled) return;
         for (BridgeEndpoint endpoint : endpoints) {
             if (endpoint != source) {
                 endpoint.sendUpdate(eventType, username, source, comment);
@@ -41,6 +46,7 @@ public class BridgedChat {
     }
 
     public void netsplitQuits(Netsplit netsplit, BridgeEndpoint source) {
+        if (!isEnabled) return;
         for (BridgeEndpoint endpoint : endpoints) {
             if (endpoint != source) {
                 endpoint.netsplitQuits(netsplit, source);
@@ -49,6 +55,7 @@ public class BridgedChat {
     }
 
     public void netsplitJoins(Netsplit netsplit, BridgeEndpoint source) {
+        if (!isEnabled) return;
         for (BridgeEndpoint endpoint : endpoints) {
             if (endpoint != source) {
                 endpoint.netsplitJoins(netsplit, source);
