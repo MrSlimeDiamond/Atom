@@ -51,27 +51,38 @@ public class IRCWhoisCommand implements DiscordCommandExecutor {
         }
 
         EmbedBuilder builder = new EmbedBuilder()
-                .setAuthor(event.getWhoisData().getNick())
-                .setTitle(event.getWhoisData().getName());
+                .setAuthor(event.getWhoisData().getNick() + " (" + event.getWhoisData().getUserString() + "@" + event.getWhoisData().getHost() + ")");
 
         StringBuilder stringBuilder = new StringBuilder();
-        event.getWhoisData().getRealName().ifPresent(builder::setDescription);
-        event.getWhoisData().getChannels().forEach(channel -> {
-            stringBuilder.append(channel).append(" ");
+
+        event.getWhoisData().getRealName().ifPresent(realname -> {
+            stringBuilder.append("**Real name:** ").append(realname).append("\n");
         });
+
         event.getWhoisData().getServer().ifPresent(server -> {
-            AtomicReference<String> serverDescription = new AtomicReference<>("*No server description*");
+            AtomicReference<String> serverDescription = new AtomicReference<>(null);
             event.getWhoisData().getServerDescription().ifPresent(serverDescription::set);
-            builder.addField("Server", server + " : " + serverDescription, false);
+
+            stringBuilder.append("**Server**: ").append(server);
+            if (!serverDescription.get().isEmpty()) {
+                stringBuilder.append(" (*").append(serverDescription).append("*)");
+            }
+
+            stringBuilder.append("\n");
         });
-        event.getWhoisData().getAccount().ifPresent(account -> builder.addField("Account", "Logged in as " + account, true));
-        event.getWhoisData().getIdleTime().ifPresent(idletime -> builder.addField("Idle", new Date(System.currentTimeMillis() - idletime) + " (" + DateUtil.formatDuration(Duration.ofSeconds(idletime)) + ")", true));
-        event.getWhoisData().getOperatorInformation().ifPresent(operatorInfo -> builder.addField("Operator", operatorInfo, false));
 
-        event.getWhoisData().getIdleTime().ifPresent(System.out::println);
+        event.getWhoisData().getIdleTime().ifPresent(idletime -> stringBuilder.append("**Idle:** ").append(new Date(System.currentTimeMillis() - idletime)).append(" (").append(DateUtil.formatDuration(Duration.ofSeconds(idletime))).append(")\n"));
 
-        String channels = stringBuilder.toString();
-        builder.addField("Channels", channels, false);
+        event.getWhoisData().getAccount().ifPresent(account -> stringBuilder.append("**Account:** " + "Logged in as ").append(account).append("\n"));
+        event.getWhoisData().getOperatorInformation().ifPresent(operatorInfo -> stringBuilder.append("**Operator:** ").append(operatorInfo).append("\n"));
+
+        StringBuilder channelsBuilder = new StringBuilder();
+        event.getWhoisData().getChannels().forEach(channel -> channelsBuilder.append(channel).append(" "));
+        String channels = channelsBuilder.toString();
+
+        stringBuilder.append("**Channels:** ").append(channels).append("\n");
+
+        builder.setDescription(stringBuilder);
 
         context.replyEmbeds(builder.build());
     }
