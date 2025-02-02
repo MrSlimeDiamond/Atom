@@ -8,4 +8,11 @@ public class BridgeStore {
     public static HashMap<Integer, BridgedChat> getChats() {
         return chats;
     }
+
+    public static BridgeEndpoint getEndpointByIdentifier(BridgedChat chat, String identifier) {
+        return chat.getEndpoints().stream()
+                .filter(endpoint -> identifier.equals(endpoint.getUniqueIdentifier()))
+                .findFirst() // Returns an Optional<BridgeEndpoint>
+                .orElseThrow(() -> new RuntimeException("No matching endpoint found for identifier: " + identifier));
+    }
 }

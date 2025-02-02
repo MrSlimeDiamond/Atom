@@ -103,10 +103,7 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
             return;
         }
         String identifier = event.getChannel().getId();
-        BridgeEndpoint source = chat.getEndpoints().stream()
-                .filter(endpoint -> identifier.equals(endpoint.getUniqueIdentifier()))
-                .findFirst() // Returns an Optional<BridgeEndpoint>
-                .orElseThrow(() -> new RuntimeException("No matching endpoint found for identifier: " + identifier));
+        BridgeEndpoint source = BridgeStore.getEndpointByIdentifier(chat, identifier);
 
         if (!event.getMessage().getContentDisplay().isEmpty()) {
             chat.sendMessage(new BridgeMessage(event.getAuthor().getEffectiveName(), event.getAuthor().getEffectiveAvatarUrl(), event.getMessage().getContentDisplay()), source);
@@ -126,10 +123,7 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
             return;
         }
         String identifier = event.getChannel().getName();
-        BridgeEndpoint source = chat.getEndpoints().stream()
-                .filter(endpoint -> identifier.equals(endpoint.getUniqueIdentifier()))
-                .findFirst() // Returns an Optional<BridgeEndpoint>
-                .orElseThrow(() -> new RuntimeException("No matching endpoint found for identifier: " + identifier));
+        BridgeEndpoint source = BridgeStore.getEndpointByIdentifier(chat, identifier);
 
         String avatarUrl = database.getBridgedEndpointAvatar(source.getId());
         chat.sendMessage(new BridgeMessage(event.getActor().getNick(), avatarUrl, event.getMessage()), source);
@@ -141,9 +135,7 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
         BridgedChat chat = BridgeStore.getChats().get(database.getBridgedChatID(database.getBridgedEndpointId(event.getChannel().getName())));
         if (chat == null) return;
         String identifier = event.getChannel().getName();
-        BridgeEndpoint source = chat.getEndpoints().stream()
-                .filter(endpoint -> identifier.equals(endpoint.getUniqueIdentifier()))
-                .findFirst().orElse(null);
+        BridgeEndpoint source = BridgeStore.getEndpointByIdentifier(chat, identifier);
 
         if (source != null) {
             if (netsplitActive && netsplit != null) {
@@ -188,9 +180,7 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
         BridgedChat chat = BridgeStore.getChats().get(database.getBridgedChatID(database.getBridgedEndpointId(event.getChannel().getName())));
         if (chat == null) return;
         String identifier = event.getChannel().getName();
-        BridgeEndpoint source = chat.getEndpoints().stream()
-                .filter(endpoint -> identifier.equals(endpoint.getUniqueIdentifier()))
-                .findFirst().orElse(null);
+        BridgeEndpoint source = BridgeStore.getEndpointByIdentifier(chat, identifier);
 
         if (source != null) {
             if (event.getActor().getNick().equals(IRCReference.nickname)) {
@@ -206,9 +196,7 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
         event.getUser().getChannels().forEach(channel -> {
             try {
                 BridgedChat chat = BridgeStore.getChats().get(database.getBridgedChatID(database.getBridgedEndpointId(channel)));
-                BridgeEndpoint source = chat.getEndpoints().stream()
-                        .filter(endpoint -> channel.equals(endpoint.getUniqueIdentifier()))
-                        .findFirst().orElse(null);
+                BridgeEndpoint source = BridgeStore.getEndpointByIdentifier(chat, channel);
 
                 if (source == null) return;
 
@@ -250,10 +238,7 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
                 return;
             }
             String identifier = event.getChannel().getName();
-            BridgeEndpoint source = chat.getEndpoints().stream()
-                    .filter(endpoint -> identifier.equals(endpoint.getUniqueIdentifier()))
-                    .findFirst() // Returns an Optional<BridgeEndpoint>
-                    .orElseThrow(() -> new RuntimeException("No matching endpoint found for identifier: " + identifier));
+            BridgeEndpoint source = BridgeStore.getEndpointByIdentifier(chat, identifier);
 
             String avatarUrl = database.getBridgedEndpointAvatar(source.getId());
             chat.sendActionMessage(new BridgeMessage(event.getActor().getNick(), avatarUrl, event.getMessage().substring(7)), source);
@@ -265,9 +250,7 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
         event.getOldUser().getChannels().forEach(channel -> {
             try {
                 BridgedChat chat = BridgeStore.getChats().get(database.getBridgedChatID(database.getBridgedEndpointId(channel)));
-                BridgeEndpoint source = chat.getEndpoints().stream()
-                        .filter(endpoint -> channel.equals(endpoint.getUniqueIdentifier()))
-                        .findFirst().orElse(null);
+                BridgeEndpoint source = BridgeStore.getEndpointByIdentifier(chat, channel);
 
                 chat.sendUpdate(EventType.NAME_CHANGE, event.getOldUser().getNick(), source, event.getNewUser().getNick());
             } catch (Exception e) {
@@ -285,10 +268,8 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
             return;
         }
         String identifier = String.valueOf(event.getChat().getId());
-        BridgeEndpoint source = chat.getEndpoints().stream()
-                .filter(endpoint -> identifier.equals(endpoint.getUniqueIdentifier()))
-                .findFirst() // Returns an Optional<BridgeEndpoint>
-                .orElseThrow(() -> new RuntimeException("No matching endpoint found for identifier: " + identifier));
+        BridgeEndpoint source = BridgeStore.getEndpointByIdentifier(chat, identifier);
+
         File avatar = event.getSender().getProfilePhoto();
         String avatarUrl;
         if (avatar != null) {
