@@ -9,6 +9,7 @@ import net.slimediamond.atom.database.Database;
 import org.kitteh.irc.client.library.element.Channel;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class IRCBridgeEndpoint implements BridgeEndpoint {
     private Channel channel;
@@ -27,7 +28,14 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
     public void sendMessage(BridgeMessage message, BridgeEndpoint source) {
         String text = message.getContent();
         if (!message.getFiles().isEmpty()) {
-            text = "[file] " + message.getContent();
+            String[] imageExtensions = {".png", ".jpg", ".jpeg", ".bmp"};
+
+            if (message.getFiles().stream().anyMatch(file ->
+                    Arrays.stream(imageExtensions).anyMatch(ext -> file.getName().endsWith(ext)))) {
+                text = "[image] " + message.getContent();
+            } else {
+                text = "[file] " + message.getContent();
+            }
         }
         channel.sendMessage("[" + source.getShortName() + "] " + message.getUsername() + ": " + text);
     }
