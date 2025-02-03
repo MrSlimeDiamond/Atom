@@ -76,10 +76,10 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
             }
         });
 
-        // send our connection messages
-        BridgeStore.getChats().forEach((id, chat) -> {
-            chat.sendUpdate(EventType.CONNECT, null, null, null);
-        });
+//        // send our connection messages
+//        BridgeStore.getChats().forEach((id, chat) -> {
+//            chat.sendUpdate(EventType.CONNECT, null, null, null);
+//        });
     }
 
     @Service.Shutdown
@@ -127,6 +127,7 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
         String identifier = event.getChannel().getName();
         BridgeEndpoint source = BridgeStore.getEndpointByIdentifier(chat, identifier);
 
+        // Nullable
         String avatarUrl = database.getBridgedEndpointAvatar(source.getId());
         chat.sendMessage(new BridgeMessage(event.getActor().getNick(), avatarUrl, event.getMessage()), source);
 

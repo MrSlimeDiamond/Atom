@@ -68,7 +68,9 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
                     }
                 }
             }
-            if (useEmbed) sendEmbed(channel, DiscordUtil.removeFormatting(message.getUsername()), DiscordUtil.removeFormatting(message.getContent()), source.getShortName(), files);
+            // we are using message.getAvatarUrl() because it might be null
+            // and embed messages can simply not have avatars.
+            if (useEmbed) sendEmbed(channel, DiscordUtil.removeFormatting(message.getUsername()), DiscordUtil.removeFormatting(message.getContent()), message.getAvatarUrl(), source.getShortName(), files);
         });
     }
 
@@ -186,6 +188,7 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
                     useEmbed = false;
                     String avatarUrl = source.getAvatarUrl();
                     if (avatarUrl == null) {
+                        // server avatar for updates
                         avatarUrl = this.getAvatarUrl();
                     }
                     WebhookClient client = WebhookClient.withUrl(webhook.getUrl());
@@ -275,13 +278,12 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
         this.isEnabled = isEnabled;
     }
 
-    private void sendEmbed(TextChannel channel, String nickname, String content, String source, ArrayList<File> files) {
+    private void sendEmbed(TextChannel channel, String nickname, String content, String avatarUrl, String source, ArrayList<File> files) {
         MessageCreateBuilder builder = new MessageCreateBuilder();
 
         MessageEmbed embed = new EmbedBuilder()
-                .setAuthor(nickname + "[" + source + "]")
+                .setAuthor(nickname + " [" + source + "]", null, avatarUrl)
                 .setDescription(content)
-                .setColor(Color.GREEN)
                 .build();
 
         builder.addEmbeds(embed);
