@@ -71,9 +71,7 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
                 database.getEndpoints(chatId).forEach(chat::addEndpoint);
 
                 BridgeStore.getChats().put(chatId, chat);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (InterruptedException e) {
+            } catch (SQLException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         });

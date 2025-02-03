@@ -23,7 +23,7 @@ public class BridgedChat {
     }
 
     public void sendMessage(BridgeMessage message, BridgeEndpoint source) {
-        if (!isEnabled) return;
+        if (!isEnabled || !source.isEnabled()) return;
         for (BridgeEndpoint endpoint : endpoints) {
             if (endpoint != source) {
                 endpoint.sendMessage(message, source);
@@ -32,7 +32,7 @@ public class BridgedChat {
     }
 
     public void sendActionMessage(BridgeMessage message, BridgeEndpoint source) {
-        if (!isEnabled) return;
+        if (!isEnabled || !source.isEnabled()) return;
         for (BridgeEndpoint endpoint : endpoints) {
             if (endpoint != source) {
                 endpoint.sendActionMessage(message, source);
@@ -41,7 +41,7 @@ public class BridgedChat {
     }
 
     public void sendUpdate(EventType eventType, String username, BridgeEndpoint source, String comment) {
-        if (!isEnabled) return;
+        if (!isEnabled || !source.isEnabled()) return;
         for (BridgeEndpoint endpoint : endpoints) {
             if (endpoint != source) {
                 endpoint.sendUpdate(eventType, username, source, comment);
@@ -50,7 +50,7 @@ public class BridgedChat {
     }
 
     public void netsplitQuits(Netsplit netsplit, BridgeEndpoint source) {
-        if (!isEnabled) return;
+        if (!isEnabled || !source.isEnabled()) return;
         for (BridgeEndpoint endpoint : endpoints) {
             if (endpoint != source) {
                 endpoint.netsplitQuits(netsplit, source);
@@ -59,7 +59,7 @@ public class BridgedChat {
     }
 
     public void netsplitJoins(Netsplit netsplit, BridgeEndpoint source) {
-        if (!isEnabled) return;
+        if (!isEnabled || !source.isEnabled()) return;
         for (BridgeEndpoint endpoint : endpoints) {
             if (endpoint != source) {
                 endpoint.netsplitJoins(netsplit, source);
