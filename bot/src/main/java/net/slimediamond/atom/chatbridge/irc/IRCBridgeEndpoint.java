@@ -132,4 +132,9 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
     public boolean isEnabled() {
         return this.isEnabled;
     }
+
+    @Override
+    public void setEnabled(boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
 }

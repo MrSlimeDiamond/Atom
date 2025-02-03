@@ -14,4 +14,5 @@ public interface BridgeEndpoint {
     String getUniqueIdentifier();
     int getId();
     boolean isEnabled();
+    void setEnabled(boolean isEnabled);
 }

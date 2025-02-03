@@ -102,4 +102,9 @@ public class TelegramBridgeEndpoint implements BridgeEndpoint {
     public boolean isEnabled() {
         return this.isEnabled;
     }
+
+    @Override
+    public void setEnabled(boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
 }

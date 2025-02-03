@@ -10,8 +10,6 @@ import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.api.utils.data.SerializableData;
 import net.slimediamond.atom.chatbridge.BridgeEndpoint;
-import net.slimediamond.atom.chatbridge.BridgeStore;
-import net.slimediamond.atom.chatbridge.BridgedChat;
 import net.slimediamond.atom.chatbridge.discord.DiscordBridgeEndpoint;
 import net.slimediamond.atom.chatbridge.irc.IRCBridgeEndpoint;
 import net.slimediamond.atom.chatbridge.telegram.TelegramBridgeEndpoint;
@@ -22,6 +20,7 @@ import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.telegram.Telegram;
 import net.slimediamond.util.number.NumberUtils;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.kitteh.irc.client.library.element.Channel;
 import org.slf4j.Logger;
 
 import java.sql.*;
@@ -115,10 +114,11 @@ public class Database {
 
     private PreparedStatement insertBridgedRoom;
     private PreparedStatement removeBridgedRoom;
+    private PreparedStatement removeEndpointsInChat;
     private PreparedStatement insertBridgeEndpoint;
     private PreparedStatement removeBridgedEndpoint;
     private PreparedStatement setBridgedEndpointAvatar;
-    private PreparedStatement disableBridgedEndpoint;
+    private PreparedStatement setEndpointPipeStatus;
     private PreparedStatement isBridgedEndpointEnabled;
     private PreparedStatement isBridgedChatEnabled;
     private PreparedStatement getBridgedEndpointId;
@@ -127,6 +127,8 @@ public class Database {
     private PreparedStatement getBridgedChatID;
     private PreparedStatement getAllBridgedChatIDs;
     private PreparedStatement getEndpointsForChat;
+    private PreparedStatement getBridgedChatIdFromName;
+    private PreparedStatement getBridgedChatName;
 
     @Service.Start
     public void startService() throws Exception {
@@ -220,15 +222,16 @@ public class Database {
         getServerMemesChannel = conn.prepareStatement("SELECT MemesChannel FROM guilds WHERE GuildID = ?");
         setServerMemesChannel = conn.prepareStatement("UPDATE guilds SET MemesChannel = ? WHERE GuildID = ?");
 
-        insertBridgedRoom = conn.prepareStatement("INSERT INTO bridged_chats (Name) VALUES (?)");
+        insertBridgedRoom = conn.prepareStatement("INSERT INTO bridged_chats (Name) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
         removeBridgedRoom = conn.prepareStatement("DELETE FROM bridged_chats WHERE ChatID = ?");
         insertBridgeEndpoint = conn.prepareStatement(
                 "INSERT INTO endpoints (ChatID, Type, UniqueIdentifier, IsEnabled) " +
-                        "VALUES (?, ?, ?, ?)"
+                        "VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS
         );
-        removeBridgedEndpoint = conn.prepareStatement("DELETE FROM endpoints WHERE EndpointID = ?"); // FIXME: endpoints must also be deleted
+        removeBridgedEndpoint = conn.prepareStatement("DELETE FROM endpoints WHERE EndpointID = ?");
+        removeEndpointsInChat = conn.prepareStatement("DELETE FROM endpoints WHERE ChatID = ?");
         setBridgedEndpointAvatar = conn.prepareStatement("UPDATE endpoints SET CustomAvatarURL = ? WHERE EndpointID = ?");
-        disableBridgedEndpoint = conn.prepareStatement("UPDATE endpoints SET IsEnabled = FALSE WHERE EndpointID = ?");
+        setEndpointPipeStatus = conn.prepareStatement("UPDATE endpoints SET IsEnabled = ? WHERE EndpointID = ?");
         isBridgedEndpointEnabled = conn.prepareStatement("SELECT IsEnabled FROM endpoints WHERE EndpointID = ?");
         isBridgedChatEnabled = conn.prepareStatement("SELECT IsEnabled FROM bridged_chats WHERE ChatID = ?");
         getBridgedEndpointId = conn.prepareStatement("SELECT EndpointID from endpoints WHERE UniqueIdentifier = ?");
@@ -238,7 +241,8 @@ public class Database {
         getEndpointsForChat = conn.prepareStatement("SELECT * FROM endpoints WHERE ChatID = ?");
 
         getBridgedChatID = conn.prepareStatement("SELECT ChatID FROM endpoints WHERE EndpointID = ?");
-
+        getBridgedChatIdFromName = conn.prepareStatement("SELECT ChatID from bridged_chats WHERE Name = ?");
+        getBridgedChatName = conn.prepareStatement("SELECT Name FROM bridged_chats WHERE ChatID = ?");
     }
 
     public boolean isDiscordAdminByID(long idLong) throws SQLException {
@@ -768,9 +772,16 @@ public class Database {
         setServerMemesChannel.execute();
     }
 
-    public void insertBridgedRoom(String name) throws SQLException {
+    public int insertBridgedRoom(String name) throws SQLException {
         insertBridgedRoom.setString(1, name);
         insertBridgedRoom.executeUpdate();
+
+        ResultSet generatedKeys = insertBridgedRoom.getGeneratedKeys();
+        if (generatedKeys.next()) {
+            return generatedKeys.getInt(1);
+        } else {
+            return -1;
+        }
     }
 
     public void removeBridgedRoom(int chatID) throws SQLException {
@@ -778,17 +789,29 @@ public class Database {
         removeBridgedRoom.executeUpdate();
     }
 
-    public void insertBridgeEndpoint(int chatID, String type, String uniqueIdentifier, boolean isEnabled) throws SQLException {
+    public int insertBridgeEndpoint(int chatID, String type, String uniqueIdentifier, boolean isEnabled) throws SQLException {
         insertBridgeEndpoint.setInt(1, chatID);
         insertBridgeEndpoint.setString(2, type);
         insertBridgeEndpoint.setString(3, uniqueIdentifier);
         insertBridgeEndpoint.setBoolean(4, isEnabled);
         insertBridgeEndpoint.executeUpdate();
+
+        ResultSet generatedKeys = insertBridgeEndpoint.getGeneratedKeys();
+        if (generatedKeys.next()) {
+            return generatedKeys.getInt(1);
+        } else {
+            return -1;
+        }
     }
 
     public void removeBridgedEndpoint(int endpointID) throws SQLException {
         removeBridgedEndpoint.setInt(1, endpointID);
         removeBridgedEndpoint.executeUpdate();
+    }
+
+    public void removeEndpointsInChat(int chatId) throws SQLException {
+        removeEndpointsInChat.setInt(1, chatId);
+        removeEndpointsInChat.execute();
     }
 
     public void setBridgedEndpointAvatar(int endpointID, String avatarURL) throws SQLException {
@@ -797,9 +820,10 @@ public class Database {
         setBridgedEndpointAvatar.executeUpdate();
     }
 
-    public void disableBridgedEndpoint(int endpointID) throws SQLException {
-        disableBridgedEndpoint.setInt(1, endpointID);
-        disableBridgedEndpoint.executeUpdate();
+    public void setEndpointPipeStatus(int endpointID, boolean status) throws SQLException {
+        setEndpointPipeStatus.setInt(1, status ? 1 : 0);
+        setEndpointPipeStatus.setInt(2, endpointID);
+        setEndpointPipeStatus.executeUpdate();
     }
 
     public boolean isBridgedEndpointEnabled(int endpointID) throws SQLException {
@@ -846,6 +870,16 @@ public class Database {
         }
     }
 
+    public String getBridgedChatName(int chatId) throws SQLException {
+        getBridgedChatName.setInt(1, chatId);
+        ResultSet rs = getBridgedChatName.executeQuery();
+        if (rs.next()) {
+            return rs.getString(1);
+        }
+
+        return null;
+    }
+
     public List<Integer> getAllChatIds() throws SQLException {
         List<Integer> ids = new ArrayList<>();
         ResultSet rs = getAllBridgedChatIDs.executeQuery();
@@ -856,7 +890,7 @@ public class Database {
         return ids;
     }
 
-    public List<BridgeEndpoint> getEndpoints(int id) throws SQLException {
+    public List<BridgeEndpoint> getEndpoints(int id) throws SQLException, InterruptedException {
         getEndpointsForChat.setLong(1, id);
         ResultSet rs = getEndpointsForChat.executeQuery();
         List<BridgeEndpoint> endpoints = new ArrayList<>();
@@ -871,9 +905,15 @@ public class Database {
             switch (type) {
                 case "discord" ->
                         endpoints.add(new DiscordBridgeEndpoint(jda.getTextChannelById(unique), unique, endpointId, (isEnabled == 1)));
-                case "irc" ->
-                        endpoints.add(new IRCBridgeEndpoint(IRC.client.getChannel(unique).get(), unique, endpointId, (isEnabled == 1)));
-                case "telegram" -> endpoints.add(new TelegramBridgeEndpoint(Telegram.getClient().getChatById(Long.parseLong(unique)), chatId, (isEnabled == 1)));
+                case "irc" -> {
+                    Optional<Channel> channel = IRC.client.getChannel(unique);
+                    if (channel.isEmpty()) {
+                        continue;
+                    }
+                    endpoints.add(new IRCBridgeEndpoint(channel.get(), unique, endpointId, (isEnabled == 1)));
+                }
+                case "telegram" ->
+                        endpoints.add(new TelegramBridgeEndpoint(Telegram.getClient().getChatById(Long.parseLong(unique)), endpointId, (isEnabled == 1)));
             }
         }
 

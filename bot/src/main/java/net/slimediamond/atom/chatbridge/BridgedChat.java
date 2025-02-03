@@ -5,9 +5,13 @@ import java.util.ArrayList;
 public class BridgedChat {
     private ArrayList<BridgeEndpoint> endpoints = new ArrayList<>();
     private boolean isEnabled;
+    private int id;
+    private String name;
 
-    public BridgedChat(boolean isEnabled) {
+    public BridgedChat(boolean isEnabled, int id, String name) {
         this.isEnabled = isEnabled;
+        this.id = id;
+        this.name = name;
     }
 
     public void addEndpoint(BridgeEndpoint endpoint) {
@@ -61,5 +65,13 @@ public class BridgedChat {
                 endpoint.netsplitJoins(netsplit, source);
             }
         }
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public int getId() {
+        return id;
     }
 }

@@ -64,12 +64,16 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
 
         // Add endpoints and chat rooms to the storage
         database.getAllChatIds().forEach(chatId -> {
+            System.out.println(chatId);
             try {
-                BridgedChat chat = new BridgedChat(database.isBridgedChatEnabled(chatId));
+                String name = database.getBridgedChatName(chatId);
+                BridgedChat chat = new BridgedChat(database.isBridgedChatEnabled(chatId), chatId, name);
                 database.getEndpoints(chatId).forEach(chat::addEndpoint);
 
                 BridgeStore.getChats().put(chatId, chat);
             } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         });

@@ -270,6 +270,11 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
         return this.isEnabled;
     }
 
+    @Override
+    public void setEnabled(boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
+
     private void sendEmbed(TextChannel channel, String nickname, String content, String source, ArrayList<File> files) {
         MessageCreateBuilder builder = new MessageCreateBuilder();
 
