@@ -67,8 +67,11 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
             channel.sendMessage("[" + source.getShortName() + "] " + msg);
         } else if (eventType == EventType.LEAVE) {
             String msg = username + " left" + source.getChannelName();
-            if (comment != null) {
-                msg = username + " was removed from " + source.getChannelName() + " by " + comment;
+            if (source instanceof MCOBridgeSource) {
+                msg = username + " left the game.";
+                if (comment != null) {
+                    msg = username + " disconnected (" + comment + ")";
+                }
             }
             channel.sendMessage("[" + source.getShortName() + "] " + msg);
         } else if (eventType == EventType.QUIT) {

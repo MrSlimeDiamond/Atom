@@ -40,7 +40,11 @@ public class TelegramBridgeEndpoint implements BridgeEndpoint {
             chat.sendMessage("[" + source.getShortName() + "] " + username + " joined " + source.getChannelName());
         } else if (eventType == EventType.LEAVE) {
             if (source instanceof MCOBridgeSource) {
-                chat.sendMessage("[" + source.getShortName() + "] " + username + " left the game.");
+                String msg = username + " left the game.";
+                if (comment != null) {
+                    msg = username + " disconnected (" + comment + ")";
+                }
+                chat.sendMessage("[" + source.getShortName() + "] " + msg);
                 return;
             }
             chat.sendMessage("[" + source.getShortName() + "] " + username + " left " + source.getChannelName());
