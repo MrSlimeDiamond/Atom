@@ -4,6 +4,7 @@ import net.slimediamond.atom.chatbridge.BridgeEndpoint;
 import net.slimediamond.atom.chatbridge.BridgeMessage;
 import net.slimediamond.atom.chatbridge.EventType;
 import net.slimediamond.atom.chatbridge.Netsplit;
+import net.slimediamond.atom.chatbridge.mco.MCOBridgeSource;
 import net.slimediamond.telegram.entity.Chat;
 
 public class TelegramBridgeEndpoint implements BridgeEndpoint {
@@ -32,8 +33,16 @@ public class TelegramBridgeEndpoint implements BridgeEndpoint {
         } else if (eventType == EventType.DISCONNECT) {
             chat.sendMessage("Chat bridge disconnected");
         } else if (eventType == EventType.JOIN) {
+            if (source instanceof MCOBridgeSource) {
+                chat.sendMessage("[" + source.getShortName() + "] " + username + " joined the game.");
+                return;
+            }
             chat.sendMessage("[" + source.getShortName() + "] " + username + " joined " + source.getChannelName());
         } else if (eventType == EventType.LEAVE) {
+            if (source instanceof MCOBridgeSource) {
+                chat.sendMessage("[" + source.getShortName() + "] " + username + " left the game.");
+                return;
+            }
             chat.sendMessage("[" + source.getShortName() + "] " + username + " left " + source.getChannelName());
         } else if (eventType == EventType.QUIT) {
             chat.sendMessage("[" + source.getShortName() + "] " + username + " quit (" + comment + ")");

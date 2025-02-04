@@ -5,6 +5,7 @@ import net.slimediamond.atom.chatbridge.BridgeEndpoint;
 import net.slimediamond.atom.chatbridge.BridgeMessage;
 import net.slimediamond.atom.chatbridge.EventType;
 import net.slimediamond.atom.chatbridge.Netsplit;
+import net.slimediamond.atom.chatbridge.mco.MCOBridgeSource;
 import net.slimediamond.atom.database.Database;
 import org.kitteh.irc.client.library.element.Channel;
 
@@ -29,6 +30,11 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
     @Override
     public void sendMessage(BridgeMessage message, BridgeEndpoint source) {
         if (!this.isEnabled) return;
+
+        if (source instanceof MCOBridgeSource) {
+            if (((MCOBridgeSource) source).getIRC().equals(this)) return;
+        }
+
         String text = message.getContent();
         if (!message.getFiles().isEmpty()) {
             String[] imageExtensions = {".png", ".jpg", ".jpeg", ".bmp"};
@@ -49,6 +55,10 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
     @Override
     public void sendUpdate(EventType eventType, String username, BridgeEndpoint source, String comment) {
         if (!this.isEnabled) return;
+        if (source instanceof MCOBridgeSource) {
+            if (((MCOBridgeSource) source).getIRC().equals(this)) return;
+        }
+
         if (eventType == EventType.JOIN) {
             String msg = username + " joined" + source.getChannelName();
             if (comment != null) {
@@ -71,6 +81,9 @@ public class IRCBridgeEndpoint implements BridgeEndpoint {
     @Override
     public void sendActionMessage(BridgeMessage message, BridgeEndpoint source) {
         if (!this.isEnabled) return;
+        if (source instanceof MCOBridgeSource) {
+            if (((MCOBridgeSource) source).getIRC().equals(this)) return;
+        }
         channel.sendMessage("[" + source.getShortName() + "] * " + message.getUsername() + " " + message.getContent());
 
     }

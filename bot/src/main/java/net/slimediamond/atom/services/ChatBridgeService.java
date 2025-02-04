@@ -8,9 +8,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.engio.mbassy.listener.Handler;
 import net.slimediamond.atom.chatbridge.*;
+import net.slimediamond.atom.chatbridge.irc.IRCBridgeEndpoint;
+import net.slimediamond.atom.chatbridge.mco.MCOBridgeSource;
 import net.slimediamond.atom.common.util.HTTPUtil;
 import net.slimediamond.atom.irc.IRC;
+import net.slimediamond.atom.irc.McObotMessageParser;
 import net.slimediamond.atom.reference.DiscordReference;
+import net.slimediamond.atom.reference.EmbedReference;
 import net.slimediamond.atom.reference.IRCReference;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
@@ -31,9 +35,12 @@ import org.kitteh.irc.client.library.event.user.UserQuitEvent;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service(value = "chat bridge", priority = 1)
 public class ChatBridgeService extends ListenerAdapter implements Listener {
@@ -47,6 +54,8 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
     private boolean netsplitActive = false;
     private boolean joinsActive = false;
     private Netsplit netsplit;
+
+    private final HashMap<BridgeEndpoint, MCOBridgeSource> ircMcoMap = new HashMap<>();
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -129,7 +138,51 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
 
         // Nullable
         String avatarUrl = database.getBridgedEndpointAvatar(source.getId());
-        chat.sendMessage(new BridgeMessage(event.getActor().getNick(), avatarUrl, event.getMessage()), source);
+        String username = event.getActor().getNick();
+        String content = event.getMessage();
+
+        if (event.getActor().getNick().equals("McObot")) {
+            avatarUrl = EmbedReference.mcoIconLarge;
+
+            if (event.getMessage().startsWith("(MCS) ")) {
+                if (!ircMcoMap.containsKey(source)) {
+                    ircMcoMap.put(source, new MCOBridgeSource((IRCBridgeEndpoint) source));
+                }
+
+                source = ircMcoMap.get(source);
+
+                McObotMessageParser parser = new McObotMessageParser(event.getActor(), event.getMessage());
+
+                if (parser.isChatMessage()) {
+                    username = parser.getSenderUsername();
+                    content = parser.getMessageContent();
+
+                    avatarUrl = "https://minecraftonline.com/cgi-bin/getplayerhead.sh?" + username + "&128";
+                } else if (parser.isJoinMessage()) {
+                    username = event.getMessage().split("\\(MCS\\) ")[1].split(" joined the game")[0];
+                    chat.sendUpdate(EventType.JOIN, username, source, null);
+                    return;
+                } else if (parser.isLeaveMessage()) {
+                    Pattern pattern = Pattern.compile("\\(MCS\\) (.+?) (?:left|disconnected: (.+))");
+                    Matcher matcher = pattern.matcher(event.getMessage().trim());
+
+                    if (matcher.find()) {
+                        username = matcher.group(1);
+                        String comment = matcher.group(2);
+
+                        chat.sendUpdate(EventType.LEAVE, username, source, comment);
+                    }
+                    return;
+                } else {
+                    // remove MCS prefix
+                    content = content.substring(6);
+                }
+            }
+        }
+
+        BridgeMessage message = new BridgeMessage(username, avatarUrl, content);
+
+        chat.sendMessage(message, source);
 
     }
 

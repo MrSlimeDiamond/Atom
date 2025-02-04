@@ -13,6 +13,7 @@ import net.slimediamond.atom.chatbridge.BridgeEndpoint;
 import net.slimediamond.atom.chatbridge.BridgeMessage;
 import net.slimediamond.atom.chatbridge.EventType;
 import net.slimediamond.atom.chatbridge.Netsplit;
+import net.slimediamond.atom.chatbridge.mco.MCOBridgeSource;
 import net.slimediamond.atom.util.DiscordUtil;
 
 import java.awt.*;
@@ -90,6 +91,15 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
                     .setAuthor("Chat bridge disconnected")
                     .build()).queue();
         } else if (eventType == EventType.JOIN) {
+            if (source instanceof MCOBridgeSource) {
+                queueUpdate(source, new EmbedBuilder()
+                        .setAuthor(username + " joined the game.", null, "https://minecraftonline.com/cgi-bin/getplayerhead.sh?" + username)
+                        .setColor(Color.GREEN)
+                        .build()
+                );
+                return;
+            }
+
             String msg = "**" + username + "** joined";
             if (comment != null) {
                 msg = "**" + username + "** was added by **" + comment + "**";
@@ -98,6 +108,20 @@ public class DiscordBridgeEndpoint implements BridgeEndpoint {
                     .setDescription(msg)
                     .build());
         } else if (eventType == EventType.LEAVE) {
+            if (source instanceof MCOBridgeSource) {
+                String msg = username + " left the game.";
+                if (comment != null) {
+                    msg = username + " disconnected (" + comment + ")";
+                }
+
+                queueUpdate(source, new EmbedBuilder()
+                        .setAuthor(msg, null, "https://minecraftonline.com/cgi-bin/getplayerhead.sh?" + username)
+                        .setColor(Color.RED)
+                        .build()
+                );
+                return;
+            }
+
             String msg = "**" + username + "** left";
             if (comment != null) {
                 msg = "**" + username + "** was removed by **" + comment + "**";
