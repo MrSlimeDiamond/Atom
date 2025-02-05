@@ -101,6 +101,7 @@ public class DiscordBot {
                 .addAliases("bridge")
                 .setDescription("Manage chat bridges")
                 .setUsage("bridge <create|delete|list>")
+                .setAdminOnly(true)
                 .discord()
                 .setSlashCommand(false)
                 .setExecutor(CommandContext::sendUsage)
