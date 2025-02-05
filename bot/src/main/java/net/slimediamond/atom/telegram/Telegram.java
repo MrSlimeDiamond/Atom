@@ -1,16 +1,22 @@
 package net.slimediamond.atom.telegram;
 
 import com.google.inject.Inject;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.slimediamond.atom.command.CommandBuilder;
+import net.slimediamond.atom.command.CommandContext;
 import net.slimediamond.atom.command.CommandManager;
+import net.slimediamond.atom.command.discord.args.DiscordArgsBuilder;
 import net.slimediamond.atom.command.telegram.TelegramMessageListener;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.reference.TelegramReference;
 import net.slimediamond.atom.telegram.commands.DebugCommand;
+import net.slimediamond.atom.telegram.commands.bridge.BridgeCreateCommand;
+import net.slimediamond.atom.telegram.commands.bridge.BridgeDeleteCommand;
+import net.slimediamond.atom.telegram.commands.endpoint.EndpointPipeCommand;
 import net.slimediamond.atom.telegram.commands.minecraftonline.*;
 import net.slimediamond.telegram.TelegramClient;
 
-@Service("telegram")
+@Service(value = "telegram", priority = 999)
 public class Telegram {
     @Inject
     CommandManager commandManager;
@@ -83,6 +89,40 @@ public class Telegram {
                 .telegram().setExecutor(new DebugCommand())
                 .then().build()
         );
+
+//        commandManager.register(new CommandBuilder()
+//                .addAliases("bridge")
+//                .setDescription("Manage chat bridges")
+//                .setUsage("bridge <create|delete|list>")
+//                .telegram()
+//                .setExecutor(CommandContext::sendUsage)
+//                .then().addChild(new CommandBuilder()
+//                        .addAliases("create")
+//                        .setDescription("Create a chat bridge")
+//                        .setUsage("bridge create [name]")
+//                        .telegram()
+//                        .setExecutor(new BridgeCreateCommand())
+//                        .then().build()
+//                )
+//                .addChild(new CommandBuilder()
+//                        .addAliases("delete", "remove", "nuke")
+//                        .setDescription("Remove a chat bridge")
+//                        .setUsage("bridge delete [name|id]")
+//                        .telegram()
+//                        .setExecutor(new BridgeDeleteCommand())
+//                        .then().build()
+//                )
+//                .build()
+//        );
+//
+//        commandManager.register(new CommandBuilder()
+//                .addAliases("pipe")
+//                .setDescription("Toggle bridge pipe to other endpoints")
+//                .setUsage("pipe <on|off>")
+//                .telegram()
+//                .setExecutor(new EndpointPipeCommand())
+//                .then().build()
+//        );
     }
 
     public static TelegramClient getClient() {

@@ -1,12 +1,18 @@
 package net.slimediamond.atom.irc;
 
 import jakarta.inject.Inject;
+import net.slimediamond.atom.Atom;
+import net.slimediamond.atom.chatbridge.irc.IRCBridgeEndpoint;
 import net.slimediamond.atom.command.CommandBuilder;
+import net.slimediamond.atom.command.CommandContext;
 import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.irc.IRCCommandListener;
 import net.slimediamond.atom.irc.commands.BridgeCommand;
 import net.slimediamond.atom.irc.commands.ChannelCommand;
 import net.slimediamond.atom.irc.commands.HelpCommand;
+import net.slimediamond.atom.irc.commands.bridge.BridgeCreateCommand;
+import net.slimediamond.atom.irc.commands.bridge.BridgeDeleteCommand;
+import net.slimediamond.atom.irc.commands.endpoint.EndpointPipeCommand;
 import net.slimediamond.atom.irc.commands.minecraftonline.*;
 import net.slimediamond.atom.reference.IRCReference;
 import net.slimediamond.atom.common.annotations.GetService;
@@ -168,6 +174,42 @@ public class IRC {
                 .then().build()
         );
 
+        commandManager.register(new CommandBuilder()
+                .addAliases("bridge")
+                .setDescription("Manage chat bridges")
+                .setUsage("bridge <create|delete|list>")
+                .setAdminOnly(true)
+                .irc()
+                .setExecutor(CommandContext::sendUsage)
+                .then().addChild(new CommandBuilder()
+                        .addAliases("create")
+                        .setDescription("Create a chat bridge")
+                        .setUsage("bridge create [name]")
+                        .irc()
+                        .setExecutor(new BridgeCreateCommand())
+                        .then().build()
+                )
+                .addChild(new CommandBuilder()
+                        .addAliases("delete", "remove", "nuke")
+                        .setDescription("Remove a chat bridge")
+                        .setUsage("bridge delete [name|id]")
+                        .irc()
+                        .setExecutor(new BridgeDeleteCommand())
+                        .then().build()
+                )
+                .build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("pipe")
+                .setDescription("Toggle bridge pipe to other endpoints")
+                .setUsage("pipe <on|off>")
+                .setAdminOnly(true)
+                .irc()
+                .setExecutor(new EndpointPipeCommand())
+                .then().build()
+        );
+
     }
 
     @Service.Shutdown
@@ -176,7 +218,7 @@ public class IRC {
     }
 
     @Service.Reload
-    public void reloadService() throws SQLException {
+    public void reloadService() throws Exception {
         client.reconnect("Service reloading!");
         database.joinAllIRCChannels();
     }

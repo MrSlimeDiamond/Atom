@@ -15,8 +15,12 @@ import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.discord.commands.*;
 import net.slimediamond.atom.discord.commands.amplicity.AmplicityTimeplayed;
-import net.slimediamond.atom.discord.commands.bridge.BridgePipeCommand;
-import net.slimediamond.atom.discord.commands.bridge.BridgeSetCommand;
+import net.slimediamond.atom.discord.commands.bridge.BridgeCreateCommand;
+import net.slimediamond.atom.discord.commands.bridge.BridgeDeleteCommand;
+import net.slimediamond.atom.discord.commands.endpoint.EndpointAddCommand;
+import net.slimediamond.atom.discord.commands.endpoint.EndpointListCommand;
+import net.slimediamond.atom.discord.commands.endpoint.EndpointPipeCommand;
+import net.slimediamond.atom.discord.commands.endpoint.EndpointRemoveCommand;
 import net.slimediamond.atom.discord.commands.info.InfoBotCommand;
 import net.slimediamond.atom.discord.commands.info.InfoHostCommand;
 import net.slimediamond.atom.discord.commands.irc.IRCNamesCommand;
@@ -39,7 +43,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 @Service(value = "discord", priority = 999, enabled = true)
 public class DiscordBot {
@@ -97,41 +100,88 @@ public class DiscordBot {
         commandManager.register(new CommandBuilder()
                 .addAliases("bridge")
                 .setDescription("Manage chat bridges")
-                .setUsage("bridge <set|unset|pipe>")
+                .setUsage("bridge <create|delete|list>")
+                .setAdminOnly(true)
                 .discord()
                 .setSlashCommand(false)
                 .setExecutor(CommandContext::sendUsage)
                 .then().addChild(new CommandBuilder()
-                        .addAliases("pipe")
-                        .setDescription("Manage the bridge pipe")
-                        .setUsage("bridge pipe <true|false|on|off>")
+                        .addAliases("create")
+                        .setDescription("Create a chat bridge")
+                        .setUsage("bridge create [name]")
                         .discord()
-                        .setExecutor(new BridgePipeCommand())
+                        .setExecutor(new BridgeCreateCommand())
                         .addArgument(new DiscordArgsBuilder()
-                                .setOptionType(OptionType.BOOLEAN)
-                                .setName("status")
-                                .setDescription("Bridge pipe status")
+                                .setOptionType(OptionType.STRING)
+                                .setName("name")
+                                .setDescription("Name of the bridge")
                                 .setId(0)
-                                .setRequired(true)
+                                .setRequired(false)
                                 .build()
                         ).then().build()
                 )
                 .addChild(new CommandBuilder()
-                        .addAliases("set")
-                        .setDescription("Set the channel to bridge to")
-                        .setUsage("bridge set <channel>")
+                        .addAliases("delete", "remove", "nuke")
+                        .setDescription("Remove a chat bridge")
+                        .setUsage("bridge delete [name|id]")
                         .discord()
-                        .setExecutor(new BridgeSetCommand())
-                        .addArgument(new DiscordArgsBuilder()
-                                .setOptionType(OptionType.STRING)
-                                .setName("channel")
-                                .setId(0)
-                                .setDescription("The channel to bridge to")
-                                .setRequired(true)
-                                .build()
-                        ).then().build()
+                        .setExecutor(new BridgeDeleteCommand())
+                        .then().build()
                 )
                 .build()
+        );
+
+        commandManager.register(new CommandBuilder()
+                .addAliases("endpoint", "endpoints")
+                .setDescription("Manage a bridged chat room's endpoints")
+                .setUsage("endpoint <add|remove|removeall|pipe|setavatar|list>")
+                .discord()
+                .setSlashCommand(false)
+                .setExecutor(CommandContext::sendUsage)
+                .then().addChild(new CommandBuilder()
+                        .addAliases("add")
+                        .setDescription("Add a chat bridge endpoint")
+                        .setUsage("endpoint add <type> <uniqueIdentifier> [chatId]")
+                        .discord().setExecutor(new EndpointAddCommand())
+                        .then().build()
+                )
+                .addChild(new CommandBuilder()
+                        .addAliases("remove")
+                        .setDescription("Remove a chat bridge endpoint")
+                        .setUsage("remove [uniqueIdentifier|id]")
+                        .discord().setExecutor(new EndpointRemoveCommand())
+                        .then().build()
+                )
+//                .addChild(new CommandBuilder()
+//                        .addAliases("removeall")
+//                        .setDescription("Remove all endpoints")
+//                        .setUsage("removeall [type]")
+//                        .discord().setExecutor(new EndpointRemoveAllCommand())
+//                        .then().build()
+//                ) // TODO
+                .addChild(new CommandBuilder()
+                        .addAliases("pipe")
+                        .setDescription("Toggle a bridge endpoint's working status")
+                        .setUsage("pipe <on|off>")
+                        .discord()
+                        .setExecutor(new EndpointPipeCommand())
+                        .addArgument(new DiscordArgsBuilder()
+                                .setOptionType(OptionType.BOOLEAN)
+                                .setName("status")
+                                .setDescription("Whether messages should be sent/received in this channel.")
+                                .setId(0)
+                                .setRequired(true)
+                                .build()
+                        )
+                        .then().build()
+                )
+                .addChild(new CommandBuilder()
+                        .addAliases("list")
+                        .setDescription("List all endpoints for this chat")
+                        .setUsage("endpoint list")
+                        .discord().setExecutor(new EndpointListCommand())
+                        .then().build()
+                ).build()
         );
 
         commandManager.register(new CommandBuilder()
@@ -179,7 +229,7 @@ public class DiscordBot {
                             IRC irc = Atom.getServiceManager().getInstance(IRC.class);
                             try {
                                 irc.reloadService();
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }
                             ctx.replyEmbeds(EmbedUtil.genericSuccessEmbed("Reloaded IRC service"));

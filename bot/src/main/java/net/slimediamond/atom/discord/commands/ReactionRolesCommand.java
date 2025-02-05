@@ -16,7 +16,7 @@ public class ReactionRolesCommand implements DiscordCommandExecutor {
 
     public void execute(DiscordCommandContext context) throws SQLException {
         if (context.getArgs()[0].equals("add")) {
-            // reactionroles add <message id> <emoji> <role>
+            // reactionroles add <content id> <emoji> <role>
             // try to parse an emoji
             long messageID;
             long roleID;
@@ -24,7 +24,7 @@ public class ReactionRolesCommand implements DiscordCommandExecutor {
                 messageID = Long.parseLong(context.getArgs()[1]);
                 roleID = Long.parseLong(context.getArgs()[3]);
             } catch (NumberFormatException e) {
-                context.replyEmbeds(EmbedUtil.genericIncorrectUsageEmbed("reactionroles add <message id> <emoji> <role id>"));
+                context.replyEmbeds(EmbedUtil.genericIncorrectUsageEmbed("reactionroles add <content id> <emoji> <role id>"));
                 return;
             }
 
@@ -56,7 +56,7 @@ public class ReactionRolesCommand implements DiscordCommandExecutor {
                 });
             });
         } else if (context.getArgs()[0].equals("remove") || context.getArgs()[0].equals("rem")) {
-            // remove <message id> <role id>
+            // remove <content id> <role id>
             long messageID;
             long roleID = 0;
             try {
@@ -65,7 +65,7 @@ public class ReactionRolesCommand implements DiscordCommandExecutor {
                     roleID = Long.parseLong(context.getArgs()[2]);
                 }
             } catch (NumberFormatException e) {
-                context.replyEmbeds(EmbedUtil.genericIncorrectUsageEmbed("reactionroles remove <message id> [role id]"));
+                context.replyEmbeds(EmbedUtil.genericIncorrectUsageEmbed("reactionroles remove <content id> [role id]"));
                 return;
             }
 

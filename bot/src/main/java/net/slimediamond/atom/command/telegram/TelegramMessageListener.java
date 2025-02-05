@@ -4,7 +4,7 @@ import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandMetadata;
 import net.slimediamond.atom.reference.TelegramReference;
 import net.slimediamond.telegram.Listener;
-import net.slimediamond.telegram.events.MessageReceivedEvent;
+import net.slimediamond.telegram.event.MessageReceivedEvent;
 
 import java.util.Arrays;
 
@@ -17,7 +17,7 @@ public class TelegramMessageListener implements Listener {
 
     @Override
     public void onMessage(MessageReceivedEvent event) {
-        String message = event.getText().toLowerCase();
+        String message = event.getMessage().getContent().toLowerCase();
         String prefix = TelegramReference.prefix;
         boolean hidden = false;
 

@@ -1,6 +1,9 @@
 package net.slimediamond.atom;
 
+import net.slimediamond.atom.discord.DiscordBot;
+import net.slimediamond.atom.irc.IRC;
 import net.slimediamond.atom.launch.AppLaunch;
+import net.slimediamond.atom.services.ChatBridgeService;
 import net.slimediamond.atom.services.system.ServiceManager;
 import net.slimediamond.util.network.NetworkUtils;
 import org.slf4j.Logger;
@@ -38,12 +41,25 @@ public class Atom {
 
         // AppLaunch will handle starting services and other tasks that should happen during startup
         AppLaunch.launch();
+
+        // Shutdown logic
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            log.info("Received SIGINT request, shutting down gracefully");
+            // graceful shutdown
+            shutdown(Atom.class);
+        }));
     }
 
-    public static void shutdown(Class<?> clazz) throws Exception {
+    public static void shutdown(Class<?> clazz) {
         log.info("Graceful shutdown called from: " + clazz.getSimpleName());
         log.info("Shutting down services...");
-        serviceManager.shutdownAll();
+
+        // shut down some stuff in a specific order
+        serviceManager.getInstance(ChatBridgeService.class).shutdownService();
+        serviceManager.getInstance(DiscordBot.class).shutdownService();
+        serviceManager.getInstance(IRC.class).shutdownService();
+
+        //serviceManager.shutdownAll();
         log.info("Bye!");
         System.exit(0);
     }
