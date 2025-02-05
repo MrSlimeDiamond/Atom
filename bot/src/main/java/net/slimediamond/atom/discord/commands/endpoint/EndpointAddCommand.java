@@ -37,7 +37,6 @@ public class EndpointAddCommand implements DiscordCommandExecutor {
 
         // chatId was specified
         if (context.getArgs().length == 3) {
-            System.out.println(context.getArgs()[2]);
             try {
                 int id = Integer.parseInt(context.getArgs()[2]);
                 chat = BridgeStore.getChats().get(id);

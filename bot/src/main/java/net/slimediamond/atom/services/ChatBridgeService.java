@@ -73,7 +73,6 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
 
         // Add endpoints and chat rooms to the storage
         database.getAllChatIds().forEach(chatId -> {
-            System.out.println(chatId);
             try {
                 String name = database.getBridgedChatName(chatId);
                 BridgedChat chat = new BridgedChat(database.isBridgedChatEnabled(chatId), chatId, name);
@@ -206,7 +205,6 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
 
                     // Mark a netsplit as completed when everyone has rejoined
                     if (netsplit.getQuits().equals(netsplit.getJoins())) {
-                        System.out.println("netsplit completed");
                         this.netsplitJoins(chat, netsplit, source);
                     }
 
@@ -223,9 +221,7 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
     }
 
     private void netsplitJoins(BridgedChat chat, Netsplit netsplit, BridgeEndpoint source) {
-        System.out.println("netsplit joins method called");
         if (netsplitActive) {
-            System.out.println("calling chat.netsplitJoins");
             chat.netsplitJoins(netsplit, source);
         }
         netsplitActive = false;
