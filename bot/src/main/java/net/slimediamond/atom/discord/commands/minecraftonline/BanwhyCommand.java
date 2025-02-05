@@ -5,12 +5,10 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.slimediamond.atom.command.discord.DiscordCommandContext;
 import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.reference.EmbedReference;
-import net.slimediamond.atom.util.EmbedUtil;
 import net.slimediamond.atom.util.minecraftonline.MCOPlayer;
 import net.slimediamond.atom.util.minecraftonline.MinecraftOnlineAPI;
 import net.slimediamond.atom.util.minecraftonline.exceptions.UnknownPlayerException;
 
-import java.awt.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class BanwhyCommand implements DiscordCommandExecutor {

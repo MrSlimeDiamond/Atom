@@ -1,6 +1,5 @@
 package net.slimediamond.atom.discord.commands.bridge;
 
-import net.slimediamond.atom.chatbridge.BridgeEndpoint;
 import net.slimediamond.atom.chatbridge.BridgeStore;
 import net.slimediamond.atom.chatbridge.BridgedChat;
 import net.slimediamond.atom.command.discord.DiscordCommandContext;
@@ -10,7 +9,6 @@ import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.util.EmbedUtil;
 
 import java.sql.SQLException;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class BridgeDeleteCommand implements DiscordCommandExecutor {
     @GetService

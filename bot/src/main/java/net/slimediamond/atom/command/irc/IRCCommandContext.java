@@ -4,8 +4,6 @@ import net.slimediamond.atom.command.*;
 import net.slimediamond.atom.irc.McObotMessageParser;
 import org.kitteh.irc.client.library.event.channel.ChannelMessageEvent;
 
-import java.util.Arrays;
-
 public class IRCCommandContext implements CommandContext {
     private ChannelMessageEvent event;
     private CommandMetadata metadata;

@@ -6,7 +6,6 @@ import net.slimediamond.atom.command.irc.IRCCommandContext;
 import net.slimediamond.atom.command.irc.IRCCommandExecutor;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.database.Database;
-import net.slimediamond.atom.util.EmbedUtil;
 
 import java.util.Arrays;
 

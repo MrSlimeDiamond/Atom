@@ -1,6 +1,5 @@
 package net.slimediamond.atom.discord.commands.streams;
 
-import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.slimediamond.atom.command.discord.DiscordCommandContext;
@@ -10,7 +9,6 @@ import net.slimediamond.atom.database.Database;
 import net.slimediamond.atom.util.EmbedUtil;
 
 import java.util.List;
-import java.util.Objects;
 
 public class StreamsChannelCommand implements DiscordCommandExecutor {
     @GetService

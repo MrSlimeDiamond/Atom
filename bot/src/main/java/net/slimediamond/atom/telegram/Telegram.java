@@ -1,18 +1,12 @@
 package net.slimediamond.atom.telegram;
 
 import com.google.inject.Inject;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.slimediamond.atom.command.CommandBuilder;
-import net.slimediamond.atom.command.CommandContext;
 import net.slimediamond.atom.command.CommandManager;
-import net.slimediamond.atom.command.discord.args.DiscordArgsBuilder;
 import net.slimediamond.atom.command.telegram.TelegramMessageListener;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.reference.TelegramReference;
 import net.slimediamond.atom.telegram.commands.DebugCommand;
-import net.slimediamond.atom.telegram.commands.bridge.BridgeCreateCommand;
-import net.slimediamond.atom.telegram.commands.bridge.BridgeDeleteCommand;
-import net.slimediamond.atom.telegram.commands.endpoint.EndpointPipeCommand;
 import net.slimediamond.atom.telegram.commands.minecraftonline.*;
 import net.slimediamond.telegram.TelegramClient;
 

@@ -9,7 +9,6 @@ import net.slimediamond.util.network.NetworkUtils;
 import java.awt.*;
 import java.net.InetAddress;
 import java.time.Duration;
-import java.util.StringJoiner;
 
 public class InfoHostCommand implements DiscordCommandExecutor {
 

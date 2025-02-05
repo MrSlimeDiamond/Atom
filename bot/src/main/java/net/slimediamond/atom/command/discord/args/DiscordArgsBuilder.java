@@ -3,8 +3,6 @@ package net.slimediamond.atom.command.discord.args;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.slimediamond.atom.command.exceptions.ArgumentException;
 
-import java.util.ArrayList;
-
 public class DiscordArgsBuilder {
     private OptionType optionType;
     private int id = -1;

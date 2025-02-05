@@ -1,10 +1,8 @@
 package net.slimediamond.atom.command;
 
 import net.slimediamond.atom.command.discord.DiscordCommand;
-import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.command.exceptions.CommandBuildException;
 import net.slimediamond.atom.command.irc.IRCCommand;
-import net.slimediamond.atom.command.irc.IRCCommandExecutor;
 import net.slimediamond.atom.command.telegram.TelegramCommand;
 
 import java.util.ArrayList;

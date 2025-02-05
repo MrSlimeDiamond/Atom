@@ -2,7 +2,6 @@ package net.slimediamond.atom.discord.commands.irc;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.engio.mbassy.listener.Handler;
-import net.slimediamond.atom.command.CommandContext;
 import net.slimediamond.atom.command.discord.DiscordCommandContext;
 import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.command.discord.args.UserArgument;

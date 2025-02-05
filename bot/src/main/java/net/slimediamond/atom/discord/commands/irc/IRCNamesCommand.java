@@ -1,15 +1,9 @@
 package net.slimediamond.atom.discord.commands.irc;
 
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.slimediamond.atom.command.discord.DiscordCommandContext;
 import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.database.Database;
-import net.slimediamond.atom.irc.IRC;
-import net.slimediamond.atom.util.EmbedUtil;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class IRCNamesCommand implements DiscordCommandExecutor {
     @GetService

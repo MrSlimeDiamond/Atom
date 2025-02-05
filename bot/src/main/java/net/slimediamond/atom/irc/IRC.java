@@ -1,8 +1,6 @@
 package net.slimediamond.atom.irc;
 
 import jakarta.inject.Inject;
-import net.slimediamond.atom.Atom;
-import net.slimediamond.atom.chatbridge.irc.IRCBridgeEndpoint;
 import net.slimediamond.atom.command.CommandBuilder;
 import net.slimediamond.atom.command.CommandContext;
 import net.slimediamond.atom.command.CommandManager;
@@ -24,8 +22,6 @@ import org.kitteh.irc.client.library.Client;
 import org.kitteh.irc.client.library.feature.auth.NickServ;
 import org.slf4j.Logger;
 
-import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 

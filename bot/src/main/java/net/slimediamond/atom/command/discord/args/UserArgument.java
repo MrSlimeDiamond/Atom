@@ -3,8 +3,6 @@ package net.slimediamond.atom.command.discord.args;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.slimediamond.atom.command.discord.AtomDiscordCommandEvent;
 
-import java.util.Optional;
-
 public class UserArgument {
     private Object value;
     private AtomDiscordCommandEvent interactionEvent;

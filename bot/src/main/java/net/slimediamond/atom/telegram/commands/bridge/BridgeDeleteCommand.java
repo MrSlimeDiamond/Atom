@@ -2,8 +2,6 @@ package net.slimediamond.atom.telegram.commands.bridge;
 
 import net.slimediamond.atom.chatbridge.BridgeStore;
 import net.slimediamond.atom.chatbridge.BridgedChat;
-import net.slimediamond.atom.command.irc.IRCCommandContext;
-import net.slimediamond.atom.command.irc.IRCCommandExecutor;
 import net.slimediamond.atom.command.telegram.TelegramCommandContext;
 import net.slimediamond.atom.command.telegram.TelegramCommandExecutor;
 import net.slimediamond.atom.common.annotations.GetService;
