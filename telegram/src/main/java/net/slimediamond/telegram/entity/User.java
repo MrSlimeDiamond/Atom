@@ -32,7 +32,7 @@ public class User {
     }
 
     public String getFullName() {
-        return firstName + " " + lastName;
+        return firstName + (lastName != null ? " " + lastName : "");
     }
 
     public long getId() {
