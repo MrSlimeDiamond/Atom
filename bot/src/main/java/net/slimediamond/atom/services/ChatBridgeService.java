@@ -25,6 +25,7 @@ import net.slimediamond.telegram.entity.File;
 import net.slimediamond.telegram.Listener;
 import net.slimediamond.telegram.event.UserAddedToChatEvent;
 import net.slimediamond.telegram.event.UserRemovedFromChatEvent;
+import org.jetbrains.annotations.NotNull;
 import org.kitteh.irc.client.library.event.channel.ChannelCtcpEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelJoinEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelMessageEvent;
@@ -322,6 +323,16 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
         String identifier = String.valueOf(event.getChat().getId());
         BridgeEndpoint source = BridgeStore.getEndpointByIdentifier(chat, identifier);
 
+        BridgeMessage message = getMessage(event);
+
+        if (event.getMessage().getPhoto() != null) {
+            message.addFile(HTTPUtil.downloadFile(event.getMessage().getPhoto().download(), event.getMessage().getPhoto().filePath().split("/")[1]));
+        }
+
+        chat.sendMessage(message, source);
+    }
+
+    private static @NotNull BridgeMessage getMessage(net.slimediamond.telegram.event.MessageReceivedEvent event) {
         File avatar = event.getSender().getProfilePhoto();
         String avatarUrl;
         if (avatar != null) {
@@ -330,15 +341,13 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
             avatarUrl = event.getChat().getPhoto().download();
         }
 
-        String name = event.getSender().getFirstName() + " " + event.getSender().getLastName();
+        String name = event.getSender().getFirstName() +
+                (event.getSender().getLastName() != null
+                        && !event.getSender().getLastName().isEmpty()
+                        ? " " + event.getSender().getLastName() : "");
 
         BridgeMessage message = new BridgeMessage(name, avatarUrl, event.getMessage().getContent());
-
-        if (event.getMessage().getPhoto() != null) {
-            message.addFile(HTTPUtil.downloadFile(event.getMessage().getPhoto().download(), event.getMessage().getPhoto().filePath().split("/")[1]));
-        }
-
-        chat.sendMessage(message, source);
+        return message;
     }
 
     @Override
