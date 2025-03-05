@@ -311,7 +311,7 @@ public class ChatBridgeService extends ListenerAdapter implements Listener {
         });
     }
 
-    // Telegram content event
+    // Telegram message event
     @Override
     public void onMessage(net.slimediamond.telegram.event.MessageReceivedEvent event) throws SQLException, IOException {
         if (event.getMessage().getContent().startsWith(TelegramReference.prefix)) return;
