@@ -5,12 +5,10 @@ import net.slimediamond.atom.command.discord.AtomDiscordCommandEvent;
 
 public class UserArgument {
     private Object value;
-    private AtomDiscordCommandEvent interactionEvent;
     private DiscordArgumentMetadata metadata;
 
     public UserArgument(Object value, AtomDiscordCommandEvent interactionEvent, DiscordArgumentMetadata metadata) {
         this.value = value;
-        this.interactionEvent = interactionEvent;
         this.metadata = metadata;
     }
 
@@ -19,7 +17,7 @@ public class UserArgument {
     }
 
     public String getAsString() {
-        return (String)value;
+        return String.valueOf(value);
     }
 
     public int getAsInt() {
