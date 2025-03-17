@@ -7,7 +7,7 @@ public class UserArgument {
     private Object value;
     private DiscordArgumentMetadata metadata;
 
-    public UserArgument(Object value, AtomDiscordCommandEvent interactionEvent, DiscordArgumentMetadata metadata) {
+    public UserArgument(Object value, DiscordArgumentMetadata metadata) {
         this.value = value;
         this.metadata = metadata;
     }

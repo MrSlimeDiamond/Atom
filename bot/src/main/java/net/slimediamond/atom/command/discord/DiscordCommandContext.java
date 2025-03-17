@@ -37,7 +37,7 @@ public class DiscordCommandContext  implements CommandContext {
             if (!arguments.isEmpty()) {
                 for (int i = 0; i < args.length; i++) {
                     Object value = getValue(args[i], interactionEvent);
-                    userArguments.add(new UserArgument(value, interactionEvent, arguments.get(i)));
+                    userArguments.add(new UserArgument(value, arguments.get(i)));
                 }
             } // otherwise, it's probably a command without args
         } else {
@@ -46,7 +46,6 @@ public class DiscordCommandContext  implements CommandContext {
             // FIXME: this is for getting options. See the top of a Discord command (like MCO lastseen)
             for (OptionMapping option : interactionEvent.getSlashCommandInteractionEvent().getOptions()) {
                 userArguments.add(new UserArgument(getValue(option.getAsString(), interactionEvent),
-                        interactionEvent,
                         arguments.get(interactionEvent.getSlashCommandInteractionEvent().getOptions().indexOf(option)))
                 ); // TODO: maybe make this a little nicer
             }
