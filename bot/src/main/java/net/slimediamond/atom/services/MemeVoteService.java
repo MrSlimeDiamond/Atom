@@ -11,6 +11,9 @@ import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
 import net.slimediamond.atom.data.Database;
+import net.slimediamond.atom.data.DatabaseV2;
+import net.slimediamond.atom.data.keys.GuildKeys;
+import net.slimediamond.atom.discord.entities.Guild;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -22,7 +25,7 @@ public class MemeVoteService extends ListenerAdapter {
     private JDA jda;
 
     @GetService
-    private Database database;
+    private DatabaseV2 database;
 
     @Service.Start
     public void startService() throws Exception {
@@ -34,7 +37,8 @@ public class MemeVoteService extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         if (!event.isFromGuild()) return;
         if (event.getMessage().getContentRaw().toLowerCase().contains("stfu atom")) return;
-        database.getServerMemesChannel(event.getGuild()).ifPresent(channel -> {
+        Guild guild = database.getGuild(event.getGuild()).orElseThrow();
+        guild.get(GuildKeys.MEMES_CHANNEL).ifPresent(channel -> {
 //            log.info("Got channel");
             if (event.getChannel().getId().equals(channel.getId()) && event.getMessage().getAttachments().size() > 0) {
                 event.getMessage().addReaction(Emoji.fromUnicode("⬆️")).queue();
@@ -49,7 +53,8 @@ public class MemeVoteService extends ListenerAdapter {
         if (event.getUser() == null) return;
         if (!event.isFromGuild()) return;
         if (event.getUser().isBot()) return;
-        database.getServerMemesChannel(event.getGuild()).ifPresent(channel -> {
+        Guild guild = database.getGuild(event.getGuild()).orElseThrow();
+        guild.get(GuildKeys.MEMES_CHANNEL).ifPresent(channel -> {
             if (event.getChannel().getId().equals(channel.getId())) {
                 if (event.getReaction().getEmoji().asUnicode().getName().equals("❤️")) {
                     event.getUser().openPrivateChannel().queue(dm -> {
