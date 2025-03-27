@@ -10,4 +10,11 @@ public interface DAO {
      * Save the DAO to the database
      */
     void save() throws SQLException;
+
+    /**
+     * Get the primary key for the DAO
+     *
+     * @return DAO primary key
+     */
+    int getPrimaryKey();
 }

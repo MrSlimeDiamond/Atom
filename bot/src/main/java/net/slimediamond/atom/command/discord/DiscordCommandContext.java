@@ -1,8 +1,6 @@
 package net.slimediamond.atom.command.discord;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -12,6 +10,7 @@ import net.slimediamond.atom.command.discord.args.ArgumentList;
 import net.slimediamond.atom.command.discord.args.DiscordArgumentMetadata;
 import net.slimediamond.atom.command.discord.args.UserArgument;
 import net.slimediamond.atom.discord.DiscordAPI;
+import net.slimediamond.atom.discord.entities.Guild;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -144,5 +143,4 @@ public class DiscordCommandContext  implements CommandContext {
     public ArgumentList getArguments() {
         return this.userArguments;
     }
-
 }

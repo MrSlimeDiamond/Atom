@@ -1,9 +1,15 @@
 package net.slimediamond.atom.command.discord;
 
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.slimediamond.atom.Atom;
+import net.slimediamond.atom.data.DatabaseV2;
+import net.slimediamond.atom.discord.entities.Guild;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
@@ -19,6 +25,7 @@ public class AtomDiscordCommandEvent {
     private final MessageChannel channel;
     private final Member member;
     private final boolean isFromGuild;
+    private final DatabaseV2 database = Atom.getServiceManager().getInstance(DatabaseV2.class);
     private Guild guild;
     private boolean deferred;
     private Message message;
@@ -34,7 +41,7 @@ public class AtomDiscordCommandEvent {
         this.message = event.getMessage();
 
         if (event.isFromGuild()) {
-            this.guild = event.getGuild();
+            this.guild = database.getGuild(event.getGuild()).orElseThrow();
         }
     }
 
@@ -46,7 +53,7 @@ public class AtomDiscordCommandEvent {
         this.isFromGuild = event.isFromGuild();
 
         if (event.isFromGuild()) {
-            this.guild = event.getGuild();
+            this.guild = database.getGuild(event.getGuild()).orElseThrow();
         }
     }
 
