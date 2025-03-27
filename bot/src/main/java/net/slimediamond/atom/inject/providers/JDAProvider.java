@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.slimediamond.atom.common.annotations.Service;
-import net.slimediamond.atom.discord.DiscordBot;
+import net.slimediamond.atom.discordbot.DiscordBot;
 import net.slimediamond.atom.reference.DiscordReference;
 
 import javax.annotation.Nullable;

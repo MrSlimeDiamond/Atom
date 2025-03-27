@@ -4,7 +4,7 @@ import net.engio.mbassy.listener.Handler;
 import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandMetadata;
 import net.slimediamond.atom.common.annotations.GetService;
-import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.data.Database;
 import net.slimediamond.atom.irc.McObotMessageParser;
 import net.slimediamond.atom.reference.IRCReference;
 import net.slimediamond.atom.util.minecraftonline.exceptions.UnknownPlayerException;

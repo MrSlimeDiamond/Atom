@@ -12,18 +12,19 @@ import java.util.Arrays;
  * Triggered either by a slash command or a
  * regular text command.
  *
- * Just a nice helper class so that both of those are on the same page.
+ * <p>Just a nice helper class so that both of those are on the same page.</p>
  */
 public class AtomDiscordCommandEvent {
-    private User user;
+    private final User user;
+    private final MessageChannel channel;
+    private final Member member;
+    private final boolean isFromGuild;
     private Guild guild;
-    private MessageChannel channel;
-    private Member member;
-    private boolean isFromGuild;
     private boolean deferred;
     private Message message;
 
-    @Nullable private SlashCommandInteractionEvent slashCommandInteractionEvent;
+    @Nullable
+    private SlashCommandInteractionEvent slashCommandInteractionEvent;
 
     public AtomDiscordCommandEvent(MessageReceivedEvent event) {
         this.user = event.getAuthor();
@@ -110,7 +111,8 @@ public class AtomDiscordCommandEvent {
         return slashCommandInteractionEvent == null;
     }
 
-    public @Nullable SlashCommandInteractionEvent getSlashCommandInteractionEvent() {
+    @Nullable
+    public SlashCommandInteractionEvent getSlashCommandInteractionEvent() {
         return slashCommandInteractionEvent;
     }
 }

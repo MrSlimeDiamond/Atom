@@ -5,7 +5,7 @@ import net.slimediamond.atom.chatbridge.BridgeStore;
 import net.slimediamond.atom.command.telegram.TelegramCommandContext;
 import net.slimediamond.atom.command.telegram.TelegramCommandExecutor;
 import net.slimediamond.atom.common.annotations.GetService;
-import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.data.Database;
 
 import java.util.Arrays;
 

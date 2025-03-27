@@ -2,7 +2,7 @@ package net.slimediamond.atom.command.irc;
 
 import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.command.CommandSender;
-import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.data.Database;
 import org.kitteh.irc.client.library.element.User;
 
 import java.sql.SQLException;

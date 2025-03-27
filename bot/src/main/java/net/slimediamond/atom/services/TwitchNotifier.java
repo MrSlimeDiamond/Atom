@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.slimediamond.atom.reference.TwitchReference;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
-import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.data.Database;
 import org.slf4j.Logger;
 
 import java.sql.SQLException;

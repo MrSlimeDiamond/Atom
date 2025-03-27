@@ -29,6 +29,8 @@ public class ServiceManager {
             return -metadata.priority();
         }));
 
+        logger.info("Starting in order: {}", sorted);
+
         for (Class<?> clazz : sorted) {
             Service metadata = clazz.getAnnotation(Service.class);
             if (metadata.enabled()) {

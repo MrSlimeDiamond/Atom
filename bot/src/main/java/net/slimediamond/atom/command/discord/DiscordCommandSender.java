@@ -3,7 +3,7 @@ package net.slimediamond.atom.command.discord;
 import net.dv8tion.jda.api.entities.User;
 import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.command.CommandSender;
-import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.data.Database;
 
 import java.sql.SQLException;
 

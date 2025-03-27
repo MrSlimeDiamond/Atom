@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+}
+
+group = "net.slimediamond.atom"
+version = "unspecified"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //JDA
+    implementation 'net.dv8tion:JDA:5.0.0-beta.10'
+}

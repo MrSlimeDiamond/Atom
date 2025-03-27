@@ -106,6 +106,7 @@ public class Config {
         prop.load(reader);
         return prop;
     }
+
     public Properties discord() throws IOException {
         return getPropertiesFile("discordbot");
     }

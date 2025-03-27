@@ -6,7 +6,7 @@ import net.slimediamond.atom.chatbridge.BridgeMessage;
 import net.slimediamond.atom.chatbridge.EventType;
 import net.slimediamond.atom.chatbridge.Netsplit;
 import net.slimediamond.atom.chatbridge.mco.MCOBridgeSource;
-import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.data.Database;
 import org.kitteh.irc.client.library.element.Channel;
 
 import java.sql.SQLException;

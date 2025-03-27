@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
-import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.data.Database;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @Service(value = "reaction roles")

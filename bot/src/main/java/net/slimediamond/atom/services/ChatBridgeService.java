@@ -18,7 +18,7 @@ import net.slimediamond.atom.reference.EmbedReference;
 import net.slimediamond.atom.reference.IRCReference;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
-import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.data.Database;
 import net.slimediamond.atom.reference.TelegramReference;
 import net.slimediamond.atom.telegram.Telegram;
 import net.slimediamond.telegram.entity.File;

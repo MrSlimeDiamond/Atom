@@ -5,7 +5,7 @@ import net.slimediamond.atom.chatbridge.BridgedChat;
 import net.slimediamond.atom.command.telegram.TelegramCommandContext;
 import net.slimediamond.atom.command.telegram.TelegramCommandExecutor;
 import net.slimediamond.atom.common.annotations.GetService;
-import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.data.Database;
 
 
 public class BridgeCreateCommand implements TelegramCommandExecutor {

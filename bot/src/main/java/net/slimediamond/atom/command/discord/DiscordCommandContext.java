@@ -11,26 +11,27 @@ import net.slimediamond.atom.command.*;
 import net.slimediamond.atom.command.discord.args.ArgumentList;
 import net.slimediamond.atom.command.discord.args.DiscordArgumentMetadata;
 import net.slimediamond.atom.command.discord.args.UserArgument;
+import net.slimediamond.atom.discord.DiscordAPI;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DiscordCommandContext  implements CommandContext {
-    private AtomDiscordCommandEvent interactionEvent;
-    private CommandMetadata metadata;
-    private String[] args;
-    private CommandManager commandManager;
-    private ArgumentList userArguments;
-    private JDA jda;
+    private final AtomDiscordCommandEvent interactionEvent;
+    private final CommandMetadata metadata;
+    private final String[] args;
+    private final CommandManager commandManager;
+    private final ArgumentList userArguments;
+    private final DiscordAPI api;
 
-    public DiscordCommandContext(AtomDiscordCommandEvent interactionEvent, CommandMetadata metadata, String[] args, CommandManager commandManager, JDA jda) {
+    public DiscordCommandContext(AtomDiscordCommandEvent interactionEvent, CommandMetadata metadata, String[] args, CommandManager commandManager, DiscordAPI api) {
         this.interactionEvent = interactionEvent;
         this.metadata = metadata;
         this.args = args;
         this.commandManager = commandManager;
         this.userArguments = new ArgumentList();
-        this.jda = jda;
+        this.api = api;
 
         ArrayList<DiscordArgumentMetadata> arguments = metadata.getDiscordCommand().getArgs();
         if (interactionEvent.isTextCommand()) {
@@ -111,8 +112,8 @@ public class DiscordCommandContext  implements CommandContext {
         }
     }
 
-    public JDA getJDA() {
-        return this.jda;
+    public DiscordAPI getAPI() {
+        return api;
     }
 
     public Guild getGuild() {

@@ -1,15 +1,13 @@
 package net.slimediamond.atom.reference;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ServiceReference {
-    public static final ArrayList<String> SERVICES_PACKAGES = new ArrayList<>();
-
-    static {
-        SERVICES_PACKAGES.add("net.slimediamond.atom.database");
-        SERVICES_PACKAGES.add("net.slimediamond.atom.discord");
-        SERVICES_PACKAGES.add("net.slimediamond.atom.irc");
-        SERVICES_PACKAGES.add("net.slimediamond.atom.services");
-        SERVICES_PACKAGES.add("net.slimediamond.atom.telegram");
-    }
+    public static final List<String> SERVICES_PACKAGES = List.of(
+            "net.slimediamond.atom.data",
+            "met.slimediamond.atom.discord",
+            "met.slimediamond.atom.telegram",
+            "met.slimediamond.atom.irc",
+            "net.slimediamond.atom.services"
+    );
 }

@@ -15,7 +15,7 @@ import net.slimediamond.atom.irc.commands.minecraftonline.*;
 import net.slimediamond.atom.reference.IRCReference;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
-import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.data.Database;
 import net.slimediamond.atom.reference.MCOReference;
 import net.slimediamond.atom.services.system.GetServiceProcessor;
 import org.kitteh.irc.client.library.Client;

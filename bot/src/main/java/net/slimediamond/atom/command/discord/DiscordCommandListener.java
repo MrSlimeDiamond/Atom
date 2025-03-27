@@ -8,7 +8,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.command.CommandManager;
 import net.slimediamond.atom.command.CommandMetadata;
-import net.slimediamond.atom.database.Database;
+import net.slimediamond.atom.data.Database;
+import net.slimediamond.atom.discord.DiscordAPI;
+import net.slimediamond.atom.discordbot.DiscordBot;
 import net.slimediamond.atom.reference.DiscordReference;
 import net.slimediamond.atom.util.EmbedUtil;
 import net.slimediamond.atom.util.minecraftonline.exceptions.UnknownPlayerException;
@@ -18,12 +20,16 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 public class DiscordCommandListener extends ListenerAdapter {
-    private CommandManager commandManager;
-    private Database database;
+    private final CommandManager commandManager;
+    private final Database database;
+    private final DiscordBot discordBot;
+    private final DiscordAPI discordAPI;
 
     public DiscordCommandListener(CommandManager commandManager) {
         this.commandManager = commandManager;
         this.database = Atom.getServiceManager().getInstance(Database.class);
+        this.discordBot = Atom.getServiceManager().getInstance(DiscordBot.class);
+        discordAPI = discordBot.getDiscordAPI();
     }
 
     // Just context commands for now
@@ -92,7 +98,7 @@ public class DiscordCommandListener extends ListenerAdapter {
 
                     DiscordCommandExecutor commandExecutor = command.getDiscordCommand().getCommandExecutor();
                     try {
-                        commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager, event.getJDA()));
+                        commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager, discordAPI));
                         break;
                     } catch (UnknownPlayerException e) {
                         event.getChannel().sendMessageEmbeds(EmbedUtil.expandedErrorEmbed("Could not find that player!")).queue();
@@ -163,7 +169,7 @@ public class DiscordCommandListener extends ListenerAdapter {
 
                 DiscordCommandExecutor commandExecutor = command.getDiscordCommand().getCommandExecutor();
                 try {
-                    commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager, event.getJDA()));
+                    commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager, discordAPI));
                 } catch (Exception e) {
                     if (e.getCause() instanceof UnknownPlayerException) {
                         event.replyEmbeds(new EmbedBuilder()
