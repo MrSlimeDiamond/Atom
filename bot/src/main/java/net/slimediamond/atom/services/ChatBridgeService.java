@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Service(value = "chat bridge", priority = 1)
+@Service(value = "chat bridge", priority = 1, enabled = false)
 public class ChatBridgeService extends ListenerAdapter implements Listener {
     @Inject
     @Nullable

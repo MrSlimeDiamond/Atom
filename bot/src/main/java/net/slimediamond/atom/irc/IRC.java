@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 
-@Service(value = "irc", priority = 999, enabled = true)
+@Service(value = "irc", priority = 999, enabled = false)
 public class IRC {
     public static Client client;
 

@@ -126,17 +126,17 @@ public class AtomGuild implements Guild, DAO {
         // Doesn't yet exist, insert it
         if (id == -1) {
             // Do we even have a table?!
-            conn.prepareStatement("CREATE TABLE IF NOT EXISTS guilds (id int NOT NULL AUTO_INCREMENT," +
+            conn.prepareStatement("CREATE TABLE IF NOT EXISTS disc_guilds (id int NOT NULL AUTO_INCREMENT," +
                     "discord_id BIGINT NOT NULL," +
                     "keys JSON NOT NULL," +
                     "PRIMARY KEY(id))").execute();
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO guilds (discord_id, keys) VALUES (?, ?)");
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO disc_guilds (discord_id, keys) VALUES (?, ?)");
             ps.setLong(1, discordId);
             ps.setString(2, JsonKeys.json(this));
             ResultSet rs = ps.executeQuery();
             this.id = rs.getInt("id");
         } else { // Update it
-            PreparedStatement ps = conn.prepareStatement("UPDATE GUILDS SET keys = ? WHERE id = ?");
+            PreparedStatement ps = conn.prepareStatement("UPDATE disc_guilds SET keys = ? WHERE id = ?");
             ps.setString(1, JsonKeys.json(this));
             ps.setInt(2, this.id);
             ps.execute();
