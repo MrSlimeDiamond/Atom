@@ -44,7 +44,7 @@ public class DatabaseV2 {
                         "&autoReconnect=true&allowPublicKeyRetrieval=true");
 
         this.managers = new ArrayList<>();
-        managers.add(new DAOManager<AtomGuild>());
+        managers.add(new DAOManager<>(AtomGuild.class));
     }
 
     public Connection getConn() {
@@ -53,8 +53,8 @@ public class DatabaseV2 {
 
     @SuppressWarnings("unchecked")
     public <T extends DAO> Optional<DAOManager<T>> getDAOManager(Class<T> type) {
-        return (Optional<DAOManager<T>>) (Optional<?>)managers.stream()
-                .filter(manager -> manager.getClass().isAssignableFrom(type))
+        return (Optional<DAOManager<T>>) (Optional<?>) managers.stream()
+                .filter(manager -> manager.getClazz().equals(type))
                 .findAny();
     }
 
