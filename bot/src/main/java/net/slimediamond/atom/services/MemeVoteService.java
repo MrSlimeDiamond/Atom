@@ -14,6 +14,7 @@ import net.slimediamond.atom.data.Database;
 import net.slimediamond.atom.data.DatabaseV2;
 import net.slimediamond.atom.data.keys.GuildKeys;
 import net.slimediamond.atom.discord.entities.Guild;
+import net.slimediamond.atom.discordbot.DiscordBot;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -27,6 +28,9 @@ public class MemeVoteService extends ListenerAdapter {
     @GetService
     private DatabaseV2 database;
 
+    @GetService
+    private DiscordBot discordBot;
+
     @Service.Start
     public void startService() throws Exception {
         if (jda == null) return;
@@ -37,7 +41,7 @@ public class MemeVoteService extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         if (!event.isFromGuild()) return;
         if (event.getMessage().getContentRaw().toLowerCase().contains("stfu atom")) return;
-        Guild guild = database.getGuild(event.getGuild()).orElseThrow();
+        Guild guild = discordBot.getDiscordAPI().getGuildById(event.getGuild().getIdLong());
         guild.get(GuildKeys.MEMES_CHANNEL).ifPresent(channel -> {
 //            log.info("Got channel");
             if (event.getChannel().getId().equals(channel.getId()) && event.getMessage().getAttachments().size() > 0) {
@@ -48,12 +52,13 @@ public class MemeVoteService extends ListenerAdapter {
         });
     }
 
+    // TODO: User toggle?
     @SubscribeEvent
     public void onMessageReactionAdd(MessageReactionAddEvent event) {
         if (event.getUser() == null) return;
         if (!event.isFromGuild()) return;
         if (event.getUser().isBot()) return;
-        Guild guild = database.getGuild(event.getGuild()).orElseThrow();
+        Guild guild = discordBot.getDiscordAPI().getGuildById(event.getGuild().getIdLong());
         guild.get(GuildKeys.MEMES_CHANNEL).ifPresent(channel -> {
             if (event.getChannel().getId().equals(channel.getId())) {
                 if (event.getReaction().getEmoji().asUnicode().getName().equals("❤️")) {

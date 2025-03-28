@@ -9,7 +9,9 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.slimediamond.atom.Atom;
 import net.slimediamond.atom.data.DatabaseV2;
+import net.slimediamond.atom.discord.DiscordAPI;
 import net.slimediamond.atom.discord.entities.Guild;
+import net.slimediamond.atom.discordbot.DiscordBot;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
@@ -25,7 +27,7 @@ public class AtomDiscordCommandEvent {
     private final MessageChannel channel;
     private final Member member;
     private final boolean isFromGuild;
-    private final DatabaseV2 database = Atom.getServiceManager().getInstance(DatabaseV2.class);
+    private final DiscordAPI api = Atom.getServiceManager().getInstance(DiscordBot.class).getDiscordAPI();
     private Guild guild;
     private boolean deferred;
     private Message message;
@@ -41,7 +43,7 @@ public class AtomDiscordCommandEvent {
         this.message = event.getMessage();
 
         if (event.isFromGuild()) {
-            this.guild = database.getGuild(event.getGuild()).orElseThrow();
+            this.guild = api.getGuildById(event.getGuild().getIdLong());
         }
     }
 
@@ -53,7 +55,7 @@ public class AtomDiscordCommandEvent {
         this.isFromGuild = event.isFromGuild();
 
         if (event.isFromGuild()) {
-            this.guild = database.getGuild(event.getGuild()).orElseThrow();
+            this.guild = api.getGuildById(event.getGuild().getIdLong());
         }
     }
 

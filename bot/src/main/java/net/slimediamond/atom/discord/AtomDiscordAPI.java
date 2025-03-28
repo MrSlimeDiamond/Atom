@@ -25,6 +25,7 @@ public class AtomDiscordAPI implements DiscordAPI {
 
     @Override
     public Guild getGuildById(long id) {
+        System.out.println(guilds);
         if (guilds.stream().map(Guild::getIdLong).anyMatch(gid -> gid.equals(id))) {
             // return an existing guild object
             return guilds.stream().filter(guild -> guild.getIdLong() == id).findAny().orElseThrow();

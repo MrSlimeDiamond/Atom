@@ -24,7 +24,7 @@ public class DatabaseV2 {
 
     private Connection conn;
 
-    private List<DAOManager<? extends DAO>> managers;
+    private List<DAOManager<?>> managers;
 
     @Service.Start
     public void open() throws SQLException {
@@ -53,8 +53,10 @@ public class DatabaseV2 {
 
     @SuppressWarnings("unchecked")
     public <T extends DAO> Optional<DAOManager<T>> getDAOManager(Class<T> type) {
-        return (Optional<DAOManager<T>>) (Optional<?>) managers.stream()
+        logger.info("Getting DAO manager: {}", type.getName());
+        return managers.stream()
                 .filter(manager -> manager.getClazz().equals(type))
+                .map(manager -> (DAOManager<T>) manager)
                 .findAny();
     }
 
