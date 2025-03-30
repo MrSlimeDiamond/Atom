@@ -11,6 +11,6 @@ subprojects {
     }
 
     dependencies {
-        implementation 'net.slimediamond:data:0.0.3'
+        implementation 'net.slimediamond:data:0.0.6'
     }
 }

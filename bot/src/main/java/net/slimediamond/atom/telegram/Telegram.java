@@ -10,7 +10,7 @@ import net.slimediamond.atom.telegram.commands.DebugCommand;
 import net.slimediamond.atom.telegram.commands.minecraftonline.*;
 import net.slimediamond.telegram.TelegramClient;
 
-@Service(value = "telegram", priority = 999)
+@Service(value = "telegram", priority = 999, enabled = false)
 public class Telegram {
     @Inject
     CommandManager commandManager;

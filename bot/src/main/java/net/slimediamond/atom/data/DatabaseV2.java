@@ -53,7 +53,6 @@ public class DatabaseV2 {
 
     @SuppressWarnings("unchecked")
     public <T extends DAO> Optional<DAOManager<T>> getDAOManager(Class<T> type) {
-        logger.info("Getting DAO manager: {}", type.getName());
         return managers.stream()
                 .filter(manager -> manager.getClazz().equals(type))
                 .map(manager -> (DAOManager<T>) manager)

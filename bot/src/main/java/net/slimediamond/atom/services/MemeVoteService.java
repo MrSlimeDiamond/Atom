@@ -10,8 +10,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.slimediamond.atom.common.annotations.GetService;
 import net.slimediamond.atom.common.annotations.Service;
-import net.slimediamond.atom.data.Database;
-import net.slimediamond.atom.data.DatabaseV2;
 import net.slimediamond.atom.data.keys.GuildKeys;
 import net.slimediamond.atom.discord.entities.Guild;
 import net.slimediamond.atom.discordbot.DiscordBot;
@@ -26,9 +24,6 @@ public class MemeVoteService extends ListenerAdapter {
     private JDA jda;
 
     @GetService
-    private DatabaseV2 database;
-
-    @GetService
     private DiscordBot discordBot;
 
     @Service.Start
@@ -39,12 +34,12 @@ public class MemeVoteService extends ListenerAdapter {
 
     @SubscribeEvent
     public void onMessageReceived(MessageReceivedEvent event) {
+        System.out.println(discordBot == null);
         if (!event.isFromGuild()) return;
         if (event.getMessage().getContentRaw().toLowerCase().contains("stfu atom")) return;
         Guild guild = discordBot.getDiscordAPI().getGuildById(event.getGuild().getIdLong());
         guild.get(GuildKeys.MEMES_CHANNEL).ifPresent(channel -> {
-//            log.info("Got channel");
-            if (event.getChannel().getId().equals(channel.getId()) && event.getMessage().getAttachments().size() > 0) {
+            if (event.getChannel().getId().equals(channel.getId()) && !event.getMessage().getAttachments().isEmpty()) {
                 event.getMessage().addReaction(Emoji.fromUnicode("⬆️")).queue();
                 event.getMessage().addReaction(Emoji.fromUnicode("⬇️")).queue();
                 event.getMessage().addReaction(Emoji.fromUnicode("❤️")).queue();

@@ -6,6 +6,7 @@ import net.slimediamond.atom.launch.AppLaunch;
 import net.slimediamond.atom.services.ChatBridgeService;
 import net.slimediamond.atom.services.system.ServiceManager;
 import net.slimediamond.data.Key;
+import net.slimediamond.data.identification.ResourceKeyable;
 import net.slimediamond.data.registry.BasicRegistry;
 import net.slimediamond.data.registry.Registry;
 import net.slimediamond.util.network.NetworkUtils;
@@ -13,14 +14,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-// who made you all static? -Slime March 24, 2025
 public class Atom {
     private static final Logger log = LoggerFactory.getLogger("atom");
     public static Config config;
 
     private static ServiceManager serviceManager;
-    private static final Registry<Key<?>> keyRegistry = new BasicRegistry<>();
+    private static List<Registry<?>> registries = new ArrayList<>();
 
     static {
         try {
@@ -28,6 +30,7 @@ public class Atom {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        registries.add(new BasicRegistry<>(Key.class));
     }
 
 
@@ -73,11 +76,15 @@ public class Atom {
         return serviceManager;
     }
 
-    public static Registry<Key<?>> getKeyRegistry() {
-        return keyRegistry;
-    }
-
     protected static void setServiceManager(ServiceManager serviceManager) {
         Atom.serviceManager = serviceManager;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends ResourceKeyable> Registry<T> getRegistry(Class<T> type) {
+        return registries.stream()
+                .filter(registry -> registry.getType().equals(type))
+                .map(registry -> (Registry<T>)registry)
+                .findAny().orElseThrow();
     }
 }

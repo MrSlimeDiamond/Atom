@@ -1,5 +1,6 @@
 package net.slimediamond.atom.discordbot.commands;
 
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.slimediamond.atom.command.discord.DiscordCommandContext;
 import net.slimediamond.atom.command.discord.DiscordCommandExecutor;
@@ -17,8 +18,12 @@ public class MemesCommand implements DiscordCommandExecutor {
         if (args[0].equalsIgnoreCase("set")) {
             // try to parse a channel
             GuildChannel channel = context.getInteractionEvent().getMessage().getMentions().getChannels().get(0);
-            guild.offer(GuildKeys.MEMES_CHANNEL, channel);
-            context.replyEmbeds(EmbedUtil.genericSuccessEmbed("Set server memes channel"));
+            if (channel instanceof TextChannel textChannel) {
+                guild.offer(GuildKeys.MEMES_CHANNEL, textChannel);
+                context.replyEmbeds(EmbedUtil.genericSuccessEmbed("Set server memes channel"));
+            } else {
+                context.replyEmbeds(EmbedUtil.expandedErrorEmbed("Memes channel must be a text channel"));
+            }
         } else if (args[0].equalsIgnoreCase("unset")) {
             guild.offer(GuildKeys.MEMES_CHANNEL, null);
             context.replyEmbeds(EmbedUtil.genericSuccessEmbed("Unset server memes channel"));

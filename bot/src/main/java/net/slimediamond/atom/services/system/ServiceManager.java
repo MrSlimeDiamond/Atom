@@ -20,7 +20,7 @@ public class ServiceManager {
 
     public void startAll() throws InterruptedException {
         if (jda != null) jda.awaitReady();
-        Reflections reflections = new Reflections(ServiceReference.SERVICES_PACKAGES.toArray());
+        Reflections reflections = new Reflections(ServiceReference.servicePackages.toArray());
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Service.class);
         List<Class<?>> sorted = new ArrayList<>(annotated);
 
@@ -29,7 +29,7 @@ public class ServiceManager {
             return -metadata.priority();
         }));
 
-        logger.info("Starting in order: {}", sorted);
+        logger.info("Starting in order: {}", sorted.stream().map(Class::getSimpleName).toList());
 
         for (Class<?> clazz : sorted) {
             Service metadata = clazz.getAnnotation(Service.class);
@@ -61,6 +61,14 @@ public class ServiceManager {
         return services;
     }
 
+    public <T> ServiceContainer getContainer(Class<T> clazz) {
+        return services.stream()
+                .filter(service -> service.getClazz().equals(clazz))
+                .findAny()
+                .orElse(null);
+    }
+
+    @SuppressWarnings("unchecked")
     public <T> T getInstance(Class<T> clazz) {
         return (T) services.stream()
                 .filter(service -> service.getClazz() == clazz)
@@ -69,6 +77,7 @@ public class ServiceManager {
                 .orElse(null);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getInstance(String name) {
         return (T) services.stream()
                 .filter(service -> service.getMetadata().value().equals(name))

@@ -50,7 +50,10 @@ import net.slimediamond.atom.discordbot.commands.streams.StreamsChannelCommand;
 import net.slimediamond.atom.discordbot.commands.streams.StreamsRemoveCommand;
 import net.slimediamond.atom.irc.IRC;
 import net.slimediamond.atom.reference.MCOReference;
+import net.slimediamond.atom.services.system.ServiceContainer;
 import net.slimediamond.atom.util.EmbedUtil;
+import net.slimediamond.data.Key;
+import net.slimediamond.data.registry.Registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,14 +79,17 @@ public class DiscordBot {
     public void startService() throws IOException, InterruptedException, SQLException {
         jda.awaitReady();
 
-        discordAPI = new AtomDiscordAPI((JDAImpl) jda);
+        // !!!
+        Registry<Key> keyRegistry = Atom.getRegistry(Key.class);
 
-        Atom.getKeyRegistry().register(GuildKeys.LOG_CHANNEL);
-        Atom.getKeyRegistry().register(GuildKeys.PINNERINO_CHANNEL);
-        Atom.getKeyRegistry().register(GuildKeys.STREAMS_CHANNEL);
-        Atom.getKeyRegistry().register(GuildKeys.MEMES_CHANNEL);
-        Atom.getKeyRegistry().register(GuildKeys.PINNERINO_EMOJI);
-        Atom.getKeyRegistry().register(GuildKeys.PINNERINO_THRESHOLD);
+        keyRegistry.register(GuildKeys.PINNERINO_THRESHOLD);
+        keyRegistry.register(GuildKeys.PINNERINO_EMOJI);
+        keyRegistry.register(GuildKeys.PINNERINO_CHANNEL);
+        keyRegistry.register(GuildKeys.MEMES_CHANNEL);
+        keyRegistry.register(GuildKeys.STREAMS_CHANNEL);
+        keyRegistry.register(GuildKeys.LOG_CHANNEL);
+
+        discordAPI = new AtomDiscordAPI((JDAImpl) jda);
 
         DiscordCommandListener commandListener = new DiscordCommandListener(commandManager);
         jda.addEventListener(commandListener);
@@ -208,61 +214,64 @@ public class DiscordBot {
                 ).build()
         );
 
-        commandManager.register(new CommandBuilder()
-                .addAliases("irc")
-                .setDescription("Commands for IRC")
-                .setUsage("irc <names|whois>")
-                .discord()
-                .setExecutor(CommandContext::sendUsage)
-                .then()
-                .addChild(new CommandBuilder()
-                        .addAliases("names", "list")
-                        .setDescription("Get a list of people in the bridged channel")
-                        .setUsage("irc names")
-                        .discord()
-                        .setExecutor(new IRCNamesCommand())
-                        .then()
-                        .build()
-                )
-                .addChild(new CommandBuilder()
-                        .addAliases("whois")
-                        .setDescription("Get information about a user on IRC")
-                        .setUsage("irc whois <user>")
-                        .discord()
-                        .setExecutor(new IRCWhoisCommand())
-                        .addArgument(new DiscordArgsBuilder()
-                                .setName("user")
-                                .setId(0)
-                                .setDescription("The user to WHOIS")
-                                .setOptionType(OptionType.STRING)
-                                .setRequired(true)
-                                .build()
-                        )
-                        .then()
-                        .build()
-                )
-                .addChild(new CommandBuilder()
-                        .addAliases("restart")
-                        .setDescription("Restarts the IRC bot")
-                        .setUsage("irc restart")
-                        .setAdminOnly(true)
-                        .discord()
-                        .setSlashCommand(false)
-                        .setExecutor(ctx -> {
-                            ctx.deferReply();
-                            IRC irc = Atom.getServiceManager().getInstance(IRC.class);
-                            try {
-                                irc.reloadService();
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                            ctx.replyEmbeds(EmbedUtil.genericSuccessEmbed("Reloaded IRC service"));
-                        })
-                        .then()
-                        .build()
-                )
-                .build()
-        );
+        ServiceContainer ircContainer = Atom.getServiceManager().getContainer(IRC.class);
+        if (ircContainer != null && ircContainer.getMetadata().enabled()) {
+            commandManager.register(new CommandBuilder()
+                    .addAliases("irc")
+                    .setDescription("Commands for IRC")
+                    .setUsage("irc <names|whois>")
+                    .discord()
+                    .setExecutor(CommandContext::sendUsage)
+                    .then()
+                    .addChild(new CommandBuilder()
+                            .addAliases("names", "list")
+                            .setDescription("Get a list of people in the bridged channel")
+                            .setUsage("irc names")
+                            .discord()
+                            .setExecutor(new IRCNamesCommand())
+                            .then()
+                            .build()
+                    )
+                    .addChild(new CommandBuilder()
+                            .addAliases("whois")
+                            .setDescription("Get information about a user on IRC")
+                            .setUsage("irc whois <user>")
+                            .discord()
+                            .setExecutor(new IRCWhoisCommand())
+                            .addArgument(new DiscordArgsBuilder()
+                                    .setName("user")
+                                    .setId(0)
+                                    .setDescription("The user to WHOIS")
+                                    .setOptionType(OptionType.STRING)
+                                    .setRequired(true)
+                                    .build()
+                            )
+                            .then()
+                            .build()
+                    )
+                    .addChild(new CommandBuilder()
+                            .addAliases("restart")
+                            .setDescription("Restarts the IRC bot")
+                            .setUsage("irc restart")
+                            .setAdminOnly(true)
+                            .discord()
+                            .setSlashCommand(false)
+                            .setExecutor(ctx -> {
+                                ctx.deferReply();
+                                IRC irc = Atom.getServiceManager().getInstance(IRC.class);
+                                try {
+                                    irc.reloadService();
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
+                                ctx.replyEmbeds(EmbedUtil.genericSuccessEmbed("Reloaded IRC service"));
+                            })
+                            .then()
+                            .build()
+                    )
+                    .build()
+            );
+        }
 
         commandManager.register(new CommandBuilder()
                 .addAliases("commands", "cmds")

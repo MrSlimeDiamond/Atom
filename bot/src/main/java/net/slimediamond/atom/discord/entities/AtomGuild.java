@@ -1,5 +1,6 @@
 package net.slimediamond.atom.discord.entities;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import net.dv8tion.jda.annotations.DeprecatedSince;
 import net.dv8tion.jda.annotations.ForRemoval;
 import net.dv8tion.jda.annotations.Incubating;
@@ -70,16 +71,14 @@ import net.dv8tion.jda.api.utils.cache.SortedSnowflakeCacheView;
 import net.dv8tion.jda.api.utils.concurrent.Task;
 import net.slimediamond.atom.data.JsonKeys;
 import net.slimediamond.atom.data.dao.DAO;
-import net.slimediamond.data.DataHolder;
+import net.slimediamond.data.Key;
+import net.slimediamond.data.value.Value;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.temporal.TemporalAccessor;
@@ -101,7 +100,7 @@ public class AtomGuild implements Guild, DAO {
     private int id = -1;
     private final long discordId;
     private final Connection conn;
-    private net.dv8tion.jda.api.entities.Guild jdaGuild;
+    private final net.dv8tion.jda.api.entities.Guild jdaGuild;
 
     public AtomGuild(long discordId, Connection conn, net.dv8tion.jda.api.entities.Guild jdaGuild) {
         this.discordId = discordId;
@@ -120,26 +119,45 @@ public class AtomGuild implements Guild, DAO {
     }
 
     @Override
+    public <Z> void offer(Key<Value<Z>> key, Z value) {
+        Guild.super.offer(key, value);
+        try {
+            save();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void save() throws SQLException {
         // Table structure:
         // CREATE TABLE IF NOT EXISTS guilds (id int NOT NULL AUTO_INCREMENT, discordId BIGINT NOT NULL, keys JSON NOT NULL, PRIMARY KEY(id))
         // Doesn't yet exist, insert it
-        if (id == -1) {
-            // Do we even have a table?!
-            conn.prepareStatement("CREATE TABLE IF NOT EXISTS disc_guilds (id int NOT NULL AUTO_INCREMENT," +
-                    "discord_id BIGINT NOT NULL," +
-                    "keys JSON NOT NULL," +
-                    "PRIMARY KEY(id))").execute();
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO disc_guilds (discord_id, keys) VALUES (?, ?)");
-            ps.setLong(1, discordId);
-            ps.setString(2, JsonKeys.json(this));
-            ResultSet rs = ps.executeQuery();
-            this.id = rs.getInt("id");
-        } else { // Update it
-            PreparedStatement ps = conn.prepareStatement("UPDATE disc_guilds SET keys = ? WHERE id = ?");
-            ps.setString(1, JsonKeys.json(this));
-            ps.setInt(2, this.id);
-            ps.execute();
+        try {
+            if (id == -1) {
+                // Do we even have a table?!
+                conn.prepareStatement("CREATE TABLE IF NOT EXISTS disc_guilds (id int NOT NULL AUTO_INCREMENT," +
+                        "discord_id BIGINT NOT NULL," +
+                        "keys_storage JSON NOT NULL," +
+                        "PRIMARY KEY(id))").execute();
+                PreparedStatement ps = conn.prepareStatement(
+                        "INSERT INTO disc_guilds (discord_id, keys_storage) VALUES (?, ?)",
+                        Statement.RETURN_GENERATED_KEYS);
+                ps.setLong(1, discordId);
+                ps.setString(2, JsonKeys.write(this));
+                ps.executeUpdate();
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    this.id = rs.getInt(1);
+                } // Else, we haven't inserted. On the next save(), we can try again. Otherwise pray
+            } else { // Update it
+                PreparedStatement ps = conn.prepareStatement("UPDATE disc_guilds SET keys_storage = ? WHERE id = ?");
+                ps.setString(1, JsonKeys.write(this));
+                ps.setInt(2, this.id);
+                ps.execute();
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 
