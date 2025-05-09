@@ -162,25 +162,26 @@ public class DiscordCommandListener extends ListenerAdapter {
                 String[] args = event.getOptions().stream().map(OptionMapping::getAsString).toArray(String[]::new);
 
                 DiscordCommandExecutor commandExecutor = command.getDiscordCommand().getCommandExecutor();
+                DiscordCommandContext context = new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager, event.getJDA());
                 try {
-                    commandExecutor.execute(new DiscordCommandContext(new AtomDiscordCommandEvent(event), command, args, commandManager, event.getJDA()));
+                    commandExecutor.execute(context);
                 } catch (Exception e) {
                     if (e.getCause() instanceof UnknownPlayerException) {
-                        event.replyEmbeds(new EmbedBuilder()
+                        context.replyEmbeds(new EmbedBuilder()
                                 .setColor(Color.red)
                                 .setDescription("Could not find that player!")
                                 .build()
-                        ).queue();
+                        );
                     } else {
-                    event.replyEmbeds(new EmbedBuilder()
-                            .setColor(Color.red)
-                            .setAuthor("An error occurred!")
-                            .setTitle(e.getClass().getSimpleName())
-                            .setDescription(e.getMessage())
-                            .build()
-                    ).queue();
+                        context.replyEmbeds(new EmbedBuilder()
+                                .setColor(Color.red)
+                                .setAuthor("An error occurred!")
+                                .setTitle(e.getClass().getSimpleName())
+                                .setDescription(e.getMessage())
+                                .build()
+                        );
 
-                    e.printStackTrace();
+                        e.printStackTrace();
                     }
                 }
                 break;
