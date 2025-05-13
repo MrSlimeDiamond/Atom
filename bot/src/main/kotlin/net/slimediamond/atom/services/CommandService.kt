@@ -19,7 +19,7 @@ class CommandService {
     @Listener
     fun onStartService(event: ServiceStartEvent) {
         event.container.logger.info("Starting command service")
-        commandNodeManager.register(PingCommand(), listOf("ping"))
+        PingCommand().register()
     }
 
 }

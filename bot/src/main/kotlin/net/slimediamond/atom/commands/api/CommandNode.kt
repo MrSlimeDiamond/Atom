@@ -1,5 +1,6 @@
 package net.slimediamond.atom.commands.api
 
+import net.slimediamond.atom.Atom
 import net.slimediamond.atom.Audience
 import net.slimediamond.atom.commands.api.irc.IrcCommandNodeContext
 import java.util.LinkedList
@@ -19,6 +20,10 @@ abstract class CommandNode(vararg aliases: String) : Command {
         }
 
         return execute(context)
+    }
+
+    fun register() {
+        Atom.instance.commandService.commandNodeManager.register(this, aliases)
     }
 
     init {
