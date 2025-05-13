@@ -2,6 +2,7 @@ package net.slimediamond.atom.irc.ircbot.listeners
 
 import net.slimediamond.atom.Atom
 import net.slimediamond.atom.commands.api.CommandPlatform
+import net.slimediamond.atom.commands.api.irc.IrcCommandSender
 import net.slimediamond.atom.event.Listener
 import net.slimediamond.atom.irc.api.events.IrcMessageEvent
 
@@ -17,7 +18,8 @@ class IrcMessageListener {
         if (event.message.lowercase().startsWith(PREFIX)) {
             // a command!
             val command = event.message.split(PREFIX)[1].split(" ")[0]
-            Atom.instance.commandService.commandNodeManager.handle(command, "", CommandPlatform.IRC, event.audience)
+            val sender = IrcCommandSender(event.user)
+            Atom.instance.commandService.commandNodeManager.handle(sender, command, "", CommandPlatform.IRC, event.audience)
         }
     }
 

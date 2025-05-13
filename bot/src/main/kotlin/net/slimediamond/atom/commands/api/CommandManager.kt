@@ -12,6 +12,6 @@ interface CommandManager<T> {
     /**
      * Handle a command execution
      */
-    fun handle(command: String, input: String, platform: CommandPlatform, audience: Audience)
+    fun handle(sender: CommandSender, command: String, input: String, platform: CommandPlatform, audience: Audience)
 
 }

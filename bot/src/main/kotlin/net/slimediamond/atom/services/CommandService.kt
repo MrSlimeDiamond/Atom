@@ -1,6 +1,7 @@
 package net.slimediamond.atom.services
 
 import net.slimediamond.atom.commands.PingCommand
+import net.slimediamond.atom.commands.WhoamiCommand
 import net.slimediamond.atom.commands.api.CommandManager
 import net.slimediamond.atom.commands.api.CommandNode
 import net.slimediamond.atom.commands.api.CommandNodeManager
@@ -20,6 +21,7 @@ class CommandService {
     fun onStartService(event: ServiceStartEvent) {
         event.container.logger.info("Starting command service")
         PingCommand().register()
+        WhoamiCommand().register()
     }
 
 }

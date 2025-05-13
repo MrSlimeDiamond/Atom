@@ -10,6 +10,6 @@ class IrcChannelMessageEvent(
     connection: Connection,
     line: String,
     message: String,
+    user: User,
     val channel: Channel,
-    val user: User
-) : IrcMessageEvent(cause, connection, line, message, channel)
+) : IrcMessageEvent(cause, connection, line, message, channel, user)

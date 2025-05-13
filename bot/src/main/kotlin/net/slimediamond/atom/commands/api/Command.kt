@@ -9,6 +9,6 @@ interface Command {
      *
      * @return The result of the command
      */
-    fun execute(input: String, platform: CommandPlatform, audience: Audience): CommandResult
+    fun execute(sender: CommandSender, input: String, platform: CommandPlatform, audience: Audience): CommandResult
 
 }
