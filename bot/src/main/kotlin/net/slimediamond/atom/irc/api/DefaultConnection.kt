@@ -1,10 +1,5 @@
 package net.slimediamond.atom.irc.api
 
-import net.slimediamond.atom.Atom
-import net.slimediamond.atom.event.Cause
-import net.slimediamond.atom.event.CauseImpl
-import net.slimediamond.atom.irc.api.events.IrcEvent
-import net.slimediamond.atom.irc.api.events.IrcPingEvent
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.InputStreamReader
@@ -25,7 +20,7 @@ class DefaultConnection(
         get() = ::socket.isInitialized && !socket.isConnected
         set(_) {}
 
-    override fun connect() {
+    override fun connect(client: IrcClient) {
         // FIXME
 //        check(this.isConnected) {
 //            "Client is already connected"
@@ -39,7 +34,7 @@ class DefaultConnection(
             sendRaw("USER $username 0 * :$realName")
             while (socket.isConnected) {
                 val line = reader.readLine() ?: break
-                handleLine(line)
+                handleLine(line, client)
             }
         }
     }
@@ -51,7 +46,7 @@ class DefaultConnection(
     }
 
     override fun sendMessage(target: String, message: String) {
-        sendRaw("PRIVMSG $target $message")
+        sendRaw("PRIVMSG $target :$message")
     }
 
     override fun sendRaw(line: String) {
@@ -59,15 +54,9 @@ class DefaultConnection(
         writer.flush()
     }
 
-    private fun handleLine(line: String) {
-        val cause: Cause = CauseImpl()
-        Atom.instance.eventManager.post(IrcEvent(cause, this, line))
-        if (line.startsWith("PING")) {
-            val event = IrcPingEvent(cause, this, line)
-            // respond to the ping
-            sendRaw("PONG :${event.message}")
-            Atom.instance.eventManager.post(event)
-        }
+    private fun handleLine(line: String, client: IrcClient) {
+        // this is because `this` can't be called in a Thread
+        client.handleLine(line, this)
     }
 
 }

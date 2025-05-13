@@ -10,6 +10,16 @@ interface User : Audience {
     /**
      * The name of the user
      */
-    var name: String
+    val nickname: String
+
+    /**
+     * The 'username' of the user
+     */
+    val username: String
+
+    /**
+     * The user's hostname
+     */
+    val hostname: String
 
 }

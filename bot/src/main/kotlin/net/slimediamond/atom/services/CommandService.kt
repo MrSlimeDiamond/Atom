@@ -16,8 +16,8 @@ class CommandService {
     val commandNodeManager: CommandManager<CommandNode> = CommandNodeManager()
 
     @Listener
-    fun onStartService(event: ServiceStartEvent<CommandService>) {
-        event.serviceContainer.logger.info("Starting command service")
+    fun onStartService(event: ServiceStartEvent) {
+        event.container.logger.info("Starting command service")
     }
 
 }

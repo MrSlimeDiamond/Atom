@@ -36,7 +36,7 @@ interface Connection {
     /**
      * Connect to the server
      */
-    fun connect()
+    fun connect(client: IrcClient)
 
     /**
      * Disconnect the socket from the server

@@ -1,7 +1,7 @@
 package net.slimediamond.atom.commands.api
 
 import net.slimediamond.atom.Audience
-import net.slimediamond.atom.commands.api.irc.IRCCommandNodeContext
+import net.slimediamond.atom.commands.api.irc.IrcCommandNodeContext
 
 abstract class CommandNode : Command {
     
@@ -12,7 +12,7 @@ abstract class CommandNode : Command {
 
         // context depends on the platform
         val context = when (platform) {
-            CommandPlatform.IRC -> IRCCommandNodeContext(input, platform, audience)
+            CommandPlatform.IRC -> IrcCommandNodeContext(input, platform, audience)
         }
 
         return execute(context)

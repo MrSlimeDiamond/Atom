@@ -4,4 +4,8 @@ import net.slimediamond.atom.event.AbstractEvent
 import net.slimediamond.atom.event.Cause
 import net.slimediamond.atom.service.ServiceContainer
 
-abstract class AbstractServiceEvent<T>(override val cause: Cause, val serviceContainer: ServiceContainer, open val clazz: Class<*>) : AbstractEvent(cause)
+abstract class AbstractServiceEvent(
+    override val cause: Cause,
+    val container: ServiceContainer,
+    open val clazz: Class<*>
+) : AbstractEvent(cause)

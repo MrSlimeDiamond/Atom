@@ -10,19 +10,21 @@ class EventManager {
         listeners.add(instance)
     }
 
+    fun post(event: Event, instance: Any) {
+        instance.javaClass.declaredMethods
+            .filter { method ->
+                method.isAnnotationPresent(Listener::class.java) &&
+                        method.parameterTypes.size == 1 &&
+                        method.parameterTypes[0].isAssignableFrom(event.javaClass)
+            }
+            .forEach { method ->
+                method.isAccessible = true
+                method.invoke(instance, event)
+            }
+    }
+
     fun post(event: Event) {
-        for (listener in listeners) {
-            listener.javaClass.declaredMethods
-                .filter { method ->
-                    method.isAnnotationPresent(Listener::class.java) &&
-                            method.parameterTypes.size == 1 &&
-                            method.parameterTypes[0].isAssignableFrom(event.javaClass)
-                }
-                .forEach { method ->
-                    method.isAccessible = true
-                    method.invoke(listener, event)
-                }
-        }
+        listeners.forEach { post(event, it) }
     }
 
 }

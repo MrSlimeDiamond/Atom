@@ -27,9 +27,8 @@ class ServiceManager {
     fun startAll() {
         val cause: Cause = CauseImpl()
         services.values.forEach { container ->
-            // new event instance for each class fired, if wanted
-            val event: ServiceStartEvent<Any> = ServiceStartEvent(cause, container, container.instance.javaClass)
-            Atom.instance.eventManager.post(event)
+            val event = ServiceStartEvent(cause, container, container.instance.javaClass)
+            Atom.instance.eventManager.post(event, container.instance)
         }
     }
 

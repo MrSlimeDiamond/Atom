@@ -19,6 +19,8 @@ class Atom : NamespaceHolder {
     lateinit var eventManager: EventManager
     @Volatile
     lateinit var factoryProvider: FactoryProvider
+    @Volatile
+    lateinit var commandService: CommandService
 
     companion object {
         private val logger: Logger = LogManager.getLogger("atom")
@@ -40,7 +42,9 @@ class Atom : NamespaceHolder {
         factoryProvider = DefaultFactoryProvider()
 
         serviceManager.addService(IrcBot())
-        serviceManager.addService(CommandService())
+
+        commandService = CommandService()
+        serviceManager.addService(commandService)
 
         logger.info("Starting all services")
         serviceManager.startAll()
