@@ -14,7 +14,3 @@ class DefaultFactoryProvider : FactoryProvider {
     }
 
 }
-
-inline fun <reified T : Any> FactoryProvider.provide(): T {
-    return provide(T::class.java)
-}

@@ -15,11 +15,20 @@ interface CommandResult {
     companion object {
 
         /**
-         * Return a successful command result
+         * A successful command result
          */
         val success: CommandResult
             get() = object: CommandResult {
                 override val success = true
+                override val message: String? = null
+            }
+
+        /**
+         * An empty command result
+         */
+        val empty: CommandResult
+            get() = object: CommandResult {
+                override val success = false
                 override val message: String? = null
             }
 

@@ -13,7 +13,12 @@ class CommandNodeManager : CommandManager<CommandNode> {
     }
 
     override fun handle(command: String, input: String, platform: CommandPlatform, audience: Audience) {
-        commands[command]?.execute(input, platform, audience)
+        val cmd = commands[command]
+        if (cmd != null) {
+            if (cmd.platforms.isEmpty() || cmd.platforms.contains(platform)) {
+                cmd.execute(input, platform, audience)
+            }
+        }
     }
 
 }
