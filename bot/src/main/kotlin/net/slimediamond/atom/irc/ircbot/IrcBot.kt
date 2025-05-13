@@ -27,7 +27,6 @@ class IrcBot {
         client = IrcClient()
 
         Atom.instance.eventManager.registerListener(IrcMessageListener())
-        Atom.instance.commandService.commandNodeManager.register(PingCommand(), listOf("ping"))
 
         val server = Server("Local", "localhost", 6667, false)
         logger.info("Connecting to {} ({}, {})", server.name, server.host, server.port)

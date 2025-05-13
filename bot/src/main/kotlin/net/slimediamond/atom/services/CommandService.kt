@@ -1,5 +1,6 @@
 package net.slimediamond.atom.services
 
+import net.slimediamond.atom.commands.PingCommand
 import net.slimediamond.atom.commands.api.CommandManager
 import net.slimediamond.atom.commands.api.CommandNode
 import net.slimediamond.atom.commands.api.CommandNodeManager
@@ -18,6 +19,7 @@ class CommandService {
     @Listener
     fun onStartService(event: ServiceStartEvent) {
         event.container.logger.info("Starting command service")
+        commandNodeManager.register(PingCommand(), listOf("ping"))
     }
 
 }

@@ -1,6 +1,5 @@
 package net.slimediamond.atom
 
-import net.slimediamond.atom.commands.PingCommand
 import net.slimediamond.atom.event.EventManager
 import net.slimediamond.atom.irc.ircbot.IrcBot
 import net.slimediamond.atom.service.ServiceManager
@@ -48,9 +47,6 @@ class Atom : NamespaceHolder {
 
         logger.info("Starting all services")
         serviceManager.startAll()
-
-        val commandService = serviceManager.provide(CommandService::class.java)
-        commandService.commandNodeManager.register(PingCommand(), listOf("ping"))
     }
 
     override fun getNamespace(): String {
