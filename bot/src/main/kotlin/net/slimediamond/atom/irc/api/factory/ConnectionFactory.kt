@@ -6,8 +6,8 @@ import net.slimediamond.atom.irc.api.Server
 
 class ConnectionFactory {
 
-    fun create(nickname: String, realName: String, server: Server): Connection {
-        return DefaultConnection(nickname, realName, server)
+    fun create(nickname: String, realName: String, username: String, server: Server): Connection {
+        return DefaultConnection(nickname, realName, username, server)
     }
 
 }

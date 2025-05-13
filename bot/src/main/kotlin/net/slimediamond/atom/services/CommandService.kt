@@ -1,0 +1,23 @@
+package net.slimediamond.atom.services
+
+import net.slimediamond.atom.commands.api.CommandManager
+import net.slimediamond.atom.commands.api.CommandNode
+import net.slimediamond.atom.commands.api.CommandNodeManager
+import net.slimediamond.atom.event.Listener
+import net.slimediamond.atom.service.Service
+import net.slimediamond.atom.service.events.ServiceStartEvent
+
+@Service("command")
+class CommandService {
+
+    /**
+     * The manager for [CommandNode]
+     */
+    val commandNodeManager: CommandManager<CommandNode> = CommandNodeManager()
+
+    @Listener
+    fun onStartService(event: ServiceStartEvent<CommandService>) {
+        event.serviceContainer.logger.info("Starting command service")
+    }
+
+}

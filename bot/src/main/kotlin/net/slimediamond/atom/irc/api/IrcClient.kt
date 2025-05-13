@@ -20,7 +20,7 @@ class IrcClient {
      */
     fun connect(metadata: ConnectionInfo) {
         val connection: Connection = Atom.instance.factoryProvider.provide<ConnectionFactory>()
-            .create(metadata.nickname, metadata.realName, metadata.server)
+            .create(metadata.nickname, metadata.realName, metadata.username, metadata.server)
         connection.connect()
         connections.add(connection)
     }

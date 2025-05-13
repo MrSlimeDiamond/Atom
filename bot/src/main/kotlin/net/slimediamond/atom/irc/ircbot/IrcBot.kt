@@ -26,7 +26,7 @@ class IrcBot {
 
         val server: Server = Server("Local", "localhost", 6667, false)
         logger.info("Connecting to {} ({}, {})", server.name, server.host, server.port)
-        client.connect(ConnectionInfo("Atom-Test", "Atom testing bot", server))
+//        client.connect(ConnectionInfo("Atom-Test", "Atom testing bot", "atom", server))
     }
 
 }

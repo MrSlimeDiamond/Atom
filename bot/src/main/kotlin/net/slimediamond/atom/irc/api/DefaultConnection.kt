@@ -26,7 +26,6 @@ class DefaultConnection(
         set(_) {}
 
     override fun connect() {
-        println(this.isConnected)
         // FIXME
 //        check(this.isConnected) {
 //            "Client is already connected"
