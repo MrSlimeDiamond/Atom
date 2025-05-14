@@ -1,6 +1,7 @@
 package net.slimediamond.atom.commands.api
 
 import net.slimediamond.atom.Atom
+import net.slimediamond.atom.commands.api.exceptions.CommandException
 import net.slimediamond.atom.commands.api.parameter.Parameter
 import net.slimediamond.atom.commands.api.platforms.CommandPlatform
 import net.slimediamond.atom.messaging.Audience
@@ -29,7 +30,8 @@ abstract class CommandNode(vararg aliases: String) : Command {
                 append(if (parameter.optional) "]" else ">")
             }
         }
-    
+
+    @Throws(CommandException::class)
     abstract fun execute(context: CommandNodeContext): CommandResult
 
     override fun execute(sender: CommandSender, input: String, platform: CommandPlatform, audience: Audience): CommandResult {
@@ -62,6 +64,11 @@ abstract class CommandNode(vararg aliases: String) : Command {
         return try {
             command.execute(context)
         } catch (e: Exception) {
+            if (e is CommandException) {
+                // FIXME: This is a little bit scuffed
+                audience.sendMessage(e.msg)
+                return CommandResult.empty
+            }
             CommandResult.error("Error: " + (e.message?: "An error occurred when executing this command"))
         }
     }

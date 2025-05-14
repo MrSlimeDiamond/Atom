@@ -1,5 +1,6 @@
 package net.slimediamond.atom.commands.api
 
+import net.slimediamond.atom.commands.api.exceptions.CommandException
 import net.slimediamond.atom.commands.api.parameter.Parameter
 import net.slimediamond.atom.commands.api.platforms.CommandPlatform
 import net.slimediamond.atom.messaging.Audience
@@ -14,12 +15,12 @@ abstract class CommandNodeContext(
     /**
      * Require a parameter
      */
+    @Throws(CommandException::class)
     fun <T> requireOne(parameter: Parameter.Value<T>): T {
         val value = parameter.parse(input)
 
         if (value == null || (value is String && value.isEmpty())) {
-            sendMessage(platform.renderNotEnoughArguments(commandNode, commandNode.parameters.indexOf(parameter), input))
-            error("Not enough parameters")
+            throw CommandException(platform.renderNotEnoughArguments(commandNode, commandNode.parameters.indexOf(parameter), input))
         }
 
         return value
