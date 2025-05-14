@@ -1,5 +1,6 @@
 package net.slimediamond.atom
 
+import net.slimediamond.atom.configuration.Configuration
 import net.slimediamond.atom.event.EventManager
 import net.slimediamond.atom.irc.ircbot.IrcBot
 import net.slimediamond.atom.service.ServiceManager
@@ -9,9 +10,14 @@ import net.slimediamond.atom.utils.factory.FactoryProvider
 import net.slimediamond.data.identification.NamespaceHolder
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.spongepowered.configurate.ConfigurationOptions
+import org.spongepowered.configurate.hocon.HoconConfigurationLoader
+import java.nio.file.Path
 
 class Atom : NamespaceHolder {
 
+    @Volatile
+    lateinit var configuration: Configuration
     @Volatile
     lateinit var serviceManager: ServiceManager
     @Volatile
@@ -36,6 +42,16 @@ class Atom : NamespaceHolder {
 
     fun start() {
         logger.info("Starting!")
+
+        val options = ConfigurationOptions.defaults()
+        val configLoader = HoconConfigurationLoader.builder()
+            .path(Path.of("atom.conf"))
+            .defaultOptions(options)
+            .build()
+
+        configuration = configLoader.loadToReference().referenceTo(Configuration::class.java).get()
+            ?: error("Configuration failed to load! (null instance provided)")
+
         serviceManager = ServiceManager()
         eventManager = EventManager()
         factoryProvider = DefaultFactoryProvider()
