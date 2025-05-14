@@ -1,6 +1,6 @@
 package net.slimediamond.atom.irc.api.entities
 
-import net.slimediamond.atom.Audience
+import net.slimediamond.atom.messaging.Audience
 
 /**
  * A user on the IRC server

@@ -7,7 +7,7 @@ import net.slimediamond.atom.commands.api.CommandResult
 class PingCommand : CommandNode("ping") {
 
     override fun execute(context: CommandNodeContext): CommandResult {
-        context.reply("Pong!")
+        context.sendMessage("Pong")
         return CommandResult.success
     }
 

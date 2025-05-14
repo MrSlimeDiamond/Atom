@@ -1,7 +1,7 @@
 package net.slimediamond.atom.commands.api
 
 import net.slimediamond.atom.Atom
-import net.slimediamond.atom.Audience
+import net.slimediamond.atom.messaging.Audience
 import net.slimediamond.atom.commands.api.irc.IrcCommandNodeContext
 import java.util.LinkedList
 

@@ -1,10 +1,5 @@
 package net.slimediamond.atom.commands.api
 
-abstract class CommandNodeContext(val sender: CommandSender, val input: String, val platform: CommandPlatform) {
+import net.slimediamond.atom.messaging.Audience
 
-    /**
-     * Send a reply to the sender
-     */
-    abstract fun reply(message: String)
-
-}
+abstract class CommandNodeContext(val sender: CommandSender, val input: String, val platform: CommandPlatform) : Audience

@@ -7,7 +7,7 @@ import net.slimediamond.atom.commands.api.CommandResult
 class WhoamiCommand : CommandNode("whoami") {
 
     override fun execute(context: CommandNodeContext): CommandResult {
-        context.reply("name: ${context.sender.name} (TODO...)")
+        context.sendMessage("name: ${context.sender.name} (TODO...)")
         return CommandResult.success
     }
 

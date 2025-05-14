@@ -1,6 +1,6 @@
 package net.slimediamond.atom.commands.api
 
-import net.slimediamond.atom.Audience
+import net.slimediamond.atom.messaging.Audience
 
 interface CommandSender : Audience {
 

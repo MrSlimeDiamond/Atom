@@ -1,6 +1,6 @@
 package net.slimediamond.atom.irc.api.events
 
-import net.slimediamond.atom.Audience
+import net.slimediamond.atom.messaging.Audience
 import net.slimediamond.atom.event.Cause
 import net.slimediamond.atom.irc.api.Connection
 import net.slimediamond.atom.irc.api.entities.User

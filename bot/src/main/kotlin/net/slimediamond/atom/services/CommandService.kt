@@ -1,5 +1,6 @@
 package net.slimediamond.atom.services
 
+import net.slimediamond.atom.commands.ColorsCommand
 import net.slimediamond.atom.commands.PingCommand
 import net.slimediamond.atom.commands.WhoamiCommand
 import net.slimediamond.atom.commands.api.CommandManager
@@ -22,6 +23,7 @@ class CommandService {
         event.container.logger.info("Starting command service")
         PingCommand().register()
         WhoamiCommand().register()
+        ColorsCommand().register()
     }
 
 }
