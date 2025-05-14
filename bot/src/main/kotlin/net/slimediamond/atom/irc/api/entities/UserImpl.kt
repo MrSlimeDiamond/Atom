@@ -16,7 +16,14 @@ class UserImpl(
     }
 
     override fun sendMessage(message: RichMessage) {
-        connection.sendMessage(nickname, IrcRichMessageRenderer.render(message))
+        val rendered = IrcRichMessageRenderer.render(message)
+        if (!rendered.contains("\n")) {
+            connection.sendMessage(nickname, rendered)
+            return
+        }
+        rendered.split("\n").forEach { part ->
+            connection.sendMessage(nickname, part)
+        }
     }
 
 }
