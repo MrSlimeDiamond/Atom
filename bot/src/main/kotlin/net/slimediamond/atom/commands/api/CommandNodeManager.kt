@@ -1,5 +1,6 @@
 package net.slimediamond.atom.commands.api
 
+import net.slimediamond.atom.commands.api.platforms.CommandPlatform
 import net.slimediamond.atom.messaging.Audience
 
 class CommandNodeManager : CommandManager<CommandNode> {

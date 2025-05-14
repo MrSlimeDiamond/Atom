@@ -2,13 +2,15 @@ package net.slimediamond.atom.commands.api
 
 import net.slimediamond.atom.Atom
 import net.slimediamond.atom.commands.api.parameter.Parameter
+import net.slimediamond.atom.commands.api.platforms.CommandPlatform
 import net.slimediamond.atom.messaging.Audience
-import net.slimediamond.atom.commands.api.platforms.irc.IrcCommandNodeContext
-import net.slimediamond.atom.messaging.Color
-import net.slimediamond.atom.messaging.RichMessage
 import java.util.LinkedList
 
 abstract class CommandNode(vararg aliases: String) : Command {
+
+    companion object {
+        private const val HERE = "here"
+    }
 
     val aliases: MutableList<String> = LinkedList()
     val platforms: MutableList<CommandPlatform> = LinkedList()
@@ -41,22 +43,19 @@ abstract class CommandNode(vararg aliases: String) : Command {
             command = cmd.get()
         }
 
-        // context depends on the platform
-        val context = when (platform) {
-            CommandPlatform.IRC -> IrcCommandNodeContext(command, sender, finalInput, platform, audience)
-        }
+        val context = platform.createContext(command, sender, finalInput, audience)
 
         if (command.parameters.isNotEmpty()) {
             command.parameters.forEach { parameter ->
-                if (!parameter.optional && input.length < parameters.indexOf(parameter)) {
+                if (!parameter.optional && finalInput.length < parameters.indexOf(parameter)) {
                     // show an error message showing they don't have enough arguments
-                    context.sendMessage(notEnoughParameters(input, parameters.indexOf(parameter)))
+                    context.sendMessage(platform.renderNotEnoughArguments(command, parameters.indexOf(parameter), finalInput))
                     return CommandResult.empty
                 }
             }
-        } else if (input.isNotEmpty()){
+        } else if (finalInput.isNotEmpty()){
             // see if they have too many arguments
-            context.sendMessage(tooManyParameters(input, 0))
+            context.sendMessage(platform.renderTooManyArguments(command, 0, finalInput))
             return CommandResult.empty
         }
 
@@ -65,39 +64,6 @@ abstract class CommandNode(vararg aliases: String) : Command {
         } catch (e: Exception) {
             CommandResult.error("Error: " + (e.message?: "An error occurred when executing this command"))
         }
-    }
-
-    fun notEnoughParameters(input: String, index: Int): RichMessage {
-        val safeIndex = index.coerceAtLeast(0).coerceAtMost(input.length)
-        val pointer = caretUnder("Usage", usage, safeIndex + 1)
-
-        return RichMessage.of().color(Color.RED)
-            .append(RichMessage.of("Not enough arguments!"))
-            .appendNewline()
-            .append(RichMessage.of("Usage: $usage"))
-            .appendNewline()
-            .append(RichMessage.of(pointer))
-    }
-
-    fun tooManyParameters(input: String, index: Int): RichMessage {
-        val pointer = " ".repeat(index.coerceAtMost(input.length)) + "^"
-
-        return RichMessage.of().color(Color.RED)
-            .append(RichMessage.of("Too many arguments!"))
-            .appendNewline()
-            .append(RichMessage.of(input))
-            .appendNewline()
-            .append(RichMessage.of(pointer))
-            .appendNewline()
-            .append(RichMessage.of("Usage: "))
-            .append(RichMessage.of(usage))
-    }
-
-    private fun caretUnder(prefix: String, content: String, paramIndex: Int): String {
-        val parts = content.split(' ')
-        val clampedIndex = paramIndex.coerceIn(0, parts.lastIndex)
-        val offset = parts.take(clampedIndex).sumOf { it.length + 3 }
-        return " ".repeat(prefix.length + offset) + "^"
     }
 
     fun register() {

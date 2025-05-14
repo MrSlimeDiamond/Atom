@@ -2,7 +2,7 @@ package net.slimediamond.atom.commands.api.platforms.irc
 
 import net.slimediamond.atom.commands.api.CommandNode
 import net.slimediamond.atom.commands.api.CommandNodeContext
-import net.slimediamond.atom.commands.api.CommandPlatform
+import net.slimediamond.atom.commands.api.platforms.CommandPlatform
 import net.slimediamond.atom.commands.api.CommandSender
 import net.slimediamond.atom.messaging.Audience
 import net.slimediamond.atom.messaging.RichMessage

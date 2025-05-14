@@ -1,6 +1,7 @@
 package net.slimediamond.atom.commands.api
 
 import net.slimediamond.atom.commands.api.parameter.Parameter
+import net.slimediamond.atom.commands.api.platforms.CommandPlatform
 import net.slimediamond.atom.messaging.Audience
 
 abstract class CommandNodeContext(
@@ -17,7 +18,7 @@ abstract class CommandNodeContext(
         val value = parameter.parse(input)
 
         if (value == null || (value is String && value.isEmpty())) {
-            sendMessage(commandNode.notEnoughParameters(input, commandNode.parameters.indexOf(parameter)))
+            sendMessage(platform.renderNotEnoughArguments(commandNode, commandNode.parameters.indexOf(parameter), input))
             error("Not enough parameters")
         }
 
