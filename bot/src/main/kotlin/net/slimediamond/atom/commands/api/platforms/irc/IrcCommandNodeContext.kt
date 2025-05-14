@@ -1,4 +1,4 @@
-package net.slimediamond.atom.commands.api.irc
+package net.slimediamond.atom.commands.api.platforms.irc
 
 import net.slimediamond.atom.messaging.Audience
 import net.slimediamond.atom.commands.api.CommandNodeContext

@@ -1,7 +1,6 @@
 package net.slimediamond.atom.irc.ircbot
 
 import net.slimediamond.atom.Atom
-import net.slimediamond.atom.commands.PingCommand
 import net.slimediamond.atom.event.Listener
 import net.slimediamond.atom.irc.api.ConnectionInfo
 import net.slimediamond.atom.irc.api.IrcClient
