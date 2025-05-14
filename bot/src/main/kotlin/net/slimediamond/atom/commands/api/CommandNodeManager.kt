@@ -23,8 +23,8 @@ class CommandNodeManager : CommandManager<CommandNode> {
             if (cmd.platforms.isEmpty() || cmd.platforms.contains(platform)) {
                 val result = cmd.execute(sender, input, platform, audience)
                 if (!result.success && result.message != null) {
-                    audience.sendMessage(RichMessage.of("Error: ${result.message!!}").color(Color.RED))
-                    logger.error("Command error for {}: {}", sender.name, result.message!!)
+                    audience.sendMessage(result.message!!.color(Color.RED))
+                    logger.error("Command error for {}: {}", sender.name, result.message!!.content)
                 }
             }
         }

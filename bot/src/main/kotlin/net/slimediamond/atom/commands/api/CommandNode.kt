@@ -65,11 +65,9 @@ abstract class CommandNode(vararg aliases: String) : Command {
             command.execute(context)
         } catch (e: Exception) {
             if (e is CommandException) {
-                // FIXME: This is a little bit scuffed
-                audience.sendMessage(e.msg)
-                return CommandResult.empty
+                return CommandResult.error(e.msg)
             }
-            CommandResult.error("Error: " + (e.message?: "An error occurred when executing this command"))
+            CommandResult.error(e.message?: "An error occurred when executing this command")
         }
     }
 
