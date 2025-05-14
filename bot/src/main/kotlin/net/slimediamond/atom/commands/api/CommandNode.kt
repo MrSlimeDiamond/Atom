@@ -1,6 +1,7 @@
 package net.slimediamond.atom.commands.api
 
 import net.slimediamond.atom.Atom
+import net.slimediamond.atom.commands.api.exceptions.ArgumentParseException
 import net.slimediamond.atom.commands.api.exceptions.CommandException
 import net.slimediamond.atom.commands.api.parameter.Parameter
 import net.slimediamond.atom.commands.api.platforms.CommandPlatform
@@ -8,10 +9,6 @@ import net.slimediamond.atom.messaging.Audience
 import java.util.LinkedList
 
 abstract class CommandNode(vararg aliases: String) : Command {
-
-    companion object {
-        private const val HERE = "here"
-    }
 
     val aliases: MutableList<String> = LinkedList()
     val platforms: MutableList<CommandPlatform> = LinkedList()
@@ -64,7 +61,9 @@ abstract class CommandNode(vararg aliases: String) : Command {
         return try {
             command.execute(context)
         } catch (e: Exception) {
-            if (e is CommandException) {
+            if (e is ArgumentParseException) {
+                return CommandResult.error(platform.renderArgumentParseException(e))
+            } else if (e is CommandException) {
                 return CommandResult.error(e.msg)
             }
             CommandResult.error(e.message?: "An error occurred when executing this command")

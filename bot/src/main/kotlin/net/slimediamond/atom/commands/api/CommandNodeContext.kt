@@ -1,5 +1,6 @@
 package net.slimediamond.atom.commands.api
 
+import net.slimediamond.atom.commands.api.exceptions.ArgumentParseException
 import net.slimediamond.atom.commands.api.exceptions.CommandException
 import net.slimediamond.atom.commands.api.parameter.Parameter
 import net.slimediamond.atom.commands.api.platforms.CommandPlatform
@@ -15,7 +16,7 @@ abstract class CommandNodeContext(
     /**
      * Require a parameter
      */
-    @Throws(CommandException::class)
+    @Throws(ArgumentParseException::class, CommandException::class)
     fun <T> requireOne(parameter: Parameter.Value<T>): T {
         val value = parameter.parse(input)
 

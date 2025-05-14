@@ -15,4 +15,8 @@ object Parameters {
         .greedy()
         .build()
 
+    val NUMBER: Parameter.Value<Int> = Parameter.int()
+        .key("number")
+        .build()
+
 }

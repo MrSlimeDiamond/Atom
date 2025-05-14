@@ -10,6 +10,7 @@ class TestCommand : CommandNode("test") {
     init {
         children.add(ChildCommand())
         children.add(ErrorCommand())
+        children.add(NumberCommand())
 
         parameters.add(Parameters.OPTIONAL_MESSAGE)
     }
@@ -47,6 +48,22 @@ class TestCommand : CommandNode("test") {
 
         override fun execute(context: CommandNodeContext): CommandResult {
             return CommandResult.error("Enjoy this error!")
+        }
+
+    }
+
+    class NumberCommand : CommandNode("number") {
+
+        init {
+            parameters.add(Parameters.NUMBER)
+        }
+
+        override fun execute(context: CommandNodeContext): CommandResult {
+            val number = context.requireOne(Parameters.NUMBER)
+
+            context.sendMessage("Your number input: $number")
+
+            return CommandResult.success
         }
 
     }

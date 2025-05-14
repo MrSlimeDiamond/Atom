@@ -1,5 +1,8 @@
 package net.slimediamond.atom.commands.api.parameter
 
+import net.slimediamond.atom.commands.api.exceptions.ArgumentParseException
+import net.slimediamond.atom.messaging.RichMessage
+
 interface Parameter {
 
     /**
@@ -27,7 +30,13 @@ interface Parameter {
         }
 
         fun int(): Value.Builder<Int> {
-            return builder(Int::class.java).parser { it.toInt() }
+            return builder(Int::class.java).parser {
+                try {
+                    return@parser it.toInt()
+                } catch (e: NumberFormatException) {
+                    throw ArgumentParseException(it, 0, RichMessage.of("Provided input is not a number"))
+                }
+            }
         }
 
         fun string(): Value.Builder<String> {
@@ -44,6 +53,7 @@ interface Parameter {
         /**
          * Parse the value from an input
          */
+        @Throws(ArgumentParseException::class)
         fun parse(input: String): T?
 
         class Builder<T> {
