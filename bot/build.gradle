@@ -8,6 +8,8 @@ group = 'net.slimediamond.atom'
 version = 'unspecified'
 
 var main = 'net.slimediamond.atom.Atom'
+var runDir = file("./run/")
+runDir.mkdirs()
 
 repositories {
     mavenCentral()
@@ -37,4 +39,8 @@ jar {
 
 application {
     mainClass = main
+}
+
+tasks.run {
+    workingDir = runDir
 }

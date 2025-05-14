@@ -45,3 +45,5 @@ bin/
 */build/
 
 build.sh
+
+bot/run/
