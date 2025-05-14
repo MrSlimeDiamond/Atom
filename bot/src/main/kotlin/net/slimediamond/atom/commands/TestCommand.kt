@@ -9,6 +9,7 @@ class TestCommand : CommandNode("test") {
 
     init {
         children.add(ChildCommand())
+        children.add(ErrorCommand())
 
         parameters.add(Parameters.OPTIONAL_MESSAGE)
     }
@@ -38,6 +39,14 @@ class TestCommand : CommandNode("test") {
             context.sendMessage("Message: $message")
 
             return CommandResult.success
+        }
+
+    }
+
+    class ErrorCommand : CommandNode("error") {
+
+        override fun execute(context: CommandNodeContext): CommandResult {
+            return CommandResult.error("Enjoy this error!")
         }
 
     }
