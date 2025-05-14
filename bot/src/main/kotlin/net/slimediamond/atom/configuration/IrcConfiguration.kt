@@ -16,11 +16,11 @@ class IrcConfiguration {
     class ServerConfiguration {
 
         @Setting
-        var name: String? = null
+        var name: String = ""
         @Setting
-        var hostname: String? = null
+        var hostname: String = ""
         @Setting
-        var port: Int? = null
+        var port: Int = 6667
         @Setting
         var ssl: Boolean = false
 
@@ -30,11 +30,11 @@ class IrcConfiguration {
     class UserConfiguration {
 
         @Setting
-        var nickname: String? = "Atom"
+        var nickname: String = "Atom"
         @Setting
-        var username: String? = "atom"
+        var username: String = "atom"
         @Setting
-        var realname: String? = "SlimeDiamond's bot"
+        var realname: String = "SlimeDiamond's bot"
 
     }
 

@@ -31,12 +31,16 @@ class IrcBot {
         val serverConfig = ircConfiguration.serverConfiguration
         val userConfig = ircConfiguration.userConfiguration
 
-        val name = serverConfig.name?: error("IRC server has no name configured")
-        val hostname = serverConfig.hostname?: error("IRC server has no host configured")
-        val port = serverConfig.port?: error("IRC server has no port configured")
-        val nickname = userConfig.nickname?: error("IRC user has no nickname configured")
-        val username = userConfig.username?: error("IRC user has no username configured")
-        val realname = userConfig.realname?: error("IRC user has no real name configured")
+        val name = serverConfig.name
+        val hostname = serverConfig.hostname
+        val port = serverConfig.port
+        val nickname = userConfig.nickname
+        val username = userConfig.username
+        val realname = userConfig.realname
+
+        if (name.isEmpty() || hostname.isEmpty()) {
+            error("Please configure IRC host configuration")
+        }
 
         val server = Server(name, hostname, port, serverConfig.ssl)
         logger.info("Connecting to {} ({}, {})", server.name, server.host, server.port)

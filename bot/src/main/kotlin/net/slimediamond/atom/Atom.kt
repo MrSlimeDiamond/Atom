@@ -43,14 +43,21 @@ class Atom : NamespaceHolder {
     fun start() {
         logger.info("Starting!")
 
+        val configPath = Path.of("atom.conf")
+        if (!configPath.toFile().exists()) {
+            configPath.toFile().createNewFile()
+        }
         val options = ConfigurationOptions.defaults()
         val configLoader = HoconConfigurationLoader.builder()
-            .path(Path.of("atom.conf"))
+            .path(configPath)
             .defaultOptions(options)
             .build()
 
-        configuration = configLoader.loadToReference().referenceTo(Configuration::class.java).get()
-            ?: error("Configuration failed to load! (null instance provided)")
+        val reference = configLoader.loadToReference().referenceTo(Configuration::class.java)
+
+        configLoader.save(reference.node())
+
+        configuration = reference.get()?: error("Configuration failed to load")
 
         serviceManager = ServiceManager()
         eventManager = EventManager()
