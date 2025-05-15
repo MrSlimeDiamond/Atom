@@ -20,6 +20,9 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:3.0.0-beta3'
     implementation 'net.slimediamond:data:0.0.6'
     implementation 'org.spongepowered:configurate-hocon:4.2.0'
+    implementation 'me.lucko:sql-streams:1.0.0'
+    implementation 'org.apache.commons:commons-dbcp2:2.13.0'
+    implementation 'com.mysql:mysql-connector-j:9.3.0'
 }
 
 test {

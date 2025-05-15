@@ -12,6 +12,6 @@ interface CommandSender : Audience {
     /**
      * Get whether this command sender has a permission
      */
-    fun hasPermission(node: String)
+    fun hasPermission(permission: String): Boolean
 
 }

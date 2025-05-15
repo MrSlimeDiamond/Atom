@@ -12,4 +12,7 @@ class Configuration {
     @Setting("irc")
     val ircConfiguration = IrcConfiguration()
 
+    @Setting("storage")
+    val storageConfiguration = StorageConfiguration()
+
 }

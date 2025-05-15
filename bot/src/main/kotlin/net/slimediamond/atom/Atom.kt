@@ -5,6 +5,8 @@ import net.slimediamond.atom.event.EventManager
 import net.slimediamond.atom.irc.ircbot.IrcBot
 import net.slimediamond.atom.service.ServiceManager
 import net.slimediamond.atom.services.CommandService
+import net.slimediamond.atom.services.PermissionService
+import net.slimediamond.atom.storage.StorageService
 import net.slimediamond.atom.utils.factory.DefaultFactoryProvider
 import net.slimediamond.atom.utils.factory.FactoryProvider
 import net.slimediamond.data.identification.NamespaceHolder
@@ -67,6 +69,8 @@ class Atom : NamespaceHolder {
 
         commandService = CommandService()
         serviceManager.addService(commandService)
+        serviceManager.addService(StorageService())
+        serviceManager.addService(PermissionService())
 
         logger.info("Starting all services")
         serviceManager.startAll()

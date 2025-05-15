@@ -6,6 +6,7 @@ import net.slimediamond.atom.commands.api.exceptions.CommandException
 import net.slimediamond.atom.commands.api.parameter.Parameter
 import net.slimediamond.atom.commands.api.platforms.CommandPlatform
 import net.slimediamond.atom.messaging.Audience
+import org.apache.logging.log4j.LogManager
 import java.util.HashMap
 import java.util.LinkedList
 
@@ -15,6 +16,8 @@ abstract class CommandNode(vararg aliases: String) : Command {
     val platforms: MutableList<CommandPlatform> = LinkedList()
     val children: MutableList<CommandNode> = LinkedList()
     val parameters: MutableList<Parameter> = LinkedList()
+    @Volatile
+    var permission: String? = null
 
     val usage: String
         get() = buildString {
@@ -33,6 +36,14 @@ abstract class CommandNode(vararg aliases: String) : Command {
     abstract fun execute(context: CommandNodeContext): CommandResult
 
     override fun execute(sender: CommandSender, input: String, platform: CommandPlatform, audience: Audience): CommandResult {
+        if (this.permission != null) {
+            if (!sender.hasPermission(permission!!)) {
+                LogManager.getLogger("command node: " + this.aliases.first())
+                    .warn("{} tried to use command '{}' without permission", sender.name, this.aliases.first())
+                return CommandResult.empty
+            }
+        }
+
         var finalInput = input
         var command = this
         val maybe = input.split(" ")[0]
@@ -75,17 +86,20 @@ abstract class CommandNode(vararg aliases: String) : Command {
             return CommandResult.error(platform.renderTooManyArguments(command, index, finalInput))
         }
 
-        val context = platform.createContext(command, sender, finalInput, audience, parameterKeyMap)
-
-        return try {
-            command.execute(context)
+        try {
+            if (command == this) {
+                val context = platform.createContext(command, sender, finalInput, audience, parameterKeyMap)
+                return command.execute(context)
+            } else {
+                return command.execute(sender, input, platform, audience)
+            }
         } catch (e: Exception) {
             if (e is ArgumentParseException) {
                 return CommandResult.error(platform.renderArgumentParseException(e))
             } else if (e is CommandException) {
                 return CommandResult.error(e.msg)
             }
-            CommandResult.error(e.message?: "An error occurred when executing this command")
+            return CommandResult.error(e.message?: "An error occurred when executing this command")
         }
     }
 

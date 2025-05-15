@@ -11,6 +11,7 @@ class TestCommand : CommandNode("test") {
         children.add(ChildCommand())
         children.add(ErrorCommand())
         children.add(NumberCommand())
+        children.add(PermissionTestCommand())
 
         parameters.add(Parameters.OPTIONAL_MESSAGE)
     }
@@ -63,6 +64,19 @@ class TestCommand : CommandNode("test") {
 
             context.sendMessage("Your number input: $number")
 
+            return CommandResult.success
+        }
+
+    }
+
+    class PermissionTestCommand : CommandNode("permission") {
+
+        init {
+            permission = "atom.command.test.permission"
+        }
+
+        override fun execute(context: CommandNodeContext): CommandResult {
+            context.sendMessage("you have permission")
             return CommandResult.success
         }
 
