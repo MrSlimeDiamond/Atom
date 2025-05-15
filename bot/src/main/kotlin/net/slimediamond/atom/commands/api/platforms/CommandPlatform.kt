@@ -17,7 +17,7 @@ interface CommandPlatform {
     /**
      * Render a "not enough arguments" message
      */
-    fun renderNotEnoughArguments(command: CommandNode, index: Int, input: String): RichMessage
+    fun renderNotEnoughArguments(command: CommandNode, index: Int): RichMessage
 
     /**
      * Render an argument parse exception
@@ -27,6 +27,6 @@ interface CommandPlatform {
     /**
      * Create a command context instance
      */
-    fun createContext(command: CommandNode, sender: CommandSender, input: String, audience: Audience): CommandNodeContext
+    fun createContext(command: CommandNode, sender: CommandSender, input: String, audience: Audience, parameterKeyMap: Map<String, String>): CommandNodeContext
 
 }

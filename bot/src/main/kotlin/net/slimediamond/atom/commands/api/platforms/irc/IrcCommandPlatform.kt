@@ -15,7 +15,7 @@ class IrcCommandPlatform : CommandPlatform {
         return RichMessage.of("Too many arguments! Usage: ${command.usage}").color(Color.RED)
     }
 
-    override fun renderNotEnoughArguments(command: CommandNode, index: Int, input: String): RichMessage {
+    override fun renderNotEnoughArguments(command: CommandNode, index: Int): RichMessage {
         return RichMessage.of("Not enough arguments! Usage: ${command.usage}").color(Color.RED)
     }
 
@@ -25,8 +25,8 @@ class IrcCommandPlatform : CommandPlatform {
             .color(Color.RED)
     }
 
-    override fun createContext(command: CommandNode, sender: CommandSender, input: String, audience: Audience): CommandNodeContext {
-        return IrcCommandNodeContext(command, sender, input, this, audience)
+    override fun createContext(command: CommandNode, sender: CommandSender, input: String, audience: Audience, parameterKeyMap: Map<String, String>): CommandNodeContext {
+        return IrcCommandNodeContext(command, sender, input, this, parameterKeyMap, audience)
     }
 
 }

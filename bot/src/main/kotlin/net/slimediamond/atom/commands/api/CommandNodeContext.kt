@@ -10,7 +10,8 @@ abstract class CommandNodeContext(
     private val commandNode: CommandNode,
     val sender: CommandSender,
     val input: String,
-    val platform: CommandPlatform
+    val platform: CommandPlatform,
+    val parameterKeyMap: Map<String, String>
 ) : Audience {
 
     /**
@@ -18,17 +19,20 @@ abstract class CommandNodeContext(
      */
     @Throws(ArgumentParseException::class, CommandException::class)
     fun <T> requireOne(parameter: Parameter.Value<T>): T {
-        val value = parameter.parse(input)
+        val notEnoughArgs = CommandException(platform.renderNotEnoughArguments(commandNode, commandNode.parameters.indexOf(parameter)))
+        val parameterInput = parameterKeyMap[parameter.key] ?: throw notEnoughArgs
+        val value = parameter.parse(parameterInput)
 
         if (value == null || (value is String && value.isEmpty())) {
-            throw CommandException(platform.renderNotEnoughArguments(commandNode, commandNode.parameters.indexOf(parameter), input))
+            throw notEnoughArgs
         }
 
         return value
     }
 
     fun <T> one(parameter: Parameter.Value<T>): T? {
-        return parameter.parse(input)
+        val parameterInput = parameterKeyMap[parameter.key] ?: return null
+        return parameter.parse(parameterInput)
     }
 
 }

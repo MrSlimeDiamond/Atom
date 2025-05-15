@@ -31,8 +31,8 @@ class DiscordCommandPlatform : CommandPlatform {
             .append(RichMessage.of(command.usage))
     }
 
-    override fun renderNotEnoughArguments(command: CommandNode, index: Int, input: String,): RichMessage {
-        val safeIndex = index.coerceAtLeast(0).coerceAtMost(input.length)
+    override fun renderNotEnoughArguments(command: CommandNode, index: Int): RichMessage {
+        val safeIndex = index.coerceAtLeast(0)
         val pointer = caretUnder("Usage", command.usage, safeIndex + 1)
 
         return RichMessage.of().color(Color.RED)
@@ -63,7 +63,7 @@ class DiscordCommandPlatform : CommandPlatform {
             .append(RichMessage.of("  $pointer here"))
     }
 
-    override fun createContext(command: CommandNode, sender: CommandSender, input: String, audience: Audience): CommandNodeContext {
+    override fun createContext(command: CommandNode, sender: CommandSender, input: String, audience: Audience, parameterKeyMap: Map<String, String>): CommandNodeContext {
         TODO("Not yet implemented")
     }
 

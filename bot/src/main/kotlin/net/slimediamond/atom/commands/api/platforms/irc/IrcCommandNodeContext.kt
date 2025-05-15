@@ -12,8 +12,9 @@ class IrcCommandNodeContext(
     sender: CommandSender,
     input: String,
     platform: CommandPlatform,
+    parameterKeyMap: Map<String, String>,
     private val audience: Audience
-) : CommandNodeContext(commandNode, sender, input, platform) {
+) : CommandNodeContext(commandNode, sender, input, platform, parameterKeyMap) {
 
     override fun sendMessage(message: String) {
         audience.sendMessage(message)

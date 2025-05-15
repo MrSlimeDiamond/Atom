@@ -6,6 +6,7 @@ import net.slimediamond.atom.commands.api.exceptions.CommandException
 import net.slimediamond.atom.commands.api.parameter.Parameter
 import net.slimediamond.atom.commands.api.platforms.CommandPlatform
 import net.slimediamond.atom.messaging.Audience
+import java.util.HashMap
 import java.util.LinkedList
 
 abstract class CommandNode(vararg aliases: String) : Command {
@@ -42,21 +43,39 @@ abstract class CommandNode(vararg aliases: String) : Command {
             command = cmd.get()
         }
 
-        val context = platform.createContext(command, sender, finalInput, audience)
+        val parsed = tokenizeInput(finalInput)
+        var index = 0
+
+        val parameterKeyMap = HashMap<String, String>()
 
         if (command.parameters.isNotEmpty()) {
-            command.parameters.forEach { parameter ->
-                if (!parameter.optional && finalInput.length < parameters.indexOf(parameter)) {
-                    // show an error message showing they don't have enough arguments
-                    context.sendMessage(platform.renderNotEnoughArguments(command, parameters.indexOf(parameter), finalInput))
-                    return CommandResult.empty
+            command.parameters.forEachIndexed { i, parameter ->
+                if (parameter.greedy) {
+                    val remaining = finalInput.split("\\s+".toRegex(), limit = i + 1).getOrNull(i) ?: ""
+                    parameterKeyMap[parameter.key] = remaining
+                    return@forEachIndexed
+                }
+
+                if (index >= parsed.size) {
+                    if (!parameter.optional) {
+                        return CommandResult.error(platform.renderNotEnoughArguments(command, i))
+                    }
+                } else {
+                    parameterKeyMap[parameter.key] = parsed[index]
+                    index++
                 }
             }
-        } else if (finalInput.isNotEmpty()){
-            // see if they have too many arguments
-            context.sendMessage(platform.renderTooManyArguments(command, 0, finalInput))
-            return CommandResult.empty
+
+            val totalInputArgs = finalInput.trim().split("\\s+".toRegex())
+            if (command.parameters.none { it.greedy } && index < totalInputArgs.size) {
+                // see if they have too many arguments
+                return CommandResult.error(platform.renderTooManyArguments(command, index, finalInput))
+            }
+        } else if (finalInput.isNotEmpty()) {
+            return CommandResult.error(platform.renderTooManyArguments(command, index, finalInput))
         }
+
+        val context = platform.createContext(command, sender, finalInput, audience, parameterKeyMap)
 
         return try {
             command.execute(context)
@@ -68,6 +87,14 @@ abstract class CommandNode(vararg aliases: String) : Command {
             }
             CommandResult.error(e.message?: "An error occurred when executing this command")
         }
+    }
+
+    private fun tokenizeInput(input: String): List<String> {
+        val regex = Regex("""("([^"]*)"|\S+)""")
+        return regex.findAll(input).map {
+            val match = it.groupValues[2]
+            match.ifEmpty { it.value.trim('"') }
+        }.toList()
     }
 
     fun register() {
