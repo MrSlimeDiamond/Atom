@@ -1,6 +1,6 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.23'
-    id 'com.gradleup.shadow' version '9.0.0-beta8'
+//    id 'com.gradleup.shadow' version '9.0.0-beta8'
     id 'application'
 }
 
@@ -34,7 +34,7 @@ kotlin {
 }
 
 jar {
-    dependsOn(tasks.shadowJar)
+//    dependsOn(tasks.shadowJar)
     manifest {
         attributes("Main-Class": main)
     }
