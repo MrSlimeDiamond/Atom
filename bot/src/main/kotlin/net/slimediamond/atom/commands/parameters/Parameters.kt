@@ -1,6 +1,6 @@
 package net.slimediamond.atom.commands.parameters
 
-import net.slimediamond.atom.commands.api.parameter.Parameter
+import net.slimediamond.atom.api.command.parameter.Parameter
 
 object Parameters {
 

@@ -1,8 +1,8 @@
 package net.slimediamond.atom.commands
 
-import net.slimediamond.atom.commands.api.CommandNode
-import net.slimediamond.atom.commands.api.CommandNodeContext
-import net.slimediamond.atom.commands.api.CommandResult
+import net.slimediamond.atom.api.command.CommandNode
+import net.slimediamond.atom.api.command.CommandNodeContext
+import net.slimediamond.atom.api.command.CommandResult
 
 class PingCommand : CommandNode("ping") {
 

@@ -1,7 +1,7 @@
 package net.slimediamond.atom.data
 
 import net.slimediamond.atom.Atom
-import net.slimediamond.atom.irc.api.Server
+import net.slimediamond.atom.api.irc.Server
 import net.slimediamond.data.Key
 import net.slimediamond.data.identification.ResourceKey
 import net.slimediamond.data.value.Value

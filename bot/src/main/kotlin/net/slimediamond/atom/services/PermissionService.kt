@@ -2,7 +2,7 @@ package net.slimediamond.atom.services
 
 import be.bendem.sqlstreams.SqlStream
 import net.slimediamond.atom.Atom
-import net.slimediamond.atom.service.Service
+import net.slimediamond.atom.api.service.Service
 import net.slimediamond.atom.storage.StorageService
 import net.slimediamond.atom.storage.dao.UserDao
 import java.sql.ResultSet

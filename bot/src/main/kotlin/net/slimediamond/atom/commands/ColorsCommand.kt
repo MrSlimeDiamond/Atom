@@ -1,10 +1,10 @@
 package net.slimediamond.atom.commands
 
-import net.slimediamond.atom.commands.api.CommandNode
-import net.slimediamond.atom.commands.api.CommandNodeContext
-import net.slimediamond.atom.commands.api.CommandResult
-import net.slimediamond.atom.messaging.Color
-import net.slimediamond.atom.messaging.RichMessage
+import net.slimediamond.atom.api.command.CommandNode
+import net.slimediamond.atom.api.command.CommandNodeContext
+import net.slimediamond.atom.api.command.CommandResult
+import net.slimediamond.atom.api.messaging.Color
+import net.slimediamond.atom.api.messaging.RichMessage
 
 // I can't speak American English much longer.
 class ColorsCommand : CommandNode("colors", "colours") {

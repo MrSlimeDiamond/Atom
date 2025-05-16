@@ -2,10 +2,9 @@ package net.slimediamond.atom.storage
 
 import be.bendem.sqlstreams.SqlStream
 import net.slimediamond.atom.Atom
-import net.slimediamond.atom.event.Listener
-import net.slimediamond.atom.service.Service
-import net.slimediamond.atom.service.events.ServiceStartEvent
-import org.apache.commons.dbcp2.BasicDataSource
+import net.slimediamond.atom.api.event.Listener
+import net.slimediamond.atom.api.service.Service
+import net.slimediamond.atom.api.service.events.ServiceStartEvent
 import org.apache.logging.log4j.Logger
 import java.sql.DriverManager
 

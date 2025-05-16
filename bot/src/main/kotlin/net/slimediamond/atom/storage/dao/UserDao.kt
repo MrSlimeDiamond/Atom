@@ -1,7 +1,7 @@
 package net.slimediamond.atom.storage.dao
 
 import net.slimediamond.atom.Atom
-import net.slimediamond.atom.irc.api.entities.User
+import net.slimediamond.atom.api.irc.entities.User
 import net.slimediamond.atom.services.PermissionService
 import net.slimediamond.atom.storage.StorageService
 import java.sql.ResultSet
