@@ -5,6 +5,7 @@ import net.slimediamond.atom.event.Listener
 import net.slimediamond.atom.irc.api.ConnectionInfo
 import net.slimediamond.atom.irc.api.IrcClient
 import net.slimediamond.atom.irc.api.Server
+import net.slimediamond.atom.irc.api.events.IrcReceivedWelcomeEvent
 import net.slimediamond.atom.irc.api.factory.ConnectionFactory
 import net.slimediamond.atom.irc.ircbot.listeners.IrcMessageListener
 import net.slimediamond.atom.service.Service
@@ -46,6 +47,11 @@ class IrcBot {
         logger.info("Connecting to {} ({}, {})", server.name, server.host, server.port)
         client.connect(ConnectionInfo(nickname, realname, username, server))
         // No code executes past here. Fuck threading
+    }
+
+    @Listener
+    fun onIrcWelcome(event: IrcReceivedWelcomeEvent) {
+        logger.info("IRC bot connected")
     }
 
 }

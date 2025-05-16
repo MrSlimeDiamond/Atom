@@ -5,6 +5,7 @@ import net.slimediamond.atom.irc.api.factory.ConnectionFactory
 import net.slimediamond.atom.irc.api.linehandlers.LineHandler
 import net.slimediamond.atom.irc.api.linehandlers.MessageLineHandler
 import net.slimediamond.atom.irc.api.linehandlers.PingLineHandler
+import net.slimediamond.atom.irc.api.linehandlers.WelcomeLineHandler
 import java.util.LinkedList
 
 /**
@@ -43,6 +44,7 @@ class IrcClient {
     init {
         addLineHandler(PingLineHandler())
         addLineHandler(MessageLineHandler())
+        addLineHandler(WelcomeLineHandler())
     }
 
 }
