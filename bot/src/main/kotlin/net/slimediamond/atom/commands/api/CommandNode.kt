@@ -1,6 +1,5 @@
 package net.slimediamond.atom.commands.api
 
-import net.slimediamond.atom.Atom
 import net.slimediamond.atom.commands.api.exceptions.ArgumentParseException
 import net.slimediamond.atom.commands.api.exceptions.CommandException
 import net.slimediamond.atom.commands.api.parameter.Parameter
@@ -19,16 +18,18 @@ abstract class CommandNode(vararg aliases: String) : Command {
     @Volatile
     var permission: String? = null
 
-    val usage: String
-        get() = buildString {
-            append(aliases.first())
-            parameters.forEach { parameter ->
-                append(if (parameter.optional) " [" else " <")
-                append(parameter.key)
-                if (parameter.greedy) {
-                    append("...")
+    open val usage: String
+        get() {
+            return buildString {
+                append(aliases.first())
+                parameters.forEach { parameter ->
+                    append(if (parameter.optional) " [" else " <")
+                    append(parameter.key)
+                    if (parameter.greedy) {
+                        append("...")
+                    }
+                    append(if (parameter.optional) "]" else ">")
                 }
-                append(if (parameter.optional) "]" else ">")
             }
         }
 
@@ -44,17 +45,22 @@ abstract class CommandNode(vararg aliases: String) : Command {
             }
         }
 
-        var finalInput = input
+        var actualInput = input
         var command = this
-        val maybe = input.split(" ")[0]
-        val cmd = children.stream().filter { cmd -> cmd.aliases.contains(maybe) }.findFirst()
-        if (cmd.isPresent) {
-            // this is silly
-            finalInput = input.split(" ").drop(1).joinToString(" ")
-            command = cmd.get()
+
+        while (command.children.isNotEmpty()) {
+            val maybe = actualInput.split(" ")[0]
+            val cmd = command.children.stream().filter { cmd -> cmd.aliases.contains(maybe) }.findFirst()
+            if (cmd.isPresent) {
+                // this is silly
+                actualInput = actualInput.split(" ").drop(1).joinToString(" ")
+                command = cmd.get()
+            } else {
+                break
+            }
         }
 
-        val parsed = tokenizeInput(finalInput)
+        val parsed = tokenizeInput(actualInput)
         var index = 0
 
         val parameterKeyMap = HashMap<String, String>()
@@ -62,7 +68,7 @@ abstract class CommandNode(vararg aliases: String) : Command {
         if (command.parameters.isNotEmpty()) {
             command.parameters.forEachIndexed { i, parameter ->
                 if (parameter.greedy) {
-                    val remaining = finalInput.split("\\s+".toRegex(), limit = i + 1).getOrNull(i) ?: ""
+                    val remaining = actualInput.split("\\s+".toRegex(), limit = i + 1).getOrNull(i) ?: ""
                     parameterKeyMap[parameter.key] = remaining
                     return@forEachIndexed
                 }
@@ -77,29 +83,25 @@ abstract class CommandNode(vararg aliases: String) : Command {
                 }
             }
 
-            val totalInputArgs = finalInput.trim().split("\\s+".toRegex())
+            val totalInputArgs = actualInput.trim().split("\\s+".toRegex())
             if (command.parameters.none { it.greedy } && index < totalInputArgs.size) {
                 // see if they have too many arguments
-                return CommandResult.error(platform.renderTooManyArguments(command, index, finalInput))
+                return CommandResult.error(platform.renderTooManyArguments(command, index, actualInput))
             }
-        } else if (finalInput.isNotEmpty()) {
-            return CommandResult.error(platform.renderTooManyArguments(command, index, finalInput))
+        } else if (actualInput.isNotEmpty()) {
+            return CommandResult.error(platform.renderTooManyArguments(command, index, actualInput))
         }
 
         try {
-            if (command == this) {
-                val context = platform.createContext(command, sender, finalInput, audience, parameterKeyMap)
-                return command.execute(context)
-            } else {
-                return command.execute(sender, input, platform, audience)
-            }
-        } catch (e: Exception) {
-            if (e is ArgumentParseException) {
-                return CommandResult.error(platform.renderArgumentParseException(e))
-            } else if (e is CommandException) {
-                return CommandResult.error(e.msg)
-            }
-            return CommandResult.error(e.message?: "An error occurred when executing this command")
+            val context = platform.createContext(command, sender, actualInput, audience, parameterKeyMap)
+            return command.execute(context)
+
+        } catch (e: ArgumentParseException) {
+            return CommandResult.error(platform.renderArgumentParseException(e))
+        } catch (e: CommandException) {
+            return CommandResult.error(e.msg)
+        } catch (e: Error) {
+            return CommandResult.error(e.javaClass.name + ": " + (e.message?: "An error occurred when executing this command"))
         }
     }
 
@@ -111,12 +113,8 @@ abstract class CommandNode(vararg aliases: String) : Command {
         }.toList()
     }
 
-    fun register() {
-        Atom.instance.commandService.commandNodeManager.register(this, aliases)
-    }
-
     init {
-        aliases.forEach { alias -> this.aliases.add(alias) }
+        this.aliases.addAll(aliases)
     }
 
 }

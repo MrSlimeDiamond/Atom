@@ -38,6 +38,7 @@ class StorageService {
 //            }
 
         sql = SqlStream.connect(DriverManager.getConnection(jdbc))
+        Atom.instance.sql = sql
     }
 
 }

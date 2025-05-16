@@ -3,6 +3,8 @@ package net.slimediamond.atom.irc.api.entities
 import net.slimediamond.atom.messaging.Audience
 import net.slimediamond.atom.irc.api.Connection
 import net.slimediamond.atom.messaging.RichMessage
+import net.slimediamond.atom.messaging.renderer.IrcRichMessageRenderer
+import net.slimediamond.atom.storage.dao.ChannelDao
 
 /**
  * An IRC channel
@@ -18,7 +20,9 @@ data class Channel(
     }
 
     override fun sendMessage(message: RichMessage) {
-        TODO("Not yet implemented")
+        IrcRichMessageRenderer.sendMessage(connection, name, message)
     }
+
+    val channelDao: ChannelDao = ChannelDao.getByName(this.name)
 
 }

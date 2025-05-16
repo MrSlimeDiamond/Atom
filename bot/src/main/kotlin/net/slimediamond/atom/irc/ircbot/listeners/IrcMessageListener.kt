@@ -16,7 +16,7 @@ class IrcMessageListener {
             val command = event.message.split(prefix)[1].split(" ")[0]
             val sender = IrcCommandSender(event.user)
             val input = event.message.split(" ").toList().drop(2).joinToString(" ")
-            Atom.instance.commandService.commandNodeManager.handle(sender, command, input, CommandPlatforms.IRC, event.audience)
+            Atom.instance.commandNodeManager.handle(sender, command, input, CommandPlatforms.IRC, event.audience)
         }
     }
 

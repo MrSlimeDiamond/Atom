@@ -1,5 +1,6 @@
 package net.slimediamond.atom.messaging.renderer
 
+import net.slimediamond.atom.irc.api.Connection
 import net.slimediamond.atom.messaging.Color
 import net.slimediamond.atom.messaging.RichMessage
 
@@ -36,6 +37,17 @@ class IrcRichMessageRenderer {
                 builder.append(part.content)
             }
             return builder.toString()
+        }
+
+        fun sendMessage(connection: Connection, target: String, message: RichMessage) {
+            val rendered = IrcRichMessageRenderer.render(message)
+            if (!rendered.contains("\n")) {
+                connection.sendMessage(target, rendered)
+                return
+            }
+            rendered.split("\n").forEach { part ->
+                connection.sendMessage(target, part)
+            }
         }
     }
 

@@ -3,12 +3,7 @@ package net.slimediamond.atom.commands.api
 import net.slimediamond.atom.commands.api.platforms.CommandPlatform
 import net.slimediamond.atom.messaging.Audience
 
-interface CommandManager<T> {
-
-    /**
-     * Register a command
-     */
-    fun register(command: T, aliases: List<String>)
+interface CommandManager {
 
     /**
      * Handle a command execution

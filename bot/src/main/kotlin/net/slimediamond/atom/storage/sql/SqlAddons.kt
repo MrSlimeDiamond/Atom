@@ -1,0 +1,16 @@
+package net.slimediamond.atom.storage.sql
+
+import be.bendem.sqlstreams.SqlStream
+import be.bendem.sqlstreams.util.SqlFunction
+import net.slimediamond.atom.Atom
+import java.sql.ResultSet
+import java.sql.Statement
+
+fun <T> SqlStream.updateReturning(sql: String, mapping: SqlFunction<ResultSet, T>, vararg params: Any): T {
+    val update = Atom.instance.sql.update { conn -> conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) }
+    update.with(params)
+
+    val rs = update.statement.generatedKeys
+    return mapping.apply(rs)
+
+}
