@@ -38,14 +38,6 @@ abstract class CommandNode(vararg aliases: String) : Command {
     abstract fun execute(context: CommandNodeContext): CommandResult
 
     override fun execute(sender: CommandSender, input: String, platform: CommandPlatform, audience: Audience): CommandResult {
-        if (this.permission != null) {
-            if (!sender.hasPermission(permission!!)) {
-                LogManager.getLogger("command node: " + this.aliases.first())
-                    .warn("{} tried to use command '{}' without permission", sender.name, this.aliases.first())
-                return CommandResult.empty
-            }
-        }
-
         var actualInput = input
         var command = this
 
@@ -58,6 +50,13 @@ abstract class CommandNode(vararg aliases: String) : Command {
                 command = cmd.get()
             } else {
                 break
+            }
+        }
+
+        if (command.permission != null) {
+            if (!sender.hasPermission(command.permission!!)) {
+                logger.warn("{} tried to use command '{}' without permission", sender.name, this.aliases.first())
+                return CommandResult.empty
             }
         }
 
