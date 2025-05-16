@@ -11,6 +11,7 @@ import java.util.LinkedList
 
 abstract class CommandNode(vararg aliases: String) : Command {
 
+    private val logger = LogManager.getLogger("command node: ${aliases.first()}")
     val aliases: MutableList<String> = LinkedList()
     val platforms: MutableList<CommandPlatform> = LinkedList()
     val children: MutableList<CommandNode> = LinkedList()
@@ -95,12 +96,14 @@ abstract class CommandNode(vararg aliases: String) : Command {
         try {
             val context = platform.createContext(command, sender, actualInput, audience, parameterKeyMap)
             return command.execute(context)
-
         } catch (e: ArgumentParseException) {
+            logger.error(e)
             return CommandResult.error(platform.renderArgumentParseException(e))
         } catch (e: CommandException) {
+            logger.error(e)
             return CommandResult.error(e.msg)
         } catch (e: Error) {
+            logger.error(e)
             return CommandResult.error(e.javaClass.name + ": " + (e.message?: "An error occurred when executing this command"))
         }
     }
