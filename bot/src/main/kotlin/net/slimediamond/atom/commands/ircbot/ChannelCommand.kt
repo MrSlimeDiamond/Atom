@@ -6,6 +6,7 @@ class ChannelCommand : RootOnlyCommandNode("channel") {
 
     init {
         children.add(ChannelQueryCommand())
+        children.add(ChannelAddCommand())
     }
 
 }

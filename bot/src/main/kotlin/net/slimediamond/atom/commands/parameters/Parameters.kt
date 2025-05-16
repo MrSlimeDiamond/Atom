@@ -1,6 +1,8 @@
 package net.slimediamond.atom.commands.parameters
 
+import net.slimediamond.atom.api.command.exceptions.ArgumentParseException
 import net.slimediamond.atom.api.command.parameter.Parameter
+import net.slimediamond.atom.api.messaging.RichMessage
 
 object Parameters {
 
@@ -17,6 +19,19 @@ object Parameters {
 
     val NUMBER: Parameter.Value<Int> = Parameter.int()
         .key("number")
+        .build()
+
+    val IRC_CHANNEL: Parameter.Value<String> = Parameter.string()
+        .key("channel")
+        .parser { input ->
+            if (!input.startsWith("#")) {
+                throw ArgumentParseException(input, 0, RichMessage.of("IRC channel names must start with '#'"))
+            } else if (input.contains(" ")) {
+                throw ArgumentParseException(input, input.indexOf(" "),
+                    RichMessage.of("IRC channel names must not contain spaces"))
+            }
+            return@parser input
+        }
         .build()
 
 }

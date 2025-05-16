@@ -17,7 +17,7 @@ open class RootOnlyCommandNode(vararg aliases: String) : CommandNode(*aliases) {
 
     override fun execute(context: CommandNodeContext): CommandResult {
         // If we managed to reach this point without finding a subcommand, they've not provided a subcommand
-        return CommandResult.Companion.error(context.platform.renderNotEnoughArguments(this, 0))
+        return CommandResult.error(context.platform.renderNotEnoughArguments(this, 0))
     }
 
 }

@@ -27,7 +27,7 @@ class DefaultConnection(
 //        }
         // initializing this actually makes the connection
         socket = Socket(server.host, server.port)
-        Thread().run {
+        Thread {
             val reader = BufferedReader(InputStreamReader(socket.getInputStream()))
             writer = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
             sendRaw("NICK $nickname")
@@ -36,7 +36,7 @@ class DefaultConnection(
                 val line = reader.readLine() ?: break
                 handleLine(line, client)
             }
-        }
+        }.start()
     }
 
     override fun disconnect(message: String) {

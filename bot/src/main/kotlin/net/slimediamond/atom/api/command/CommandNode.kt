@@ -76,7 +76,7 @@ abstract class CommandNode(vararg aliases: String) : Command {
 
                 if (index >= parsed.size) {
                     if (!parameter.optional) {
-                        return CommandResult.Companion.error(platform.renderNotEnoughArguments(command, i))
+                        return CommandResult.error(platform.renderNotEnoughArguments(command, i))
                     }
                 } else {
                     parameterKeyMap[parameter.key] = parsed[index]
@@ -87,24 +87,24 @@ abstract class CommandNode(vararg aliases: String) : Command {
             val totalInputArgs = actualInput.trim().split("\\s+".toRegex())
             if (command.parameters.none { it.greedy } && index < totalInputArgs.size) {
                 // see if they have too many arguments
-                return CommandResult.Companion.error(platform.renderTooManyArguments(command, index, actualInput))
+                return CommandResult.error(platform.renderTooManyArguments(command, index, actualInput))
             }
         } else if (actualInput.isNotEmpty()) {
-            return CommandResult.Companion.error(platform.renderTooManyArguments(command, index, actualInput))
+            return CommandResult.error(platform.renderTooManyArguments(command, index, actualInput))
         }
 
-        try {
+        return try {
             val context = platform.createContext(command, sender, actualInput, audience, parameterKeyMap)
-            return command.execute(context)
+            command.execute(context)
         } catch (e: ArgumentParseException) {
             logger.error(e)
-            return CommandResult.Companion.error(platform.renderArgumentParseException(e))
+            CommandResult.error(platform.renderArgumentParseException(e))
         } catch (e: CommandException) {
             logger.error(e)
-            return CommandResult.error(e.msg)
-        } catch (e: Error) {
+            CommandResult.error(e.msg)
+        } catch (e: Throwable) {
             logger.error(e)
-            return CommandResult.error(e.javaClass.name + ": " + (e.message ?: "An error occurred when executing this command"))
+            CommandResult.error(e.javaClass.name + ": " + (e.message ?: "An error occurred when executing this command"))
         }
     }
 
