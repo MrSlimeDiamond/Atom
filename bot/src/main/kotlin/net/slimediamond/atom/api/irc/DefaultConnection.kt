@@ -36,6 +36,8 @@ class DefaultConnection(
                 val line = reader.readLine() ?: break
                 handleLine(line, client)
             }
+        }.apply {
+            name = "irc bot"
         }.start()
     }
 
