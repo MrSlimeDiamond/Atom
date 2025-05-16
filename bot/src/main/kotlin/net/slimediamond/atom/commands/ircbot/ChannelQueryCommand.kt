@@ -6,6 +6,10 @@ import net.slimediamond.atom.api.command.CommandResult
 
 class ChannelQueryCommand : CommandNode("query") {
 
+    init {
+        permission = "atom.command.ircbot.channel.query"
+    }
+
     override fun execute(context: CommandNodeContext): CommandResult {
         TODO("Not yet implemented")
     }

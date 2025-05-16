@@ -12,12 +12,15 @@ import java.util.LinkedList
 abstract class CommandNode(vararg aliases: String) : Command {
 
     private val logger = LogManager.getLogger("command node: ${aliases.first()}")
+    private val _children: MutableList<CommandNode> = LinkedList()
+    val children: List<CommandNode> get() = _children
     val aliases: MutableList<String> = LinkedList()
     val platforms: MutableList<CommandPlatform> = LinkedList()
-    val children: MutableList<CommandNode> = LinkedList()
     val parameters: MutableList<Parameter> = LinkedList()
     @Volatile
     var permission: String? = null
+    @Volatile
+    var parent: CommandNode? = null
 
     open val usage: String
         get() {
@@ -41,9 +44,9 @@ abstract class CommandNode(vararg aliases: String) : Command {
         var actualInput = input
         var command = this
 
-        while (command.children.isNotEmpty()) {
+        while (command._children.isNotEmpty()) {
             val maybe = actualInput.split(" ")[0]
-            val cmd = command.children.stream().filter { cmd -> cmd.aliases.contains(maybe) }.findFirst()
+            val cmd = command._children.stream().filter { cmd -> cmd.aliases.contains(maybe) }.findFirst()
             if (cmd.isPresent) {
                 // this is silly
                 actualInput = actualInput.split(" ").drop(1).joinToString(" ")
@@ -53,12 +56,11 @@ abstract class CommandNode(vararg aliases: String) : Command {
             }
         }
 
-        if (command.permission != null) {
-            if (!sender.hasPermission(command.permission!!)) {
-                logger.warn("{} tried to use command '{}' without permission", sender.name, this.aliases.first())
-                return CommandResult.empty
-            }
+        if (command.permission != null && !sender.hasPermission(command.permission!!)) {
+            logger.warn("{} tried to use command '{}' without permission '{}'", sender.name, command.aliases.first(), command.permission)
+            return CommandResult.empty
         }
+
 
         val parsed = tokenizeInput(actualInput)
         var index = 0
@@ -113,6 +115,12 @@ abstract class CommandNode(vararg aliases: String) : Command {
             val match = it.groupValues[2]
             match.ifEmpty { it.value.trim('"') }
         }.toList()
+    }
+
+    protected fun addChild(child: CommandNode) {
+        child.parent = this
+        _children.add(child)
+        // println("Add child: ${child.aliases.first()} parent: ${child.parent?.aliases?.first()}")
     }
 
     init {

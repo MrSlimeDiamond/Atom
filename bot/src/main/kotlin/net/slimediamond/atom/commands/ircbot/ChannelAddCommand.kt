@@ -10,6 +10,7 @@ class ChannelAddCommand : CommandNode("add") {
 
     init {
         parameters.add(Parameters.IRC_CHANNEL)
+        permission = "atom.command.ircbot.channel.add"
     }
 
     override fun execute(context: CommandNodeContext): CommandResult {

@@ -8,10 +8,10 @@ import net.slimediamond.atom.commands.parameters.Parameters
 class TestCommand : CommandNode("test") {
 
     init {
-        children.add(ChildCommand())
-        children.add(ErrorCommand())
-        children.add(NumberCommand())
-        children.add(PermissionTestCommand())
+        addChild(ChildCommand())
+        addChild(ErrorCommand())
+        addChild(NumberCommand())
+        addChild(PermissionTestCommand())
 
         parameters.add(Parameters.OPTIONAL_MESSAGE)
     }

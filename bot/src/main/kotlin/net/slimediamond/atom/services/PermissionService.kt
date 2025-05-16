@@ -11,6 +11,7 @@ class PermissionService {
     fun hasPermission(user: UserDao, permission: String): Boolean {
         val parts = permission.split(".")
         val candidates = mutableListOf(permission)
+        candidates.add("*")
 
         for (i in 1 until parts.size) {
             val base = parts.take(i).joinToString(".")

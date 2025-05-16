@@ -8,7 +8,7 @@ class IrcBotRootCommand : RootOnlyCommandNode("ircbot") {
     init {
         platforms.add(CommandPlatforms.IRC)
 
-        children.add(ChannelCommand())
+        addChild(ChannelCommand())
     }
 
 }
