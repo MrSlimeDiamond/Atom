@@ -5,6 +5,7 @@ import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.event.Listener
 import net.slimediamond.atom.api.service.Service
 import net.slimediamond.atom.api.service.events.ServiceStartEvent
+import org.apache.commons.dbcp2.BasicDataSource
 import org.apache.logging.log4j.Logger
 import java.sql.DriverManager
 
@@ -28,15 +29,15 @@ class StorageService {
             return
         }
 
-//        val dataSource = BasicDataSource()
-//            .apply {
-//                url = jdbc
-//                validationQuery = "SELECT 1"
-//                maxIdle = 1
-//                initialSize = 2
-//            }
+        val dataSource = BasicDataSource()
+            .apply {
+                url = jdbc
+                validationQuery = "SELECT 1"
+                maxIdle = 1
+                initialSize = 2
+            }
 
-        sql = SqlStream.connect(DriverManager.getConnection(jdbc))
+        sql = SqlStream.connect(dataSource)
         Atom.instance.sql = sql
     }
 

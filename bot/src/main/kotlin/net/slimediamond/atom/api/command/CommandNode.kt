@@ -104,6 +104,7 @@ abstract class CommandNode(vararg aliases: String) : Command {
             logger.error(e)
             CommandResult.error(e.msg)
         } catch (e: Throwable) {
+            // this doesn't always trigger for some reason
             logger.error(e)
             CommandResult.error(e.javaClass.name + ": " + (e.message ?: "An error occurred when executing this command"))
         }
