@@ -3,18 +3,18 @@ package net.slimediamond.atom.commands
 import net.slimediamond.atom.api.command.CommandNode
 import net.slimediamond.atom.api.command.CommandNodeContext
 import net.slimediamond.atom.api.command.CommandResult
-import net.slimediamond.atom.api.messaging.RichMessage
+import net.slimediamond.atom.api.messaging.RichText
 
 class WhoamiCommand : CommandNode("whoami") {
 
     override fun execute(context: CommandNodeContext): CommandResult {
-        val builder = RichMessage.of("User information for ${context.sender.name}: ")
+        val builder = RichText.of("User information for ${context.sender.name}: ")
         if (context.sender.userDao != null) {
             val userDao = context.sender.userDao!!
-            builder.append(RichMessage.of("User ID: ${userDao.id}; recognized IRC nickname: ${userDao.ircNickname}; " +
+            builder.append(RichText.of("User ID: ${userDao.id}; recognized IRC nickname: ${userDao.ircNickname}; " +
                     "recognized IRC hostname: ${userDao.ircHostname}; Discord ID: ${userDao.discordId}"))
         } else {
-            builder.append(RichMessage.of("not in the database."))
+            builder.append(RichText.of("not in the database."))
         }
 
         context.sendMessage(builder)

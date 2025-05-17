@@ -4,7 +4,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.slimediamond.atom.api.discord.entities.MessageChannel
-import net.slimediamond.atom.api.messaging.RichMessage
+import net.slimediamond.atom.api.messaging.RichText
 import net.slimediamond.atom.api.messaging.renderer.DiscordRichMessageRenderer
 
 class KordMessageChannel(private val channel: dev.kord.core.entity.channel.MessageChannel) : MessageChannel {
@@ -19,7 +19,7 @@ class KordMessageChannel(private val channel: dev.kord.core.entity.channel.Messa
         }
     }
 
-    override fun sendMessage(message: RichMessage) {
+    override fun sendMessage(message: RichText) {
         sendMessage(DiscordRichMessageRenderer.render(message));
     }
 

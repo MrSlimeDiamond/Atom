@@ -3,10 +3,9 @@ package net.slimediamond.atom.api.command
 import net.slimediamond.atom.api.command.platforms.CommandPlatform
 import net.slimediamond.atom.api.messaging.Audience
 import net.slimediamond.atom.api.messaging.Color
-import net.slimediamond.atom.api.messaging.RichMessage
+import net.slimediamond.atom.api.messaging.RichText
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.Executors
-import kotlin.concurrent.thread
 
 class CommandNodeManager : CommandManager {
 
@@ -29,7 +28,7 @@ class CommandNodeManager : CommandManager {
                 }
             } catch (e: Throwable) {
                 logger.error(e)
-                audience.sendMessage(RichMessage.of("${e.javaClass.name}: ${e.message}").color(Color.RED))
+                audience.sendMessage(RichText.of("${e.javaClass.name}: ${e.message}").color(Color.RED))
             }
         }
     }

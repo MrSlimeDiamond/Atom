@@ -2,7 +2,7 @@ package net.slimediamond.atom.api.irc.entities
 
 import net.slimediamond.atom.api.messaging.Audience
 import net.slimediamond.atom.api.irc.Connection
-import net.slimediamond.atom.api.messaging.RichMessage
+import net.slimediamond.atom.api.messaging.RichText
 import net.slimediamond.atom.api.messaging.renderer.IrcRichMessageRenderer
 import net.slimediamond.atom.storage.dao.ChannelDao
 
@@ -19,7 +19,7 @@ data class Channel(
         connection.sendMessage(name, message)
     }
 
-    override fun sendMessage(message: RichMessage) {
+    override fun sendMessage(message: RichText) {
         IrcRichMessageRenderer.sendMessage(connection, name, message)
     }
 

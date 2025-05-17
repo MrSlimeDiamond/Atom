@@ -10,6 +10,6 @@ interface Audience {
     /**
      * Send a message to the audience
      */
-    fun sendMessage(message: RichMessage)
+    fun sendMessage(message: RichText)
 
 }

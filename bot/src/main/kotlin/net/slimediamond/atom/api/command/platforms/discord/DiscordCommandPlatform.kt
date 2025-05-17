@@ -7,11 +7,11 @@ import net.slimediamond.atom.api.command.exceptions.ArgumentParseException
 import net.slimediamond.atom.api.command.platforms.CommandPlatform
 import net.slimediamond.atom.api.messaging.Audience
 import net.slimediamond.atom.api.messaging.Color
-import net.slimediamond.atom.api.messaging.RichMessage
+import net.slimediamond.atom.api.messaging.RichText
 
 class DiscordCommandPlatform : CommandPlatform {
 
-    override fun renderTooManyArguments(command: CommandNode, index: Int, input: String): RichMessage {
+    override fun renderTooManyArguments(command: CommandNode, index: Int, input: String): RichText {
         val pointer = " ".repeat(index.coerceAtMost(input.length)) + "^"
         var limited = input
 
@@ -19,30 +19,30 @@ class DiscordCommandPlatform : CommandPlatform {
             limited = input.substring(0, 50) + "..."
         }
 
-        return RichMessage.of().color(Color.RED)
-            .append(RichMessage.of("Too many arguments!"))
+        return RichText.of().color(Color.RED)
+            .append(RichText.of("Too many arguments!"))
             .appendNewline()
-            .append(RichMessage.of("> $limited"))
+            .append(RichText.of("> $limited"))
             .appendNewline()
-            .append(RichMessage.of("  $pointer here"))
+            .append(RichText.of("  $pointer here"))
             .appendNewline()
-            .append(RichMessage.of("Usage: "))
-            .append(RichMessage.of(command.usage))
+            .append(RichText.of("Usage: "))
+            .append(RichText.of(command.usage))
     }
 
-    override fun renderNotEnoughArguments(command: CommandNode, index: Int): RichMessage {
+    override fun renderNotEnoughArguments(command: CommandNode, index: Int): RichText {
         val safeIndex = index.coerceAtLeast(0)
         val pointer = caretUnder("Usage", command.usage, safeIndex + 1)
 
-        return RichMessage.of().color(Color.RED)
-            .append(RichMessage.of("Not enough arguments!"))
+        return RichText.of().color(Color.RED)
+            .append(RichText.of("Not enough arguments!"))
             .appendNewline()
-            .append(RichMessage.of("Usage: ${command.usage}"))
+            .append(RichText.of("Usage: ${command.usage}"))
             .appendNewline()
-            .append(RichMessage.of("$pointer here"))
+            .append(RichText.of("$pointer here"))
     }
 
-    override fun renderArgumentParseException(e: ArgumentParseException): RichMessage {
+    override fun renderArgumentParseException(e: ArgumentParseException): RichText {
         val index = e.index
         val input = e.input
 
@@ -53,13 +53,13 @@ class DiscordCommandPlatform : CommandPlatform {
             limited = input.substring(0, 50) + "..."
         }
 
-        return RichMessage.of().color(Color.RED)
-            .append(RichMessage.of("${e.javaClass.name}: "))
+        return RichText.of().color(Color.RED)
+            .append(RichText.of("${e.javaClass.name}: "))
             .append(e.msg)
             .appendNewline()
-            .append(RichMessage.of("> $limited"))
+            .append(RichText.of("> $limited"))
             .appendNewline()
-            .append(RichMessage.of("  $pointer here"))
+            .append(RichText.of("  $pointer here"))
     }
 
     override fun createContext(command: CommandNode, sender: CommandSender, input: String, audience: Audience, parameterKeyMap: Map<String, String>): CommandNodeContext {

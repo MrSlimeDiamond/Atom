@@ -7,20 +7,20 @@ import net.slimediamond.atom.api.command.exceptions.ArgumentParseException
 import net.slimediamond.atom.api.command.platforms.CommandPlatform
 import net.slimediamond.atom.api.messaging.Audience
 import net.slimediamond.atom.api.messaging.Color
-import net.slimediamond.atom.api.messaging.RichMessage
+import net.slimediamond.atom.api.messaging.RichText
 
 class IrcCommandPlatform : CommandPlatform {
 
-    override fun renderTooManyArguments(command: CommandNode, index: Int, input: String): RichMessage {
-        return RichMessage.of("Too many arguments! Usage: ${command.usage}").color(Color.RED)
+    override fun renderTooManyArguments(command: CommandNode, index: Int, input: String): RichText {
+        return RichText.of("Too many arguments! Usage: ${command.usage}").color(Color.RED)
     }
 
-    override fun renderNotEnoughArguments(command: CommandNode, index: Int): RichMessage {
-        return RichMessage.of("Not enough arguments! Usage: ${command.usage}").color(Color.RED)
+    override fun renderNotEnoughArguments(command: CommandNode, index: Int): RichText {
+        return RichText.of("Not enough arguments! Usage: ${command.usage}").color(Color.RED)
     }
 
-    override fun renderArgumentParseException(e: ArgumentParseException): RichMessage {
-        return RichMessage.of("Could not parse args: ${e.javaClass.simpleName}: ")
+    override fun renderArgumentParseException(e: ArgumentParseException): RichText {
+        return RichText.of("Could not parse args: ${e.javaClass.simpleName}: ")
             .append(e.msg)
             .color(Color.RED)
     }

@@ -1,7 +1,7 @@
 package net.slimediamond.atom.api.irc.entities
 
 import net.slimediamond.atom.api.irc.Connection
-import net.slimediamond.atom.api.messaging.RichMessage
+import net.slimediamond.atom.api.messaging.RichText
 import net.slimediamond.atom.api.messaging.renderer.IrcRichMessageRenderer
 
 class UserImpl(
@@ -15,7 +15,7 @@ class UserImpl(
         connection.sendMessage(nickname, message)
     }
 
-    override fun sendMessage(message: RichMessage) {
+    override fun sendMessage(message: RichText) {
         IrcRichMessageRenderer.sendMessage(connection, username, message)
     }
 

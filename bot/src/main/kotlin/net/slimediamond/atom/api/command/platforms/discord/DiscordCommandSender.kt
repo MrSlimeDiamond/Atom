@@ -2,7 +2,7 @@ package net.slimediamond.atom.api.command.platforms.discord
 
 import net.slimediamond.atom.api.command.CommandSender
 import net.slimediamond.atom.api.discord.entities.User
-import net.slimediamond.atom.api.messaging.RichMessage
+import net.slimediamond.atom.api.messaging.RichText
 import net.slimediamond.atom.storage.dao.UserDao
 
 class DiscordCommandSender(private val user: User) : CommandSender {
@@ -22,7 +22,7 @@ class DiscordCommandSender(private val user: User) : CommandSender {
         user.sendMessage(message)
     }
 
-    override fun sendMessage(message: RichMessage) {
+    override fun sendMessage(message: RichText) {
         user.sendMessage(message)
     }
 

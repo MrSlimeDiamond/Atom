@@ -1,7 +1,7 @@
 package net.slimediamond.atom.api.messaging.renderer
 
 import net.slimediamond.atom.api.messaging.Color
-import net.slimediamond.atom.api.messaging.RichMessage
+import net.slimediamond.atom.api.messaging.RichText
 
 // wrapper for the irc renderer but in a discord 'ansi' embed
 object DiscordRichMessageRenderer {
@@ -20,7 +20,7 @@ object DiscordRichMessageRenderer {
         Color.WHITE to "37m"
     )
 
-    private fun renderAnsi(message: RichMessage): String {
+    private fun renderAnsi(message: RichText): String {
         val builder = StringBuilder()
         message.parts.forEach { part ->
             val color = COLORS[part.style?.color]
@@ -34,7 +34,7 @@ object DiscordRichMessageRenderer {
         return builder.toString()
     }
 
-    fun render(message: RichMessage): String {
+    fun render(message: RichText): String {
         return buildString {
             append("```ansi\n")
             append(renderAnsi(message))

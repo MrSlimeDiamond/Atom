@@ -5,31 +5,31 @@ import java.util.LinkedList
 /**
  * A "rich message", supporting colours, appending elements, etc
  */
-class RichMessage private constructor(var content: String, var style: Style?) {
+class RichText private constructor(var content: String, var style: Style?) {
 
-    val parts: MutableList<RichMessage> = LinkedList()
+    val parts: MutableList<RichText> = LinkedList()
 
     init {
         parts.add(this)
     }
 
     companion object {
-        fun of(content: String): RichMessage {
-            return RichMessage(content, null)
+        fun of(content: String): RichText {
+            return RichText(content, null)
         }
 
-        fun of(): RichMessage {
-            return RichMessage("", null)
+        fun of(): RichText {
+            return RichText("", null)
         }
     }
 
-    fun color(color: Color): RichMessage {
+    fun color(color: Color): RichText {
         val style = Style(color)
         this.style = style
         return this
     }
 
-    fun append(other: RichMessage): RichMessage {
+    fun append(other: RichText): RichText {
         if (other.style == null) {
             other.style = this.style
         }
@@ -37,7 +37,7 @@ class RichMessage private constructor(var content: String, var style: Style?) {
         return this
     }
 
-    fun appendNewline(): RichMessage {
+    fun appendNewline(): RichText {
         parts.add(of("\n"))
         return this
     }

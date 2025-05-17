@@ -5,7 +5,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.slimediamond.atom.api.discord.entities.User
-import net.slimediamond.atom.api.messaging.RichMessage
+import net.slimediamond.atom.api.messaging.RichText
 import net.slimediamond.atom.api.messaging.renderer.DiscordRichMessageRenderer
 
 class KordUser(private val user: dev.kord.core.entity.User) : User {
@@ -24,7 +24,7 @@ class KordUser(private val user: dev.kord.core.entity.User) : User {
         }
     }
 
-    override fun sendMessage(message: RichMessage) {
+    override fun sendMessage(message: RichText) {
         sendMessage(DiscordRichMessageRenderer.render(message))
     }
 

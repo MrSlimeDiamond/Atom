@@ -5,7 +5,7 @@ import net.slimediamond.atom.api.command.CommandNodeContext
 import net.slimediamond.atom.api.command.CommandSender
 import net.slimediamond.atom.api.command.platforms.CommandPlatform
 import net.slimediamond.atom.api.messaging.Audience
-import net.slimediamond.atom.api.messaging.RichMessage
+import net.slimediamond.atom.api.messaging.RichText
 
 class DiscordCommandNodeContext(
     commandNode: CommandNode,
@@ -20,7 +20,7 @@ class DiscordCommandNodeContext(
         audience.sendMessage(message)
     }
 
-    override fun sendMessage(message: RichMessage) {
+    override fun sendMessage(message: RichText) {
         audience.sendMessage(message)
     }
 

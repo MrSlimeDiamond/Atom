@@ -1,6 +1,6 @@
 package net.slimediamond.atom.api.command
 
-import net.slimediamond.atom.api.messaging.RichMessage
+import net.slimediamond.atom.api.messaging.RichText
 
 interface CommandResult {
 
@@ -12,7 +12,7 @@ interface CommandResult {
     /**
      * A message associated with this command result
      */
-    val message: RichMessage?
+    val message: RichText?
 
     companion object {
 
@@ -22,7 +22,7 @@ interface CommandResult {
         val success: CommandResult
             get() = object: CommandResult {
                 override val success = true
-                override val message: RichMessage? = null
+                override val message: RichText? = null
             }
 
         /**
@@ -31,7 +31,7 @@ interface CommandResult {
         val empty: CommandResult
             get() = object: CommandResult {
                 override val success = false
-                override val message: RichMessage? = null
+                override val message: RichText? = null
             }
 
         /**
@@ -39,13 +39,13 @@ interface CommandResult {
          */
         fun error(message: String): CommandResult = object : CommandResult {
             override val success = false
-            override val message = RichMessage.of(message)
+            override val message = RichText.of(message)
         }
 
         /**
          * Return an error command result with a message
          */
-        fun error(message: RichMessage): CommandResult = object : CommandResult {
+        fun error(message: RichText): CommandResult = object : CommandResult {
             override val success = false
             override val message = message
         }

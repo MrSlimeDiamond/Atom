@@ -1,7 +1,7 @@
 package net.slimediamond.atom.api.command.parameter
 
 import net.slimediamond.atom.api.command.exceptions.ArgumentParseException
-import net.slimediamond.atom.api.messaging.RichMessage
+import net.slimediamond.atom.api.messaging.RichText
 
 interface Parameter {
 
@@ -34,7 +34,7 @@ interface Parameter {
                 try {
                     return@parser it.toInt()
                 } catch (e: NumberFormatException) {
-                    throw ArgumentParseException(it, 0, RichMessage.of("Provided input is not a number"))
+                    throw ArgumentParseException(it, 0, RichText.of("Provided input is not a number"))
                 }
             }
         }
