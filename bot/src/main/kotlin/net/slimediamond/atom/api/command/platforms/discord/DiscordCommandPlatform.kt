@@ -63,7 +63,7 @@ class DiscordCommandPlatform : CommandPlatform {
     }
 
     override fun createContext(command: CommandNode, sender: CommandSender, input: String, audience: Audience, parameterKeyMap: Map<String, String>): CommandNodeContext {
-        TODO("Not yet implemented")
+        return DiscordCommandNodeContext(command, sender, input, this, parameterKeyMap, audience)
     }
 
     private fun caretUnder(prefix: String, content: String, paramIndex: Int): String {

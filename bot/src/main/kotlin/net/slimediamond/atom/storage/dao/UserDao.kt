@@ -1,7 +1,6 @@
 package net.slimediamond.atom.storage.dao
 
 import net.slimediamond.atom.Atom
-import net.slimediamond.atom.api.irc.entities.User
 import net.slimediamond.atom.services.PermissionService
 import net.slimediamond.atom.storage.StorageService
 import java.sql.ResultSet
@@ -13,10 +12,16 @@ class UserDao(val id: Int) {
         private val sql = Atom.instance.serviceManager.provide(StorageService::class.java).sql
         private val permissionService = Atom.instance.serviceManager.provide(PermissionService::class.java)
 
-        fun getFromIrc(user: User): Optional<UserDao> {
-            return sql.first("SELECT * from users WHERE irc_nickname = ? AND irc_hostname = ?", {
+        fun getFromIrc(user: net.slimediamond.atom.api.irc.entities.User): Optional<UserDao> {
+            return sql.first("SELECT id from users WHERE irc_nickname = ? AND irc_hostname = ?", {
                 UserDao(it.getInt("id"))
             }, user.nickname, user.hostname)
+        }
+
+        fun getFromDiscord(user: net.slimediamond.atom.api.discord.entities.User): Optional<UserDao> {
+            return sql.first("SELECT id FROM users WHERE discord_id = ?", {
+                UserDao(it.getInt("id"))
+            }, user.id)
         }
     }
 

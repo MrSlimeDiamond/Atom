@@ -15,4 +15,7 @@ class Configuration {
     @Setting("storage")
     val storageConfiguration = StorageConfiguration()
 
+    @Setting("discord")
+    val discordConfiguration = DiscordConfiguration()
+
 }

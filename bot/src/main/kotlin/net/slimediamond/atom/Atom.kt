@@ -15,6 +15,7 @@ import net.slimediamond.atom.services.PermissionService
 import net.slimediamond.atom.storage.StorageService
 import net.slimediamond.atom.api.factory.DefaultFactoryProvider
 import net.slimediamond.atom.api.factory.FactoryProvider
+import net.slimediamond.atom.discord.DiscordBot
 import net.slimediamond.data.identification.NamespaceHolder
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -77,6 +78,7 @@ class Atom : NamespaceHolder {
         serviceManager.addService(StorageService())
         serviceManager.addService(PermissionService())
         serviceManager.addService(IrcBot())
+        serviceManager.addService(DiscordBot())
 
         logger.info("Registering commands")
         commandNodeManager = CommandNodeManager()

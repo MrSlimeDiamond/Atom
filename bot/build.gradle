@@ -23,6 +23,7 @@ dependencies {
     implementation 'me.lucko:sql-streams:1.0.0'
     implementation 'org.apache.commons:commons-dbcp2:2.13.0'
     implementation 'com.mysql:mysql-connector-j:9.3.0'
+    implementation 'dev.kord:kord-core:0.15.0'
 }
 
 test {
