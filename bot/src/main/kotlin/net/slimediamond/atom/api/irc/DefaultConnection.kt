@@ -51,6 +51,10 @@ class DefaultConnection(
         sendRaw("PRIVMSG $target :$message")
     }
 
+    override fun joinChannel(target: String) {
+        sendRaw("JOIN $target")
+    }
+
     override fun sendRaw(line: String) {
         writer.write(line + "\r\n")
         writer.flush()

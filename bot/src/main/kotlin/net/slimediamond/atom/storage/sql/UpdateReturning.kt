@@ -7,7 +7,7 @@ import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
 
-fun <T> SqlStream.updateReturning(sql: String, mapping: SqlFunction<ResultSet, T>, vararg params: Any): T {
+inline fun <T> SqlStream.updateReturning(sql: String, mapping: SqlFunction<ResultSet, T>, vararg params: Any): T {
     val update = Atom.instance.sql.update { conn -> conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) }
     update.with(*params)
     update.execute()

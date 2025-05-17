@@ -53,6 +53,11 @@ interface Connection {
     fun sendMessage(target: String, message: String)
 
     /**
+     * Join the specified IRC channel
+     */
+    fun joinChannel(target: String)
+
+    /**
      * Sends a raw message to the server
      */
     fun sendRaw(line: String)

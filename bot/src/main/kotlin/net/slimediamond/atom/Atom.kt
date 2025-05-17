@@ -73,10 +73,10 @@ class Atom : NamespaceHolder {
         eventManager = EventManager()
         factoryProvider = DefaultFactoryProvider()
 
-        serviceManager.addService(IrcBot())
 
         serviceManager.addService(StorageService())
         serviceManager.addService(PermissionService())
+        serviceManager.addService(IrcBot())
 
         logger.info("Registering commands")
         commandNodeManager = CommandNodeManager()

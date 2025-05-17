@@ -32,8 +32,8 @@ class ChannelDao(private val id: Int, val name: String) {
         }
         set(value) {
             Atom.instance.sql.execute("UPDATE irc_channels SET auto_join = ? WHERE id = ?")
-                .with(value)
-                .with(this.id)
+                .with(value, this.id)
+                .execute()
         }
 
 }

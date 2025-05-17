@@ -19,6 +19,11 @@ class ChannelAutoJoinCommand : CommandNode("autojoin") {
         val channelDao = CommandUtils.getChannelDao(context)
         val status = context.requireOne(Parameters.BOOLEAN)
 
+        if (channelDao.autoJoin == status) {
+            context.sendMessage("Auto join is already $status for ${channelDao.name}")
+            return CommandResult.success
+        }
+
         channelDao.autoJoin = status
 
         context.sendMessage("Auto join for ${channelDao.name} is now: $status")

@@ -1,23 +1,25 @@
 package net.slimediamond.atom.commands.ircbot
 
+import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.command.CommandNode
 import net.slimediamond.atom.api.command.CommandNodeContext
 import net.slimediamond.atom.api.command.CommandResult
 import net.slimediamond.atom.commands.parameters.Parameters
-import net.slimediamond.atom.storage.dao.ChannelDao
+import net.slimediamond.atom.ircbot.IrcBot
 
-class ChannelAddCommand : CommandNode("add") {
+class ChannelJoinCommand : CommandNode("join") {
 
     init {
         parameters.add(Parameters.IRC_CHANNEL)
-        permission = "atom.command.ircbot.channel.add"
+        permission = "atom.command.ircbot.channel.join"
     }
 
     override fun execute(context: CommandNodeContext): CommandResult {
         val channel = context.requireOne(Parameters.IRC_CHANNEL)
-        // This creates a DAO (adds it to the database) if one doesn't exist
-        val dao = ChannelDao.getByName(channel)
-        context.sendMessage("Channel $channel added (or nothing was done if it's already added)")
+
+        Atom.instance.serviceManager.provide(IrcBot::class.java).connection.joinChannel(channel)
+        context.sendMessage("Joined channel $channel")
+
         return CommandResult.success
     }
 

@@ -2,6 +2,7 @@ package net.slimediamond.atom.ircbot
 
 import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.event.Listener
+import net.slimediamond.atom.api.irc.Connection
 import net.slimediamond.atom.api.irc.ConnectionInfo
 import net.slimediamond.atom.api.irc.IrcClient
 import net.slimediamond.atom.api.irc.Server
@@ -10,6 +11,7 @@ import net.slimediamond.atom.api.irc.factory.ConnectionFactory
 import net.slimediamond.atom.ircbot.listeners.IrcMessageListener
 import net.slimediamond.atom.api.service.Service
 import net.slimediamond.atom.api.service.events.ServiceStartEvent
+import net.slimediamond.atom.storage.StorageService
 import org.apache.logging.log4j.Logger
 
 @Service("ircbot")
@@ -17,6 +19,7 @@ class IrcBot {
 
     private lateinit var logger: Logger
     private lateinit var client: IrcClient
+    lateinit var connection: Connection
 
     @Listener
     fun onServiceStart(event: ServiceStartEvent) {
@@ -43,15 +46,20 @@ class IrcBot {
             error("Please configure IRC host configuration")
         }
 
+        // client.addLineHandler { println(it) }
+
         val server = Server(name, hostname, port, serverConfig.ssl)
         logger.info("Connecting to {} ({}, {})", server.name, server.host, server.port)
-        client.connect(ConnectionInfo(nickname, realname, username, server))
-        // No code executes past here. Fuck threading
+        connection = client.connect(ConnectionInfo(nickname, realname, username, server))
     }
 
     @Listener
     fun onIrcWelcome(event: IrcReceivedWelcomeEvent) {
         logger.info("IRC bot connected")
+
+        Atom.instance.serviceManager.provide(StorageService::class.java).getAutoJoinChannels().forEach { channel ->
+            event.connection.joinChannel(channel)
+        }
     }
 
 }

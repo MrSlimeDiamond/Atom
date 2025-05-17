@@ -7,6 +7,7 @@ import net.slimediamond.atom.api.irc.linehandlers.MessageLineHandler
 import net.slimediamond.atom.api.irc.linehandlers.PingLineHandler
 import net.slimediamond.atom.api.irc.linehandlers.WelcomeLineHandler
 import java.util.LinkedList
+import java.util.function.Consumer
 
 /**
  * An IRC client
@@ -26,15 +27,25 @@ class IrcClient {
     /**
      * Add a server to the IRC client
      */
-    fun connect(metadata: ConnectionInfo) {
+    fun connect(metadata: ConnectionInfo): Connection {
         val connection: Connection = Atom.instance.factoryProvider.provide(ConnectionFactory::class.java)
             .create(metadata.nickname, metadata.realName, metadata.username, metadata.server)
         connection.connect(this)
         connections.add(connection)
+        return connection
     }
 
     fun addLineHandler(handler: LineHandler) {
         lineHandlers.add(handler)
+    }
+
+    fun addLineHandler(handler: Consumer<String>) {
+        lineHandlers.add(object : LineHandler {
+            override fun handle(line: String, connection: Connection) {
+                handler.accept(line)
+            }
+
+        })
     }
 
     fun handleLine(line: String, connection: Connection) {
