@@ -102,32 +102,33 @@ public class MCOPlayer {
      * @throws UnknownPlayerException If the player does not exist
      */
     public Optional<Date> getLastseen() throws SQLException, IOException, UnknownPlayerException {
-        if (this.lastseen != null) {
-            return Optional.of(this.lastseen);
-        } else {
-            Optional<Date> mcoLastseen = database.getMCOLastseenByName(username);
-            if (mcoLastseen.isPresent()) {
-                // in database
-                this.lastseen = mcoLastseen.get();
-                return mcoLastseen;
-            } else {
-                // We'll have to retrieve it first
-                Optional<Date> lastseen = MinecraftOnlineAPI.getPlayerLastseenByName(username);
-
-                // This shouldn't happen, but just in case
-                if (!lastseen.isPresent()) throw new UnknownPlayerException(this.username + " was not found");
-
-                // If the player's lastseen is not in the database, insert it
-
-                try {
-                    setLastseen(lastseen.get());
-                } catch (SQLException e) {
-                    this.lastseen = lastseen.get();
-                    throw new RuntimeException(e);
-                }
-                return lastseen;
-            }
-        }
+//        if (this.lastseen != null) {
+//            return Optional.of(this.lastseen);
+//        } else {
+//            Optional<Date> mcoLastseen = database.getMCOLastseenByName(username);
+//            if (mcoLastseen.isPresent()) {
+//                // in database
+//                this.lastseen = mcoLastseen.get();
+//                return mcoLastseen;
+//            } else {
+//                // We'll have to retrieve it first
+//                Optional<Date> lastseen = MinecraftOnlineAPI.getPlayerLastseenByName(username);
+//
+//                // This shouldn't happen, but just in case
+//                if (!lastseen.isPresent()) throw new UnknownPlayerException(this.username + " was not found");
+//
+//                // If the player's lastseen is not in the database, insert it
+//
+//                try {
+//                    setLastseen(lastseen.get());
+//                } catch (SQLException e) {
+//                    this.lastseen = lastseen.get();
+//                    throw new RuntimeException(e);
+//                }
+//                return lastseen;
+//            }
+//        }
+        return MinecraftOnlineAPI.getPlayerLastseenByName(this.username);
     }
 
     /**
