@@ -1,7 +1,9 @@
 package net.slimediamond.atom.api.command.parameter
 
+import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.command.exceptions.ArgumentParseException
 import net.slimediamond.atom.api.messaging.RichText
+import net.slimediamond.atom.api.service.ServiceContainer
 
 interface Parameter {
 
@@ -45,6 +47,14 @@ interface Parameter {
 
         fun boolean(): Value.Builder<Boolean> {
             return builder(Boolean::class.java).parser { it.toBoolean() }
+        }
+
+        fun service(): Value.Builder<ServiceContainer> {
+            return builder(ServiceContainer::class.java)
+                .parser {
+                    Atom.instance.serviceManager.getByName(it)?:
+                    throw ArgumentParseException(it, 0, RichText.of("Could not find a service container with that name"))
+                }
         }
     }
 

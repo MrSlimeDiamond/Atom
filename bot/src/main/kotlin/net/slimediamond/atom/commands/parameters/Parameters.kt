@@ -6,18 +6,18 @@ import net.slimediamond.atom.api.messaging.RichText
 
 object Parameters {
 
-    val MESSAGE: Parameter.Value<String> = Parameter.string()
+    val MESSAGE = Parameter.string()
         .key("message")
         .greedy()
         .build()
 
-    val OPTIONAL_MESSAGE: Parameter.Value<String> = Parameter.string()
+    val OPTIONAL_MESSAGE = Parameter.string()
         .optional()
         .key("message")
         .greedy()
         .build()
 
-    val NUMBER: Parameter.Value<Int> = Parameter.int()
+    val NUMBER = Parameter.int()
         .key("number")
         .build()
 
@@ -25,7 +25,7 @@ object Parameters {
         .key("status")
         .build()
 
-    val IRC_CHANNEL: Parameter.Value<String> = Parameter.string()
+    val IRC_CHANNEL = Parameter.string()
         .key("channel")
         .parser { input ->
             if (!input.startsWith("#")) {
@@ -36,6 +36,10 @@ object Parameters {
             }
             return@parser input
         }
+        .build()
+
+    val SERVICE = Parameter.service()
+        .key("service")
         .build()
 
 }

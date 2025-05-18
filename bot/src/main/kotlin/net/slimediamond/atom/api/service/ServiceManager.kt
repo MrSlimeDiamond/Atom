@@ -37,4 +37,8 @@ class ServiceManager {
         return services[clazz]?.instance as T
     }
 
+    fun getByName(name: String): ServiceContainer? {
+        return services.values.firstOrNull { it.name == name }
+    }
+
 }
