@@ -46,6 +46,10 @@ class KordDiscordClient(private val token: String) : DiscordClient {
         }
     }
 
+    override suspend fun logout() {
+        kord.logout()
+    }
+
     override suspend fun getGuildById(id: Long): Guild? {
         val kordGuild = kord.guilds.filter { it.id.value.toLong() == id }.firstOrNull()
         if (kordGuild != null) {
@@ -53,6 +57,5 @@ class KordDiscordClient(private val token: String) : DiscordClient {
         }
         return null
     }
-
 
 }

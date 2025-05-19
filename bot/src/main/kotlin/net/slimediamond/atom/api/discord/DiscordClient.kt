@@ -10,6 +10,11 @@ interface DiscordClient {
     suspend fun login()
 
     /**
+     * Log out from the Discord API
+     */
+    suspend fun logout()
+
+    /**
      * Get a guild by its ID
      */
     suspend fun getGuildById(id: Long): Guild?

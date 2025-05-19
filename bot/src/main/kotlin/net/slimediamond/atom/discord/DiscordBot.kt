@@ -8,13 +8,14 @@ import net.slimediamond.atom.api.discord.DiscordClient
 import net.slimediamond.atom.api.event.Listener
 import net.slimediamond.atom.api.service.Service
 import net.slimediamond.atom.api.service.events.ServiceStartEvent
+import net.slimediamond.atom.api.service.events.ServiceStopEvent
 import net.slimediamond.atom.discord.abstraction.KordDiscordClient
 import net.slimediamond.atom.discord.listeners.DiscordMessageListener
 
 @Service("discord")
 class DiscordBot {
 
-    lateinit var discordClient: DiscordClient
+    lateinit var client: DiscordClient
 
     @OptIn(DelicateCoroutinesApi::class)
     @Listener
@@ -25,13 +26,21 @@ class DiscordBot {
             event.container.logger.error("No token provided - Discord bot will not start")
             return
         }
-        discordClient = KordDiscordClient(token)
+        client = KordDiscordClient(token)
         GlobalScope.launch {
             event.container.logger.info("Logging in!")
-            discordClient.login()
+            client.login()
         }
 
         Atom.instance.eventManager.registerListener(DiscordMessageListener())
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    @Listener
+    fun onServiceStop(event: ServiceStopEvent) {
+        GlobalScope.launch {
+            client.logout()
+        }
     }
 
 }
