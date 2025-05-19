@@ -13,6 +13,7 @@ import net.slimediamond.atom.api.command.platforms.discord.DiscordCommandNodeCon
 import net.slimediamond.atom.api.event.Listener
 import net.slimediamond.atom.api.service.events.ServiceStopEvent
 import net.slimediamond.atom.commands.parameters.Parameters
+import net.slimediamond.atom.utils.Embeds
 
 class ServicesCommand : RootOnlyCommandNode("services") {
 
@@ -29,6 +30,7 @@ class ServicesCommand : RootOnlyCommandNode("services") {
             val services = Atom.instance.serviceManager.services
             if (context is DiscordCommandNodeContext) {
                 val embed = EmbedBuilder().apply {
+                    color = Embeds.THEME_COLOR
                     title = "Services"
                     description = services.map { service -> "* ${service.value.name}" }.joinToString("\n")
                     footer { text = "${services.size} total" }
@@ -76,7 +78,7 @@ class ServicesCommand : RootOnlyCommandNode("services") {
 //                return CommandResult.success
 //            }
 
-            context.sendMessage("Restarting service ${service.name}")
+            context.replySuccess("Restarting service ${service.name}")
             service.restart()
             return CommandResult.success
         }
