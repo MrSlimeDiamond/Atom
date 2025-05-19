@@ -3,20 +3,20 @@ package net.slimediamond.atom.api.messaging
 enum class Color {
 
     WHITE,
-    BLACK,
-    NAVY,
+//    BLACK,
+//    NAVY,
     GREEN,
     RED,
-    DARK_RED,
-    PURPLE,
-    OLIVE,
+//    DARK_RED,
+//    PURPLE,
+//    OLIVE,
     YELLOW,
-    LIGHT_GREEN,
-    TEAL,
+//    LIGHT_GREEN,
+//    TEAL,
     CYAN,
     BLUE,
     PINK,
     GRAY,
-    LIGHT_GRAY
+//    LIGHT_GRAY
 
 }

@@ -9,21 +9,21 @@ object IrcRichMessageRenderer {
     private const val COLOR_CODE = '\u0003'
     private val COLORS: Map<Color, String> = mapOf(
         Color.WHITE to "00",
-        Color.BLACK to "01",
-        Color.NAVY to "02",
+//        Color.BLACK to "01",
+//        Color.NAVY to "02",
         Color.GREEN to "03",
         Color.RED to "04",
-        Color.DARK_RED to "05",
-        Color.PURPLE to "06",
-        Color.OLIVE to "07",
+//        Color.DARK_RED to "05",
+//        Color.PURPLE to "06",
+//        Color.OLIVE to "07",
         Color.YELLOW to "08",
-        Color.LIGHT_GREEN to "09",
-        Color.TEAL to "10",
+//        Color.LIGHT_GREEN to "09",
+//        Color.TEAL to "10",
         Color.CYAN to "11",
         Color.BLUE to "12",
         Color.PINK to "13",
         Color.GRAY to "14",
-        Color.LIGHT_GRAY to "15"
+//        Color.LIGHT_GRAY to "15"
     )
 
     fun render(message: RichText): String {
