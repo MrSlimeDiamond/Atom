@@ -21,6 +21,18 @@ class RichText private constructor(var content: String, var style: Style?) {
         fun of(): RichText {
             return RichText("", null)
         }
+
+        fun newline(): RichText {
+            return of("\n")
+        }
+
+        fun join(separator: RichText, parts: Collection<RichText>): RichText {
+            val builder = of()
+            parts.forEach { part ->
+                builder.append(separator).append(part)
+            }
+            return builder
+        }
     }
 
     fun color(color: Color): RichText {
@@ -38,7 +50,7 @@ class RichText private constructor(var content: String, var style: Style?) {
     }
 
     fun appendNewline(): RichText {
-        parts.add(of("\n"))
+        parts.add(newline())
         return this
     }
 

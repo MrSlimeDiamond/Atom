@@ -39,4 +39,8 @@ class CommandNodeManager : CommandManager {
         }
     }
 
+    fun getCommands(): List<CommandNode> {
+        return commands.values.toList()
+    }
+
 }

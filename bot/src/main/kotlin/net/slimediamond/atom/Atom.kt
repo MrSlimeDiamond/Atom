@@ -2,6 +2,7 @@ package net.slimediamond.atom
 
 import be.bendem.sqlstreams.SqlStream
 import net.slimediamond.atom.api.command.CommandNodeManager
+import net.slimediamond.atom.api.command.HelpCommandNode
 import net.slimediamond.atom.commands.ircbot.IrcBotRootCommand
 import net.slimediamond.atom.configuration.Configuration
 import net.slimediamond.atom.api.event.EventManager
@@ -78,6 +79,7 @@ class Atom {
 
         logger.info("Registering commands")
         commandNodeManager = CommandNodeManager()
+        commandNodeManager.register(HelpCommandNode())
         commandNodeManager.register(PingCommand())
         commandNodeManager.register(WhoamiCommand())
         commandNodeManager.register(ColorsCommand())

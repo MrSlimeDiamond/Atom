@@ -10,14 +10,18 @@ object DiscordRichMessageRenderer {
 
     // FIXME: Not all colours are populated.
     private val COLORS = mapOf(
-        Color.GRAY to "30m",
+        Color.GRAY to "90m",
         Color.RED to "31m",
-        Color.OLIVE to "32m",
+        Color.DARK_RED to "31m",
+        Color.GREEN to "32m",
+        Color.LIGHT_GREEN to "32m",
         Color.YELLOW to "33m",
         Color.BLUE to "34m",
         Color.PINK to "35m",
+        Color.PURPLE to "35m",
         Color.CYAN to "36m",
-        Color.WHITE to "37m"
+        Color.WHITE to "37m",
+        Color.RED to "91m",
     )
 
     private fun renderAnsi(message: RichText): String {

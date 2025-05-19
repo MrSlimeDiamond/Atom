@@ -22,6 +22,12 @@ abstract class CommandNode(vararg aliases: String) : Command {
     @Volatile
     var parent: CommandNode? = null
 
+    init {
+        if (this !is HelpCommandNode) {
+            addChild(HelpCommandNode())
+        }
+    }
+
     open val usage: String
         get() {
             return buildString {
