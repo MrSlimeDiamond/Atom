@@ -26,18 +26,21 @@ class HelpCommandNode : CommandNode("Help subcommand", "help", "?") {
                 .append(RichText.of("Usage: ${parent!!.usage}").color(Color.CYAN))
         }
 
-        parents.forEach { parent ->
-            result
-                .appendNewline()
+        parents.stream()
+            .distinct()
+            .filter { it.permission == null || context.sender.hasPermission(it.permission!!) }
+            .filter { it.platforms.isEmpty() || it.platforms.contains(context.platform) }
+            .forEach { parent ->
+            result.appendNewline()
                 .append(command(parent))
                 .append(RichText.join(RichText.newline().append(RichText.of("  ")),
                     parent.children
                         .filter { it !is HelpCommandNode }
                         .map { command(it) }))
         }
-        context.sender.sendMessage(result)
 
-        // TODO: Announce that they've been DMed
+        // Send it to the command sender and not into the actual channel
+        context.sender.sendMessage(result)
 
         return CommandResult.success
     }
