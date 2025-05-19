@@ -1,10 +1,10 @@
 package net.slimediamond.atom.api.discord.entities
 
-import net.slimediamond.atom.api.messaging.Audience
+import net.slimediamond.atom.api.messaging.DiscordAudience
 import net.slimediamond.atom.storage.dao.UserDao
 import java.util.*
 
-interface User : Audience {
+interface User : DiscordAudience {
 
     /**
      * The user's display name

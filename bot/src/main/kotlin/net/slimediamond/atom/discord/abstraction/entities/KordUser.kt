@@ -1,12 +1,12 @@
 package net.slimediamond.atom.discord.abstraction.entities
 
 import dev.kord.core.entity.effectiveName
+import dev.kord.rest.builder.message.EmbedBuilder
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.slimediamond.atom.api.discord.entities.User
 import net.slimediamond.atom.api.messaging.RichText
-import net.slimediamond.atom.api.messaging.renderer.DiscordRichMessageRenderer
 
 class KordUser(private val user: dev.kord.core.entity.User) : User {
 
@@ -17,15 +17,26 @@ class KordUser(private val user: dev.kord.core.entity.User) : User {
     override val id: Long
         get() = user.id.value.toLong()
 
+    override suspend fun sendEmbeds(vararg embeds: EmbedBuilder) {
+        getDmChannel().sendEmbeds(*embeds)
+    }
+
     @OptIn(DelicateCoroutinesApi::class)
     override fun sendMessage(message: String) {
         GlobalScope.launch {
-            user.getDmChannel().createMessage(message)
+            getDmChannel().sendMessage(message)
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun sendMessage(message: RichText) {
-        sendMessage(DiscordRichMessageRenderer.render(message))
+        GlobalScope.launch {
+            getDmChannel().sendMessage(message)
+        }
+    }
+
+    suspend fun getDmChannel(): KordMessageChannel {
+        return KordMessageChannel(user.getDmChannel())
     }
 
 }

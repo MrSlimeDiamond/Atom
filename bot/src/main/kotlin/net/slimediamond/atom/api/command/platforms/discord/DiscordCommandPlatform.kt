@@ -7,6 +7,7 @@ import net.slimediamond.atom.api.command.exceptions.ArgumentParseException
 import net.slimediamond.atom.api.command.platforms.CommandPlatform
 import net.slimediamond.atom.api.messaging.Audience
 import net.slimediamond.atom.api.messaging.Color
+import net.slimediamond.atom.api.messaging.DiscordAudience
 import net.slimediamond.atom.api.messaging.RichText
 
 class DiscordCommandPlatform : CommandPlatform {
@@ -63,6 +64,9 @@ class DiscordCommandPlatform : CommandPlatform {
     }
 
     override fun createContext(command: CommandNode, sender: CommandSender, input: String, audience: Audience, parameterKeyMap: Map<String, String>): CommandNodeContext {
+        if (audience !is DiscordAudience) {
+            throw IllegalArgumentException("Provided audience is not Discord compatible")
+        }
         return DiscordCommandNodeContext(command, sender, input, this, parameterKeyMap, audience)
     }
 

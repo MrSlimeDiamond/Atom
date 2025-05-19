@@ -15,6 +15,7 @@ class DefaultConnection(
 
     private lateinit var socket: Socket
     private lateinit var writer: BufferedWriter
+    private lateinit var thread: Thread
 
     override var isConnected: Boolean
         get() = ::socket.isInitialized && !socket.isConnected
@@ -27,7 +28,7 @@ class DefaultConnection(
 //        }
         // initializing this actually makes the connection
         socket = Socket(server.host, server.port)
-        Thread {
+        thread = Thread {
             val reader = BufferedReader(InputStreamReader(socket.getInputStream()))
             writer = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
             sendRaw("NICK $nickname")
@@ -38,13 +39,17 @@ class DefaultConnection(
             }
         }.apply {
             name = "irc bot"
-        }.start()
+        }
+
+        thread.start()
     }
 
     override fun disconnect(message: String) {
         sendRaw("QUIT :$message")
         writer.close()
         socket.close()
+        isConnected = false
+        thread.interrupt()
     }
 
     override fun sendMessage(target: String, message: String) {

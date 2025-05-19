@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger
 
 class ServiceManager {
 
-    private val services: MutableMap<Class<*>, ServiceContainer> = HashMap()
+    val services: MutableMap<Class<*>, ServiceContainer> = HashMap()
     private val logger: Logger = LogManager.getLogger("service manager")
 
     fun addService(instance: Any) {

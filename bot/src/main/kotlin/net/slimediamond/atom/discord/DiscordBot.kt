@@ -22,7 +22,8 @@ class DiscordBot {
         event.container.logger.info("Starting Discord bot")
         val token = Atom.instance.configuration.discordConfiguration.token
         if (token.isEmpty()) {
-            error("No token provided - Discord bot will not start")
+            event.container.logger.error("No token provided - Discord bot will not start")
+            return
         }
         discordClient = KordDiscordClient(token)
         GlobalScope.launch {

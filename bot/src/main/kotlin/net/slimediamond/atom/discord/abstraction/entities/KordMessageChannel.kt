@@ -1,5 +1,7 @@
 package net.slimediamond.atom.discord.abstraction.entities
 
+import dev.kord.core.behavior.channel.createMessage
+import dev.kord.rest.builder.message.EmbedBuilder
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -11,6 +13,12 @@ class KordMessageChannel(private val channel: dev.kord.core.entity.channel.Messa
 
     override val id: Long
         get() = channel.id.value.toLong()
+
+    override suspend fun sendEmbeds(vararg embeds: EmbedBuilder) {
+        channel.createMessage {
+            this.embeds = embeds.toMutableList()
+        }
+    }
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun sendMessage(message: String) {

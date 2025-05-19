@@ -11,6 +11,7 @@ import net.slimediamond.atom.api.irc.factory.ConnectionFactory
 import net.slimediamond.atom.ircbot.listeners.IrcMessageListener
 import net.slimediamond.atom.api.service.Service
 import net.slimediamond.atom.api.service.events.ServiceStartEvent
+import net.slimediamond.atom.api.service.events.ServiceStopEvent
 import net.slimediamond.atom.storage.StorageService
 import org.apache.logging.log4j.Logger
 
@@ -51,6 +52,11 @@ class IrcBot {
         val server = Server(name, hostname, port, serverConfig.ssl)
         logger.info("Connecting to {} ({}, {})", server.name, server.host, server.port)
         connection = client.connect(ConnectionInfo(nickname, realname, username, server))
+    }
+
+    @Listener
+    fun onServiceStop(event: ServiceStopEvent) {
+        connection.disconnect("Service 'ircbot' is stopping")
     }
 
     @Listener

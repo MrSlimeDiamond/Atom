@@ -1,8 +1,8 @@
 package net.slimediamond.atom.api.discord.entities
 
-import net.slimediamond.atom.api.messaging.Audience
+import net.slimediamond.atom.api.messaging.DiscordAudience
 
-interface MessageChannel : Audience {
+interface MessageChannel : DiscordAudience {
 
     /**
      * The channel's ID

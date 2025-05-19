@@ -1,10 +1,6 @@
 package net.slimediamond.atom
 
 import be.bendem.sqlstreams.SqlStream
-import net.slimediamond.atom.commands.ColorsCommand
-import net.slimediamond.atom.commands.PingCommand
-import net.slimediamond.atom.commands.TestCommand
-import net.slimediamond.atom.commands.WhoamiCommand
 import net.slimediamond.atom.api.command.CommandNodeManager
 import net.slimediamond.atom.commands.ircbot.IrcBotRootCommand
 import net.slimediamond.atom.configuration.Configuration
@@ -15,15 +11,15 @@ import net.slimediamond.atom.services.PermissionService
 import net.slimediamond.atom.storage.StorageService
 import net.slimediamond.atom.api.factory.DefaultFactoryProvider
 import net.slimediamond.atom.api.factory.FactoryProvider
+import net.slimediamond.atom.commands.*
 import net.slimediamond.atom.discord.DiscordBot
-import net.slimediamond.data.identification.NamespaceHolder
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.spongepowered.configurate.ConfigurationOptions
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader
 import java.nio.file.Path
 
-class Atom : NamespaceHolder {
+class Atom {
 
     @Volatile
     lateinit var configuration: Configuration
@@ -87,13 +83,10 @@ class Atom : NamespaceHolder {
         commandNodeManager.register(ColorsCommand())
         commandNodeManager.register(TestCommand())
         commandNodeManager.register(IrcBotRootCommand())
+        commandNodeManager.register(ServicesCommand())
 
         logger.info("Starting all services")
         serviceManager.startAll()
-    }
-
-    override fun getNamespace(): String {
-        return "atom"
     }
 
 }
