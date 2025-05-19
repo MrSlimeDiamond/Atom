@@ -4,7 +4,7 @@ package net.slimediamond.atom.api.command
  * A command node which is only for a root command, specifically for holding
  * subcommands on that command.
  */
-open class RootOnlyCommandNode(vararg aliases: String) : CommandNode(*aliases) {
+open class RootOnlyCommandNode(description: String, vararg aliases: String) : CommandNode(description, *aliases) {
 
     override val usage: String
         get() {

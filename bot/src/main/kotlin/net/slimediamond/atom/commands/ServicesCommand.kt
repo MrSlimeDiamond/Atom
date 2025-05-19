@@ -15,7 +15,7 @@ import net.slimediamond.atom.api.service.events.ServiceStopEvent
 import net.slimediamond.atom.commands.parameters.Parameters
 import net.slimediamond.atom.utils.Embeds
 
-class ServicesCommand : RootOnlyCommandNode("services") {
+class ServicesCommand : RootOnlyCommandNode("Manage services", "services") {
 
     init {
         addChild(ListCommand())
@@ -23,7 +23,7 @@ class ServicesCommand : RootOnlyCommandNode("services") {
         addChild(RestartCommand())
     }
 
-    class ListCommand : CommandNode("list") {
+    class ListCommand : CommandNode("List services", "list") {
 
         @OptIn(DelicateCoroutinesApi::class)
         override fun execute(context: CommandNodeContext): CommandResult {
@@ -46,7 +46,7 @@ class ServicesCommand : RootOnlyCommandNode("services") {
 
     }
 
-    class InfoCommand : CommandNode("info") {
+    class InfoCommand : CommandNode("Display information about a service", "info") {
 
         init {
             parameters.add(Parameters.SERVICE)
@@ -59,7 +59,7 @@ class ServicesCommand : RootOnlyCommandNode("services") {
 
     }
 
-    class RestartCommand : CommandNode("restart") {
+    class RestartCommand : CommandNode("Restart a service", "restart") {
 
         init {
             parameters.add(Parameters.SERVICE)

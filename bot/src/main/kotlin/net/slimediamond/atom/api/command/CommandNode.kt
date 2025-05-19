@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager
 import java.util.HashMap
 import java.util.LinkedList
 
-abstract class CommandNode(vararg aliases: String) : Command {
+abstract class CommandNode(val description: String, vararg aliases: String) : Command {
 
     private val logger = LogManager.getLogger("command node: ${aliases.first()}")
     private val _children: MutableList<CommandNode> = LinkedList()

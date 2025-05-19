@@ -2,7 +2,7 @@ package net.slimediamond.atom.commands.ircbot
 
 import net.slimediamond.atom.api.command.RootOnlyCommandNode
 
-class ChannelCommand : RootOnlyCommandNode("channel") {
+class ChannelCommand : RootOnlyCommandNode("Manage IRC channels", "channel") {
 
     init {
         addChild(ChannelQueryCommand())

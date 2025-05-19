@@ -5,7 +5,7 @@ import net.slimediamond.atom.api.command.CommandNodeContext
 import net.slimediamond.atom.api.command.CommandResult
 import net.slimediamond.atom.commands.parameters.Parameters
 
-class TestCommand : CommandNode("test") {
+class TestCommand : CommandNode("Debug/test commands", "test") {
 
     init {
         addChild(ChildCommand())
@@ -27,7 +27,7 @@ class TestCommand : CommandNode("test") {
         return CommandResult.success
     }
 
-    class ChildCommand : CommandNode("child") {
+    class ChildCommand : CommandNode("Test subcommands", "child") {
 
         init {
             parameters.add(Parameters.MESSAGE)
@@ -45,7 +45,7 @@ class TestCommand : CommandNode("test") {
 
     }
 
-    class ErrorCommand : CommandNode("error") {
+    class ErrorCommand : CommandNode("Test throwing an error", "error") {
 
         override fun execute(context: CommandNodeContext): CommandResult {
             return CommandResult.error("Enjoy this error!")
@@ -53,7 +53,7 @@ class TestCommand : CommandNode("test") {
 
     }
 
-    class NumberCommand : CommandNode("number") {
+    class NumberCommand : CommandNode("Test parsing a number", "number") {
 
         init {
             parameters.add(Parameters.NUMBER)
@@ -69,7 +69,7 @@ class TestCommand : CommandNode("test") {
 
     }
 
-    class PermissionTestCommand : CommandNode("permission") {
+    class PermissionTestCommand : CommandNode("Test permission checks", "permission") {
 
         init {
             permission = "atom.command.test.permission"

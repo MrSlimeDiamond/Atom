@@ -5,7 +5,7 @@ import net.slimediamond.atom.api.messaging.Color
 import net.slimediamond.atom.api.messaging.RichText
 import java.util.LinkedList
 
-class HelpCommandNode : CommandNode("help", "?") {
+class HelpCommandNode : CommandNode("Help subcommand", "help", "?") {
 
     override fun execute(context: CommandNodeContext): CommandResult {
         val parents = LinkedList<CommandNode>()
@@ -16,15 +16,24 @@ class HelpCommandNode : CommandNode("help", "?") {
         } else {
             parents.add(parent!!)
         }
-        val result = RichText.of()
-            .append(RichText.of("Atom Help: ").color(Color.GREEN))
+        val result = RichText.of().append(RichText.of("Atom Help").color(Color.GREEN))
+
+        if (parents.size == 1) {
+            result.append(RichText.of(" [").color(Color.GRAY)
+                .append(RichText.of(parent!!.aliases.first()).color(Color.WHITE))
+                .append(RichText.of("]").color(Color.GRAY)))
+                .appendNewline()
+                .append(RichText.of("Usage: ${parent!!.usage}").color(Color.CYAN))
+        }
 
         parents.forEach { parent ->
             result
-                .append(RichText.of(parent.aliases.first()))
                 .appendNewline()
                 .append(command(parent))
-                .append(RichText.join(RichText.newline().append(RichText.of("  ")), parent.children.filter { it !is HelpCommandNode }.map { command(it) }))
+                .append(RichText.join(RichText.newline().append(RichText.of("  ")),
+                    parent.children
+                        .filter { it !is HelpCommandNode }
+                        .map { command(it) }))
         }
         context.sender.sendMessage(result)
 
@@ -35,9 +44,10 @@ class HelpCommandNode : CommandNode("help", "?") {
 
     private fun command(command: CommandNode): RichText {
         return RichText.of()
+            .append(RichText.of("> ").color(Color.PINK))
             .append(RichText.of(command.aliases.joinToString(", ")).color(Color.BLUE))
             .append(RichText.of(" - ").color(Color.GRAY))
-            .append(RichText.of("Description: TODO..."))
+            .append(RichText.of(command.description).color(Color.WHITE))
     }
 
 }

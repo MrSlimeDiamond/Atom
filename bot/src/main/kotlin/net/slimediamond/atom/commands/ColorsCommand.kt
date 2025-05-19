@@ -7,7 +7,7 @@ import net.slimediamond.atom.api.messaging.Color
 import net.slimediamond.atom.api.messaging.RichText
 
 // I can't speak American English much longer.
-class ColorsCommand : CommandNode("colors", "colours") {
+class ColorsCommand : CommandNode("Display ANSI colours", "colors", "colours") {
 
     override fun execute(context: CommandNodeContext): CommandResult {
         val builder: RichText = RichText.of("Colours:")

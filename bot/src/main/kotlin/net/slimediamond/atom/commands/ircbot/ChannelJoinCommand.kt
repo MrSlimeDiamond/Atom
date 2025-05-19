@@ -7,7 +7,7 @@ import net.slimediamond.atom.api.command.CommandResult
 import net.slimediamond.atom.commands.parameters.Parameters
 import net.slimediamond.atom.ircbot.IrcBot
 
-class ChannelJoinCommand : CommandNode("join") {
+class ChannelJoinCommand : CommandNode("Join an IRC channel", "join") {
 
     init {
         parameters.add(Parameters.IRC_CHANNEL)
