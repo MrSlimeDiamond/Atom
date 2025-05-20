@@ -26,10 +26,14 @@ class RichText private constructor(var content: String, var style: Style?) {
             return of("\n")
         }
 
-        fun join(separator: RichText, parts: Collection<RichText>): RichText {
+        fun join(separator: RichText, parts: List<RichText>, separatorFirst: Boolean = false): RichText {
             val builder = of()
             parts.forEach { part ->
-                builder.append(separator).append(part)
+                // append the separator for all parts besides the first
+                if (parts.indexOf(part) > 0 || separatorFirst) {
+                    builder.append(separator)
+                }
+                builder.append(part)
             }
             return builder
         }

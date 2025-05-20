@@ -20,7 +20,7 @@ class HelpCommandNode : CommandNode("Help subcommand", "help", "?") {
 
         if (parents.size == 1) {
             result.append(RichText.of(" [").color(Color.GRAY)
-                .append(RichText.of(parent!!.aliases.first()).color(Color.WHITE))
+                .append(RichText.join(RichText.of(", ").color(Color.GRAY), parent!!.aliases.map { RichText.of(it).color(Color.WHITE) }))
                 .append(RichText.of("]").color(Color.GRAY)))
                 .appendNewline()
                 .append(RichText.of("Usage: ${parent!!.usage}").color(Color.CYAN))
@@ -36,7 +36,7 @@ class HelpCommandNode : CommandNode("Help subcommand", "help", "?") {
                 .append(RichText.join(RichText.newline().append(RichText.of("  ")),
                     parent.children
                         .filter { it !is HelpCommandNode }
-                        .map { command(it) }))
+                        .map { command(it) }, true))
         }
 
         // Send it to the command sender and not into the actual channel
