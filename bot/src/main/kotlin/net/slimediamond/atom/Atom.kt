@@ -13,6 +13,7 @@ import net.slimediamond.atom.storage.StorageService
 import net.slimediamond.atom.api.factory.DefaultFactoryProvider
 import net.slimediamond.atom.api.factory.FactoryProvider
 import net.slimediamond.atom.commands.*
+import net.slimediamond.atom.commands.minecraftonline.TimeplayedCommand
 import net.slimediamond.atom.discord.DiscordBot
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -86,6 +87,7 @@ class Atom {
         commandNodeManager.register(TestCommand())
         commandNodeManager.register(IrcBotRootCommand())
         commandNodeManager.register(ServicesCommand())
+        commandNodeManager.register(TimeplayedCommand())
 
         logger.info("Starting all services")
         serviceManager.startAll()
