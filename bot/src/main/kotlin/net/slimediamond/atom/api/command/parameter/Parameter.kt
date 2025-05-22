@@ -27,34 +27,38 @@ interface Parameter {
     val optional: Boolean
 
     companion object {
-        fun <T> builder(clazz: Class<T>): Value.Builder<T> {
-            return Value.Builder<T>()
+        inline fun <reified T : Any> builder(config: Value.Builder<T>.() -> Unit): Value.Builder<T> {
+            return Value.Builder<T>().apply(config)
         }
 
-        fun int(): Value.Builder<Int> {
-            return builder(Int::class.java).parser {
-                try {
-                    return@parser it.toInt()
-                } catch (e: NumberFormatException) {
-                    throw ArgumentParseException(it, 0, RichText.of("Provided input is not a number"))
+        fun int(config: Value.Builder<Int>.() -> Unit): Value<Int> {
+            return builder<Int> {
+                parser {
+                    return@parser it.toIntOrNull()?: throw ArgumentParseException(it, 0, RichText.of("Provided input is not a number"))
                 }
-            }
+            }.apply(config).build()
         }
 
-        fun string(): Value.Builder<String> {
-            return builder(String::class.java).parser { it }
+        fun string(config: Value.Builder<String>.() -> Unit): Value<String> {
+            return builder<String> {
+                parser { it }
+            }.apply(config).build()
         }
 
-        fun boolean(): Value.Builder<Boolean> {
-            return builder(Boolean::class.java).parser { it.toBoolean() }
-        }
-
-        fun service(): Value.Builder<ServiceContainer> {
-            return builder(ServiceContainer::class.java)
-                .parser {
-                    Atom.instance.serviceManager.getByName(it)?:
-                    throw ArgumentParseException(it, 0, RichText.of("Could not find a service container with that name"))
+        fun boolean(config: Value.Builder<Boolean>.() -> Unit): Value<Boolean> {
+            return builder<Boolean> {
+                parser {
+                    it.toBooleanStrictOrNull()?: throw ArgumentParseException(it, 0, RichText.of("Provided input must be a boolean (true or false)"))
                 }
+            }.apply(config).build()
+        }
+
+        fun service(config: Value.Builder<ServiceContainer>.() -> Unit): Value<ServiceContainer> {
+            return builder<ServiceContainer> {
+                parser {
+                    Atom.instance.serviceManager.getByName(it)?: throw ArgumentParseException(it, 0, RichText.of("Could not find service '$it'"))
+                }
+            }.apply(config).build()
         }
     }
 
@@ -97,4 +101,8 @@ class ParameterValueImpl<T>(
     private val parser: (String) -> T
 ) : Parameter, Parameter.Value<T> {
     override fun parse(input: String): T = parser(input)
+}
+
+inline fun <reified T : Any> parameter(config: Parameter.Value.Builder<T>.() -> Unit): Parameter.Value<T> {
+    return Parameter.builder<T>(config).build()
 }
