@@ -48,7 +48,7 @@ class HelpCommandNode : CommandNode("Help subcommand", "help", "?") {
     private fun command(command: CommandNode): RichText {
         return RichText.of()
             .append(RichText.of("> ").color(Color.PINK))
-            .append(RichText.of(command.aliases.joinToString(", ")).color(Color.BLUE))
+            .append(RichText.of(command.aliases.first()).color(Color.BLUE))
             .append(RichText.of(" - ").color(Color.GRAY))
             .append(RichText.of(command.description).color(Color.WHITE))
     }
