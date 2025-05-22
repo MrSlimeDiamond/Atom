@@ -10,6 +10,6 @@ interface Command {
      *
      * @return The result of the command
      */
-    fun execute(sender: CommandSender, input: String, platform: CommandPlatform, audience: Audience): CommandResult
+    suspend fun execute(sender: CommandSender, input: String, platform: CommandPlatform, audience: Audience): CommandResult
 
 }

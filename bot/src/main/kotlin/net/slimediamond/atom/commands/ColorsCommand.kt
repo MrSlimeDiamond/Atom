@@ -9,7 +9,7 @@ import net.slimediamond.atom.api.messaging.RichText
 // I can't speak American English much longer.
 class ColorsCommand : CommandNode("Display ANSI colours", "colors", "colours") {
 
-    override fun execute(context: CommandNodeContext): CommandResult {
+    override suspend fun execute(context: CommandNodeContext): CommandResult {
         val builder: RichText = RichText.of("Colours:")
 
         for (color in Color.entries) {

@@ -7,7 +7,7 @@ import java.util.LinkedList
 
 class HelpCommandNode : CommandNode("Help subcommand", "help", "?") {
 
-    override fun execute(context: CommandNodeContext): CommandResult {
+    override suspend fun execute(context: CommandNodeContext): CommandResult {
         val parents = LinkedList<CommandNode>()
         // construct a map
         if (parent == null) {

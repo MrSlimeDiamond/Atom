@@ -16,7 +16,7 @@ class TestCommand : CommandNode("Debug/test commands", "test") {
         parameters.add(Parameters.OPTIONAL_MESSAGE)
     }
 
-    override fun execute(context: CommandNodeContext): CommandResult {
+    override suspend fun execute(context: CommandNodeContext): CommandResult {
         context.sendMessage("Parent")
 
         val message = context.one(Parameters.OPTIONAL_MESSAGE)
@@ -33,7 +33,7 @@ class TestCommand : CommandNode("Debug/test commands", "test") {
             parameters.add(Parameters.MESSAGE)
         }
 
-        override fun execute(context: CommandNodeContext): CommandResult {
+        override suspend fun execute(context: CommandNodeContext): CommandResult {
             val message = context.requireOne(Parameters.MESSAGE)
             context.sendMessage("Child")
 
@@ -47,7 +47,7 @@ class TestCommand : CommandNode("Debug/test commands", "test") {
 
     class ErrorCommand : CommandNode("Test throwing an error", "error") {
 
-        override fun execute(context: CommandNodeContext): CommandResult {
+        override suspend fun execute(context: CommandNodeContext): CommandResult {
             return CommandResult.error("Enjoy this error!")
         }
 
@@ -59,7 +59,7 @@ class TestCommand : CommandNode("Debug/test commands", "test") {
             parameters.add(Parameters.NUMBER)
         }
 
-        override fun execute(context: CommandNodeContext): CommandResult {
+        override suspend fun execute(context: CommandNodeContext): CommandResult {
             val number = context.requireOne(Parameters.NUMBER)
 
             context.sendMessage("Your number input: $number")
@@ -75,7 +75,7 @@ class TestCommand : CommandNode("Debug/test commands", "test") {
             permission = "atom.command.test.permission"
         }
 
-        override fun execute(context: CommandNodeContext): CommandResult {
+        override suspend fun execute(context: CommandNodeContext): CommandResult {
             context.sendMessage("you have permission")
             return CommandResult.success
         }

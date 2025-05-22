@@ -44,9 +44,9 @@ abstract class CommandNode(val description: String, vararg aliases: String) : Co
         }
 
     @Throws(CommandException::class)
-    abstract fun execute(context: CommandNodeContext): CommandResult
+    abstract suspend fun execute(context: CommandNodeContext): CommandResult
 
-    override fun execute(sender: CommandSender, input: String, platform: CommandPlatform, audience: Audience): CommandResult {
+    override suspend fun execute(sender: CommandSender, input: String, platform: CommandPlatform, audience: Audience): CommandResult {
         var actualInput = input
         var command = this
 

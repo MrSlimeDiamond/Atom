@@ -15,7 +15,7 @@ open class RootOnlyCommandNode(description: String, vararg aliases: String) : Co
             }
         }
 
-    override fun execute(context: CommandNodeContext): CommandResult {
+    override suspend fun execute(context: CommandNodeContext): CommandResult {
         // If we managed to reach this point without finding a subcommand, they've not provided a subcommand
         return CommandResult.error(context.platform.renderNotEnoughArguments(this, 0))
     }

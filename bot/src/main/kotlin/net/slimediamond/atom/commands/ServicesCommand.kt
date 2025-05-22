@@ -26,7 +26,7 @@ class ServicesCommand : RootOnlyCommandNode("Manage services", "services") {
     class ListCommand : CommandNode("List services", "list") {
 
         @OptIn(DelicateCoroutinesApi::class)
-        override fun execute(context: CommandNodeContext): CommandResult {
+        override suspend fun execute(context: CommandNodeContext): CommandResult {
             val services = Atom.instance.serviceManager.services
             if (context is DiscordCommandNodeContext) {
                 val embed = EmbedBuilder().apply {
@@ -52,7 +52,7 @@ class ServicesCommand : RootOnlyCommandNode("Manage services", "services") {
             parameters.add(Parameters.SERVICE)
         }
 
-        override fun execute(context: CommandNodeContext): CommandResult {
+        override suspend fun execute(context: CommandNodeContext): CommandResult {
             // context.sendMessage(context.requireOne(Parameters.SERVICE).name)
             TODO("Not yet implemented")
         }
@@ -66,7 +66,7 @@ class ServicesCommand : RootOnlyCommandNode("Manage services", "services") {
             permission = "atom.command.services.restart"
         }
 
-        override fun execute(context: CommandNodeContext): CommandResult {
+        override suspend fun execute(context: CommandNodeContext): CommandResult {
             val service = context.requireOne(Parameters.SERVICE)
 
 //            if (!service.instance.javaClass.methods

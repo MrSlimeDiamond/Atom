@@ -15,7 +15,7 @@ class ChannelAutoJoinCommand : CommandNode("Change auto join status on an IRC ch
         permission = "atom.command.ircbot.channel.autojoin"
     }
 
-    override fun execute(context: CommandNodeContext): CommandResult {
+    override suspend fun execute(context: CommandNodeContext): CommandResult {
         val channelDao = CommandUtils.getChannelDao(context)
         val status = context.requireOne(Parameters.BOOLEAN)
 

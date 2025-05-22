@@ -10,7 +10,7 @@ class ChannelQueryCommand : CommandNode("Get a list of IRC channels", "query") {
         permission = "atom.command.ircbot.channel.query"
     }
 
-    override fun execute(context: CommandNodeContext): CommandResult {
+    override suspend fun execute(context: CommandNodeContext): CommandResult {
         TODO("Not yet implemented")
     }
 

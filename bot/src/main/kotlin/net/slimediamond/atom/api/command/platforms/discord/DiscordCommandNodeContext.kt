@@ -30,4 +30,8 @@ class DiscordCommandNodeContext(
         audience.sendEmbeds(*embeds)
     }
 
+    suspend fun sendEmbed(config: EmbedBuilder.() -> Unit) {
+        audience.sendEmbeds(EmbedBuilder().apply(config))
+    }
+
 }

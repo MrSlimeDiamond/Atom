@@ -7,7 +7,7 @@ import net.slimediamond.atom.api.messaging.RichText
 
 class WhoamiCommand : CommandNode("Check who the bot thinks you are", "whoami") {
 
-    override fun execute(context: CommandNodeContext): CommandResult {
+    override suspend fun execute(context: CommandNodeContext): CommandResult {
         val builder = RichText.of("User information for ${context.sender.name}: ")
         if (context.sender.userDao != null) {
             val userDao = context.sender.userDao!!
