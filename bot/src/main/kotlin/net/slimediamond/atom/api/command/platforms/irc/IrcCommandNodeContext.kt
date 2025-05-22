@@ -16,11 +16,11 @@ class IrcCommandNodeContext(
     private val audience: Audience
 ) : CommandNodeContext(commandNode, sender, input, platform, parameterKeyMap) {
 
-    override fun sendMessage(message: String) {
+    override suspend fun sendMessage(message: String) {
         audience.sendMessage(message)
     }
 
-    override fun sendMessage(message: RichText) {
+    override suspend fun sendMessage(message: RichText) {
         audience.sendMessage(message)
     }
 

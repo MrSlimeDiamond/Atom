@@ -5,11 +5,11 @@ interface Audience {
     /**
      * Send a message to the audience
      */
-    fun sendMessage(message: String)
+    suspend fun sendMessage(message: String)
 
     /**
      * Send a message to the audience
      */
-    fun sendMessage(message: RichText)
+    suspend fun sendMessage(message: RichText)
 
 }

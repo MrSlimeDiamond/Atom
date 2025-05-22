@@ -18,11 +18,11 @@ class DiscordCommandSender(private val user: User) : CommandSender {
             .orElse(false)
     }
 
-    override fun sendMessage(message: String) {
+    override suspend fun sendMessage(message: String) {
         user.sendMessage(message)
     }
 
-    override fun sendMessage(message: RichText) {
+    override suspend fun sendMessage(message: RichText) {
         user.sendMessage(message)
     }
 

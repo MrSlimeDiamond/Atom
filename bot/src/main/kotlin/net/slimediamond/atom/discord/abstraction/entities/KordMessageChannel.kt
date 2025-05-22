@@ -2,9 +2,6 @@ package net.slimediamond.atom.discord.abstraction.entities
 
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.rest.builder.message.EmbedBuilder
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import net.slimediamond.atom.api.discord.entities.MessageChannel
 import net.slimediamond.atom.api.messaging.RichText
 import net.slimediamond.atom.api.messaging.renderer.DiscordRichMessageRenderer
@@ -20,14 +17,11 @@ class KordMessageChannel(private val channel: dev.kord.core.entity.channel.Messa
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    override fun sendMessage(message: String) {
-        GlobalScope.launch {
-            channel.createMessage(message)
-        }
+    override suspend fun sendMessage(message: String) {
+        channel.createMessage(message)
     }
 
-    override fun sendMessage(message: RichText) {
+    override suspend fun sendMessage(message: RichText) {
         sendMessage(DiscordRichMessageRenderer.render(message));
     }
 

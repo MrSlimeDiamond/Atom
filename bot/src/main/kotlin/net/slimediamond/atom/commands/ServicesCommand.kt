@@ -25,18 +25,14 @@ class ServicesCommand : RootOnlyCommandNode("Manage services", "services") {
 
     class ListCommand : CommandNode("List services", "list") {
 
-        @OptIn(DelicateCoroutinesApi::class)
         override suspend fun execute(context: CommandNodeContext): CommandResult {
             val services = Atom.instance.serviceManager.services
             if (context is DiscordCommandNodeContext) {
-                val embed = EmbedBuilder().apply {
+                context.sendEmbed {
                     color = Embeds.THEME_COLOR
                     title = "Services"
                     description = services.map { service -> "* ${service.value.name}" }.joinToString("\n")
                     footer { text = "${services.size} total" }
-                }
-                GlobalScope.launch {
-                    context.sendEmbeds(embed)
                 }
             } else {
                 context.sendMessage("Services (${services.size}): ${services.map { it.value.name }.joinToString(", ")}")

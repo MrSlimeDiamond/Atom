@@ -11,11 +11,11 @@ class UserImpl(
     override val hostname: String
 ) : User {
 
-    override fun sendMessage(message: String) {
+    override suspend fun sendMessage(message: String) {
         connection.sendMessage(nickname, message)
     }
 
-    override fun sendMessage(message: RichText) {
+    override suspend fun sendMessage(message: RichText) {
         IrcRichMessageRenderer.sendMessage(connection, username, message)
     }
 

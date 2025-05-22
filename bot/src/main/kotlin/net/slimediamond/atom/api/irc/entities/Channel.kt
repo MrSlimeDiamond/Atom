@@ -15,11 +15,11 @@ data class Channel(
     val users: List<User>
 ) : Audience {
 
-    override fun sendMessage(message: String) {
+    override suspend fun sendMessage(message: String) {
         connection.sendMessage(name, message)
     }
 
-    override fun sendMessage(message: RichText) {
+    override suspend fun sendMessage(message: RichText) {
         IrcRichMessageRenderer.sendMessage(connection, name, message)
     }
 
