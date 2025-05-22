@@ -29,16 +29,30 @@ object DiscordRichMessageRenderer {
                     .append("[0;")
                     .append(color)
             }
+            // why does this need ==true
+            val bold = part.style?.bold == true
+            val italics = part.style?.italics == true
+            if (bold) builder.append("**")
+            if (italics) builder.append("*")
             builder.append(part.content)
+            if (italics) builder.append("*")
+            if (bold) builder.append("**")
         }
         return builder.toString()
     }
 
     fun render(message: RichText): String {
         return buildString {
-            append("```ansi\n")
+            // only show code blocks if there is ansi colour coding
+            var ansi = false
+            if (message.parts.any { it.style?.color != null }) {
+                ansi = true
+                append("```ansi\n")
+            }
             append(renderAnsi(message))
-            append("```")
+            if (ansi) {
+                append("```")
+            }
         }
     }
 

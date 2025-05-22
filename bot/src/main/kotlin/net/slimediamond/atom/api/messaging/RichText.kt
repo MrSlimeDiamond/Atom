@@ -11,6 +11,7 @@ class RichText private constructor(var content: String, var style: Style?) {
 
     init {
         parts.add(this)
+        this.style = Style(null, bold = false, italics = false)
     }
 
     companion object {
@@ -40,8 +41,32 @@ class RichText private constructor(var content: String, var style: Style?) {
     }
 
     fun color(color: Color): RichText {
-        val style = Style(color)
-        this.style = style
+        if (this.style == null) {
+            val style = Style(color, bold = false, italics = false)
+            this.style = style
+        } else {
+            this.style!!.color = color
+        }
+        return this
+    }
+
+    fun bold(): RichText {
+        if (this.style == null) {
+            val style = Style(null, bold = true, italics = false)
+            this.style = style
+        } else {
+            this.style!!.bold = true
+        }
+        return this
+    }
+
+    fun italics(): RichText {
+        if (this.style == null) {
+            val style = Style(null, bold = false, italics = true)
+            this.style = style
+        } else {
+            this.style!!.italics = true
+        }
         return this
     }
 
@@ -58,6 +83,6 @@ class RichText private constructor(var content: String, var style: Style?) {
         return this
     }
 
-    data class Style(var color: Color)
+    data class Style(var color: Color?, var bold: Boolean, var italics: Boolean)
 
 }
