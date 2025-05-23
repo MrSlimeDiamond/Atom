@@ -9,12 +9,13 @@ import org.apache.logging.log4j.LogManager
 import java.util.HashMap
 import java.util.LinkedList
 
-abstract class CommandNode(val description: String, vararg aliases: String) : Command {
+abstract class CommandNode(val description: String, val aliases: List<String>) : Command {
+
+    constructor(description: String, vararg aliases: String) : this(description, aliases.toList())
 
     private val logger = LogManager.getLogger("command node: ${aliases.first()}")
     private val _children: MutableList<CommandNode> = LinkedList()
     val children: List<CommandNode> get() = _children
-    val aliases: MutableList<String> = LinkedList()
     val platforms: MutableList<CommandPlatform> = LinkedList()
     val parameters: MutableList<Parameter> = LinkedList()
     @Volatile
@@ -128,10 +129,6 @@ abstract class CommandNode(val description: String, vararg aliases: String) : Co
         child.parent = this
         _children.add(child)
         // println("Add child: ${child.aliases.first()} parent: ${child.parent?.aliases?.first()}")
-    }
-
-    init {
-        this.aliases.addAll(aliases)
     }
 
 }
