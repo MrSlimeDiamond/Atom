@@ -8,22 +8,29 @@ import net.slimediamond.atom.api.messaging.RichText
 import net.slimediamond.atom.commands.parameters.Parameters
 import net.slimediamond.atom.utils.infoEmbed
 
-class TimeplayedCommand : CommandNode("Check an MCO player's time online", "timeplayed", "playtime", "tp", "pt") {
+class SeenCommand(private val firstseen: Boolean, description: String, vararg aliases: String) : CommandNode(description, *aliases) {
 
     init {
         parameters.add(Parameters.MCO_PLAYER)
     }
 
     override suspend fun execute(context: CommandNodeContext): CommandResult {
-        // at the very start, take a timestamp
         val player = context.requireOne(Parameters.MCO_PLAYER)
+        val date = if (firstseen) {
+            player.firstseen
+        } else {
+            player.lastseen
+        }
         val message = RichText.of()
             .append(RichText.of(player.name).bold())
-            .append(RichText.of(" has played on Freedonia for "))
-            .append(RichText.of(String.format("%.2f", player.timeOnline / 3600.0)).bold())
-            .append(RichText.of(" hours."))
+            .appendSpace()
+            .append(RichText.of(if (firstseen) "first" else "last"))
+            .append(RichText.of(" visited Freedonia on "))
+            .append(RichText.timestamp(date).bold())
+            .append(RichText.of(" ("))
+            .append(RichText.timestamp(date, relative = true).bold())
+            .append(RichText.of(")"))
         if (context is DiscordCommandNodeContext) {
-            // embeds!
             context.sendEmbeds(player.infoEmbed(message))
         } else {
             context.sendMessage(message)

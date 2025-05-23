@@ -13,6 +13,7 @@ import net.slimediamond.atom.storage.StorageService
 import net.slimediamond.atom.api.factory.DefaultFactoryProvider
 import net.slimediamond.atom.api.factory.FactoryProvider
 import net.slimediamond.atom.commands.*
+import net.slimediamond.atom.commands.minecraftonline.SeenCommand
 import net.slimediamond.atom.commands.minecraftonline.TimeplayedCommand
 import net.slimediamond.atom.discord.DiscordBot
 import org.apache.logging.log4j.LogManager
@@ -88,6 +89,8 @@ class Atom {
         commandNodeManager.register(IrcBotRootCommand())
         commandNodeManager.register(ServicesCommand())
         commandNodeManager.register(TimeplayedCommand())
+        commandNodeManager.register(SeenCommand(true, "Get the first seen date of a player", "firstseen", "fs"))
+        commandNodeManager.register(SeenCommand(false, "Get the last seen date of a player", "lastseen", "ls"))
 
         logger.info("Starting all services")
         serviceManager.startAll()

@@ -1,11 +1,16 @@
 package net.slimediamond.atom.api.messaging
 
+import org.apache.commons.lang3.time.DurationFormatUtils
+import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.Instant
+import java.util.Date
 import java.util.LinkedList
 
 /**
  * A "rich message", supporting colours, appending elements, etc
  */
-class RichText private constructor(var content: String, var style: Style?) {
+open class RichText private constructor(var content: String, var style: Style?) {
 
     val parts: MutableList<RichText> = LinkedList()
 
@@ -25,6 +30,10 @@ class RichText private constructor(var content: String, var style: Style?) {
 
         fun newline(): RichText {
             return of("\n")
+        }
+
+        fun timestamp(date: Date, relative: Boolean = false): Timestamp {
+            return Timestamp(date, relative)
         }
 
         fun join(separator: RichText, parts: List<RichText>, separatorFirst: Boolean = false): RichText {
@@ -78,6 +87,11 @@ class RichText private constructor(var content: String, var style: Style?) {
         return this
     }
 
+    fun appendSpace(): RichText {
+        parts.add(of(" "))
+        return this
+    }
+
     fun appendNewline(): RichText {
         parts.add(newline())
         return this
@@ -85,4 +99,12 @@ class RichText private constructor(var content: String, var style: Style?) {
 
     data class Style(var color: Color?, var bold: Boolean, var italics: Boolean)
 
+    data class Timestamp(val date: Date, val relative: Boolean) : RichText(
+        if (relative) relativeDate(date) else date.toString(), null)
+
+}
+
+fun relativeDate(date: Date): String {
+    val duration = Duration.between(date.toInstant(), Instant.now())
+    return DurationFormatUtils.formatDurationWords(duration.toMillis(), true, true) + " ago"
 }

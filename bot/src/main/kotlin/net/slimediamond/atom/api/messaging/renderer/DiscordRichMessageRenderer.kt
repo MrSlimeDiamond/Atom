@@ -34,7 +34,15 @@ object DiscordRichMessageRenderer {
                 val italics = part.style?.italics == true
                 if (bold) append("**")
                 if (italics) append("*")
-                append(part.content)
+                if (part is RichText.Timestamp) {
+                    if (part.relative) {
+                        append("<t:${part.date.toInstant().epochSecond}:R>")
+                    } else {
+                        append("<t:${part.date.toInstant().epochSecond}:f>")
+                    }
+                } else {
+                    append(part.content)
+                }
                 if (italics) append("*")
                 if (bold) append("**")
             }
