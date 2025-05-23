@@ -7,6 +7,10 @@ import net.slimediamond.atom.api.messaging.RichText
 object IrcRichMessageRenderer {
 
     private const val COLOR_CODE = '\u0003'
+    private const val BOLD = '\u0002'
+    private const val ITALICS = '\u001D'
+    private const val UNDERLINE = '\u001F'
+
     private val COLORS: Map<Color, String> = mapOf(
         Color.WHITE to "00",
 //        Color.BLACK to "01",
@@ -27,15 +31,21 @@ object IrcRichMessageRenderer {
     )
 
     fun render(message: RichText): String {
-        val builder = StringBuilder()
-        message.parts.forEach { part ->
-            val color = COLORS[part.style?.color]
-            if (color != null) {
-                builder.append(COLOR_CODE).append(color)
+        return buildString {
+            message.parts.forEach { part ->
+                val color = COLORS[part.style?.color]
+                if (color != null) {
+                    append(COLOR_CODE).append(color)
+                }
+                val bold = part.style?.bold == true
+                val italics = part.style?.italics == true
+                if (bold) append(BOLD)
+                if (italics) append(ITALICS)
+                append(part.content)
+                if (italics) append(ITALICS)
+                if (bold) append(BOLD)
             }
-            builder.append(part.content)
         }
-        return builder.toString()
     }
 
     fun sendMessage(connection: Connection, target: String, message: RichText) {

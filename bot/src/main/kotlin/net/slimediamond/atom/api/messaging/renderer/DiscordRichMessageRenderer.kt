@@ -21,24 +21,24 @@ object DiscordRichMessageRenderer {
     )
 
     private fun renderAnsi(message: RichText): String {
-        val builder = StringBuilder()
-        message.parts.forEach { part ->
-            val color = COLORS[part.style?.color]
-            if (color != null) {
-                builder.append(COLOR_CODE)
-                    .append("[0;")
-                    .append(color)
+        return buildString {
+            message.parts.forEach { part ->
+                val color = COLORS[part.style?.color]
+                if (color != null) {
+                    append(COLOR_CODE)
+                        .append("[0;")
+                        .append(color)
+                }
+                // why does this need == true
+                val bold = part.style?.bold == true
+                val italics = part.style?.italics == true
+                if (bold) append("**")
+                if (italics) append("*")
+                append(part.content)
+                if (italics) append("*")
+                if (bold) append("**")
             }
-            // why does this need ==true
-            val bold = part.style?.bold == true
-            val italics = part.style?.italics == true
-            if (bold) builder.append("**")
-            if (italics) builder.append("*")
-            builder.append(part.content)
-            if (italics) builder.append("*")
-            if (bold) builder.append("**")
         }
-        return builder.toString()
     }
 
     fun render(message: RichText): String {
