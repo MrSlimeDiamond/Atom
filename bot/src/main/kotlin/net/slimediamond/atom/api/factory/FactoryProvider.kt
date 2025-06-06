@@ -1,5 +1,7 @@
 package net.slimediamond.atom.api.factory
 
+import kotlin.reflect.KClass
+
 interface FactoryProvider {
 
     /**
@@ -10,6 +12,6 @@ interface FactoryProvider {
     /**
      * Provide a factory
      */
-    fun <T : Any> provide(clazz: Class<T>): T
+    fun <T : Any> provide(clazz: KClass<T>): T
 
 }

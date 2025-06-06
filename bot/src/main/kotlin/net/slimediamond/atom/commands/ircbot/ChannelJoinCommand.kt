@@ -17,7 +17,7 @@ class ChannelJoinCommand : CommandNode("Join an IRC channel", "join") {
     override suspend fun execute(context: CommandNodeContext): CommandResult {
         val channel = context.requireOne(Parameters.IRC_CHANNEL)
 
-        Atom.instance.serviceManager.provide(IrcBot::class.java).connection.joinChannel(channel)
+        Atom.instance.serviceManager.provide(IrcBot::class).connection.joinChannel(channel)
         context.sendMessage("Joined channel $channel")
 
         return CommandResult.success

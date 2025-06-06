@@ -63,7 +63,7 @@ class IrcBot {
     fun onIrcWelcome(event: IrcReceivedWelcomeEvent) {
         logger.info("IRC bot connected")
 
-        Atom.instance.serviceManager.provide(StorageService::class.java).getAutoJoinChannels().forEach { channel ->
+        Atom.instance.serviceManager.provide(StorageService::class).getAutoJoinChannels().forEach { channel ->
             event.connection.joinChannel(channel)
         }
     }

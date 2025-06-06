@@ -6,10 +6,11 @@ import net.slimediamond.atom.api.event.CauseImpl
 import net.slimediamond.atom.api.service.events.ServiceStartEvent
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import kotlin.reflect.KClass
 
 class ServiceManager {
 
-    val services: MutableMap<Class<*>, ServiceContainer> = HashMap()
+    val services: MutableMap<KClass<*>, ServiceContainer> = HashMap()
     private val logger: Logger = LogManager.getLogger("service manager")
 
     fun addService(instance: Any) {
@@ -19,7 +20,7 @@ class ServiceManager {
         val name: String = instance.javaClass.getAnnotation(Service::class.java).value
         val logger: Logger = LogManager.getLogger(name)
         val container = ServiceContainer(name, instance, logger)
-        services[instance.javaClass] = container
+        services[instance::class] = container
         Atom.instance.eventManager.registerListener(instance)
         this.logger.info("Service '{}' registered", container.name)
     }
@@ -33,7 +34,7 @@ class ServiceManager {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> provide(clazz: Class<T>): T {
+    fun <T : Any> provide(clazz: KClass<T>): T {
         return services[clazz]?.instance as T
     }
 

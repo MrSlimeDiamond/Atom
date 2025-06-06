@@ -9,8 +9,8 @@ import java.util.Optional
 class UserDao(val id: Int) {
 
     companion object {
-        private val sql = Atom.instance.serviceManager.provide(StorageService::class.java).sql
-        private val permissionService = Atom.instance.serviceManager.provide(PermissionService::class.java)
+        private val sql = Atom.instance.serviceManager.provide(StorageService::class).sql
+        private val permissionService = Atom.instance.serviceManager.provide(PermissionService::class)
 
         fun getFromIrc(user: net.slimediamond.atom.api.irc.entities.User): Optional<UserDao> {
             return sql.first("SELECT id from users WHERE irc_nickname = ? AND irc_hostname = ?", {
