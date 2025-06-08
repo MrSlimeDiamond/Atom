@@ -3,13 +3,10 @@ package net.slimediamond.atom.storage
 import be.bendem.sqlstreams.SqlStream
 import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.event.Listener
-import net.slimediamond.atom.api.irc.entities.Channel
 import net.slimediamond.atom.api.service.Service
 import net.slimediamond.atom.api.service.events.ServiceStartEvent
 import org.apache.commons.dbcp2.BasicDataSource
 import org.apache.logging.log4j.Logger
-import java.sql.DriverManager
-import kotlin.streams.toList
 
 @Service("storage")
 class StorageService {

@@ -56,7 +56,7 @@ class IrcBot {
 
     @Listener
     fun onServiceStop(event: ServiceStopEvent) {
-        connection.disconnect("Service 'ircbot' is stopping")
+        connection.disconnect("Service '${event.container.name}' is stopping")
     }
 
     @Listener
