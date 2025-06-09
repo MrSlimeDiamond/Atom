@@ -4,6 +4,7 @@ import net.slimediamond.atom.api.command.CommandNode
 import net.slimediamond.atom.api.command.CommandNodeContext
 import net.slimediamond.atom.api.command.CommandSender
 import net.slimediamond.atom.api.command.exceptions.ArgumentParseException
+import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.api.messaging.Audience
 import net.slimediamond.atom.api.messaging.RichText
 
@@ -27,6 +28,6 @@ interface CommandPlatform {
     /**
      * Create a command context instance
      */
-    fun createContext(command: CommandNode, sender: CommandSender, input: String, audience: Audience, parameterKeyMap: Map<String, String>): CommandNodeContext
+    fun createContext(command: CommandNode, cause: Cause, sender: CommandSender, input: String, audience: Audience, parameterKeyMap: Map<String, String>): CommandNodeContext
 
 }

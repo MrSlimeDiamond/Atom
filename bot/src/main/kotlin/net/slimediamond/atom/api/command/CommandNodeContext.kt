@@ -5,11 +5,13 @@ import net.slimediamond.atom.api.command.exceptions.CommandException
 import net.slimediamond.atom.api.command.parameter.Parameter
 import net.slimediamond.atom.api.command.platforms.CommandPlatform
 import net.slimediamond.atom.api.command.platforms.discord.DiscordCommandNodeContext
+import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.api.messaging.Audience
 import net.slimediamond.atom.utils.Embeds
 
 abstract class CommandNodeContext(
     private val commandNode: CommandNode,
+    val cause: Cause,
     val sender: CommandSender,
     val input: String,
     val platform: CommandPlatform,

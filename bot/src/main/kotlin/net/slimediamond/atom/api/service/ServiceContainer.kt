@@ -2,7 +2,6 @@ package net.slimediamond.atom.api.service
 
 import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.event.Cause
-import net.slimediamond.atom.api.event.CauseImpl
 import net.slimediamond.atom.api.service.events.ServiceStartEvent
 import net.slimediamond.atom.api.service.events.ServiceStopEvent
 import org.apache.logging.log4j.Logger
@@ -17,8 +16,7 @@ data class ServiceContainer(val name: String, val instance: Any, val logger: Log
         Atom.instance.eventManager.post(ServiceStopEvent(cause, this, instance.javaClass), instance)
     }
 
-    fun restart() {
-        val cause = CauseImpl()
+    fun restart(cause: Cause) {
         stop(cause)
         start(cause)
     }

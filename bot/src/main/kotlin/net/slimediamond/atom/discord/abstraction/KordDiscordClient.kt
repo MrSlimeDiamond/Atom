@@ -12,7 +12,7 @@ import net.slimediamond.atom.api.discord.DiscordClient
 import net.slimediamond.atom.api.discord.entities.Guild
 import net.slimediamond.atom.api.discord.event.DiscordGuildMessageEvent
 import net.slimediamond.atom.api.discord.event.DiscordUserMessageEvent
-import net.slimediamond.atom.api.event.CauseImpl
+import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.discord.abstraction.entities.KordGuild
 import net.slimediamond.atom.discord.abstraction.entities.KordMessageChannel
 import net.slimediamond.atom.discord.abstraction.entities.KordUser
@@ -26,13 +26,15 @@ class KordDiscordClient(private val token: String) : DiscordClient {
 
         kord.on<MessageCreateEvent> {
             val kordUser = message.author ?: return@on
-            val cause = CauseImpl()
             val user = KordUser(kordUser)
             val kordGuild = message.getGuildOrNull()
             val kordChannel = message.getChannel()
+            val cause = Cause.of(user, kordChannel)
             if (kordGuild != null) {
                 val guild = KordGuild(kordGuild)
                 val channel = KordMessageChannel(kordChannel)
+                cause.push(guild)
+                cause.push(channel)
                 Atom.instance.eventManager.post(DiscordGuildMessageEvent(cause, this@KordDiscordClient, user, message.content, channel, guild))
             } else {
                 // user message

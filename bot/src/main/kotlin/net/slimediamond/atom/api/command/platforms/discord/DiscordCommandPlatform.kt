@@ -5,6 +5,7 @@ import net.slimediamond.atom.api.command.CommandNodeContext
 import net.slimediamond.atom.api.command.CommandSender
 import net.slimediamond.atom.api.command.exceptions.ArgumentParseException
 import net.slimediamond.atom.api.command.platforms.CommandPlatform
+import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.api.messaging.Audience
 import net.slimediamond.atom.api.messaging.Color
 import net.slimediamond.atom.api.messaging.DiscordAudience
@@ -63,11 +64,11 @@ class DiscordCommandPlatform : CommandPlatform {
             .append(RichText.of("  $pointer here"))
     }
 
-    override fun createContext(command: CommandNode, sender: CommandSender, input: String, audience: Audience, parameterKeyMap: Map<String, String>): CommandNodeContext {
+    override fun createContext(command: CommandNode, cause: Cause, sender: CommandSender, input: String, audience: Audience, parameterKeyMap: Map<String, String>): CommandNodeContext {
         if (audience !is DiscordAudience) {
             throw IllegalArgumentException("Provided audience is not Discord compatible")
         }
-        return DiscordCommandNodeContext(command, sender, input, this, parameterKeyMap, audience)
+        return DiscordCommandNodeContext(command, cause, sender, input, this, parameterKeyMap, audience)
     }
 
     private fun caretUnder(prefix: String, content: String, paramIndex: Int): String {

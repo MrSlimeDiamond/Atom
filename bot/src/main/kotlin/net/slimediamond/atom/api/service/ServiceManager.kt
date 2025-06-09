@@ -2,7 +2,6 @@ package net.slimediamond.atom.api.service
 
 import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.event.Cause
-import net.slimediamond.atom.api.event.CauseImpl
 import net.slimediamond.atom.api.service.events.ServiceStartEvent
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -26,7 +25,7 @@ class ServiceManager {
     }
 
     fun startAll() {
-        val cause: Cause = CauseImpl()
+        val cause: Cause = Cause.of(this, Atom.instance)
         services.values.forEach { container ->
             val event = ServiceStartEvent(cause, container, container.instance.javaClass)
             Atom.instance.eventManager.post(event, container.instance)

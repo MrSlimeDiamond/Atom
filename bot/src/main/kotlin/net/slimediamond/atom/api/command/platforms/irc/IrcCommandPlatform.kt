@@ -5,6 +5,7 @@ import net.slimediamond.atom.api.command.CommandNodeContext
 import net.slimediamond.atom.api.command.CommandSender
 import net.slimediamond.atom.api.command.exceptions.ArgumentParseException
 import net.slimediamond.atom.api.command.platforms.CommandPlatform
+import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.api.messaging.Audience
 import net.slimediamond.atom.api.messaging.Color
 import net.slimediamond.atom.api.messaging.RichText
@@ -25,8 +26,8 @@ class IrcCommandPlatform : CommandPlatform {
             .color(Color.RED)
     }
 
-    override fun createContext(command: CommandNode, sender: CommandSender, input: String, audience: Audience, parameterKeyMap: Map<String, String>): CommandNodeContext {
-        return IrcCommandNodeContext(command, sender, input, this, parameterKeyMap, audience)
+    override fun createContext(command: CommandNode, cause: Cause, sender: CommandSender, input: String, audience: Audience, parameterKeyMap: Map<String, String>): CommandNodeContext {
+        return IrcCommandNodeContext(command, cause, sender, input, this, parameterKeyMap, audience)
     }
 
 }

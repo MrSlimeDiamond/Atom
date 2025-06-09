@@ -75,7 +75,7 @@ class ServicesCommand : RootOnlyCommandNode("Manage services", "services") {
 //            }
 
             context.replySuccess("Restarting service ${service.name}")
-            service.restart()
+            service.restart(context.cause)
             return CommandResult.success
         }
 

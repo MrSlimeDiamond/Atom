@@ -1,7 +1,7 @@
 package net.slimediamond.atom.api.irc.linehandlers
 
 import net.slimediamond.atom.Atom
-import net.slimediamond.atom.api.event.CauseImpl
+import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.api.irc.Connection
 import net.slimediamond.atom.api.irc.entities.Channel
 import net.slimediamond.atom.api.irc.entities.UserImpl
@@ -21,12 +21,13 @@ class MessageLineHandler : LineHandler {
             val content = privmsgMatch.groupValues[5]
 
             val user = UserImpl(connection, nickname, ident, hostname)
-            val cause = CauseImpl()
+            val cause = Cause.of(user, connection)
 
             if (target.startsWith("#")) {
                 // TODO: Users list
                 // (or omit it maybe?)
                 val channel = Channel(connection, target, listOf())
+                cause.push(channel)
                 Atom.instance.eventManager.post(IrcChannelMessageEvent(cause, connection, line, content, user, channel))
             } else {
                 Atom.instance.eventManager.post(IrcUserMessageEvent(cause, connection, line, content, user))

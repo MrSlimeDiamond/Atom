@@ -4,6 +4,7 @@ import net.slimediamond.atom.api.command.exceptions.ArgumentParseException
 import net.slimediamond.atom.api.command.exceptions.CommandException
 import net.slimediamond.atom.api.command.parameter.Parameter
 import net.slimediamond.atom.api.command.platforms.CommandPlatform
+import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.api.messaging.Audience
 import org.apache.logging.log4j.LogManager
 import java.util.HashMap
@@ -102,7 +103,8 @@ abstract class CommandNode(val description: String, val aliases: List<String>) :
         }
 
         return try {
-            val context = platform.createContext(command, sender, actualInput, audience, parameterKeyMap)
+            val cause = Cause.of(sender, command, this, platform)
+            val context = platform.createContext(command, cause, sender, actualInput, audience, parameterKeyMap)
             command.execute(context)
         } catch (e: ArgumentParseException) {
             logger.error(e)

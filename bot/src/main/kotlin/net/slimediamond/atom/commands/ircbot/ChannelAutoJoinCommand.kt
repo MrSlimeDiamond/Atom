@@ -4,7 +4,6 @@ import net.slimediamond.atom.api.command.CommandNode
 import net.slimediamond.atom.api.command.CommandNodeContext
 import net.slimediamond.atom.api.command.CommandResult
 import net.slimediamond.atom.commands.parameters.Parameters
-import net.slimediamond.atom.utils.CommandUtils
 import net.slimediamond.atom.utils.getChannelDao
 
 class ChannelAutoJoinCommand : CommandNode("Change auto join status on an IRC channel", "autojoin") {
