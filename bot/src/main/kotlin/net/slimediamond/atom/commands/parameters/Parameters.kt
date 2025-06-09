@@ -53,6 +53,7 @@ object Parameters {
             return@parser MCODataServiceProvider.web().getPlayerByName(input)
                 .orElseThrow { PlayerNotFoundException(input) }
         }
+        optional()
     }
 
 }

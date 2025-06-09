@@ -94,8 +94,11 @@ abstract class CommandNode(val description: String, val aliases: List<String>) :
             }
 
             val totalInputArgs = actualInput.trim().split("\\s+".toRegex())
-            if (command.parameters.none { it.greedy } && index < totalInputArgs.size) {
-                // see if they have too many arguments
+            val nonGreedyParams = command.parameters.filter { !it.greedy }
+            val requiredCount = nonGreedyParams.count { !it.optional }
+            val maxCount = nonGreedyParams.size
+
+            if (totalInputArgs.size < requiredCount || totalInputArgs.size > maxCount) {
                 return CommandResult.error(platform.renderTooManyArguments(command, index, actualInput))
             }
         } else if (actualInput.isNotEmpty()) {

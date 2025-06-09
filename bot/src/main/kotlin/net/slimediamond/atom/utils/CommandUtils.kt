@@ -1,5 +1,8 @@
 package net.slimediamond.atom.utils
 
+import com.minecraftonline.mcodata.api.MCODataServiceProvider
+import com.minecraftonline.mcodata.api.exceptions.PlayerNotFoundException
+import com.minecraftonline.mcodata.api.model.MCOPlayer
 import net.slimediamond.atom.api.command.CommandNodeContext
 import net.slimediamond.atom.api.command.exceptions.CommandException
 import net.slimediamond.atom.api.command.platforms.irc.IrcCommandNodeContext
@@ -13,4 +16,9 @@ fun CommandNodeContext.getChannelDao(): ChannelDao {
     }
     val channel = this.requireOne(Parameters.IRC_CHANNEL)
     return ChannelDao.getByName(channel)
+}
+
+fun CommandNodeContext.getTargetMCOPlayer(): MCOPlayer {
+    return this.one(Parameters.MCO_PLAYER)?: MCODataServiceProvider.web().getPlayerByName(this.sender.name)
+        .orElseThrow { PlayerNotFoundException(this.sender.name) }
 }

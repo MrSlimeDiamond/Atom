@@ -6,6 +6,7 @@ import net.slimediamond.atom.api.command.CommandResult
 import net.slimediamond.atom.api.command.platforms.discord.DiscordCommandNodeContext
 import net.slimediamond.atom.api.messaging.RichText
 import net.slimediamond.atom.commands.parameters.Parameters
+import net.slimediamond.atom.utils.getTargetMCOPlayer
 import net.slimediamond.atom.utils.infoEmbed
 
 class TimeplayedCommand : CommandNode("Check an MCO player's time online", "timeplayed", "playtime", "tp", "pt") {
@@ -16,7 +17,7 @@ class TimeplayedCommand : CommandNode("Check an MCO player's time online", "time
 
     override suspend fun execute(context: CommandNodeContext): CommandResult {
         // at the very start, take a timestamp
-        val player = context.requireOne(Parameters.MCO_PLAYER)
+        val player = context.getTargetMCOPlayer()
         val message = RichText.of()
             .append(RichText.of(player.name).bold())
             .append(RichText.of(" has played on Freedonia for "))

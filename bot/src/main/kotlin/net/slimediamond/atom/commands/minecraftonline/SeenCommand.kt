@@ -6,6 +6,7 @@ import net.slimediamond.atom.api.command.CommandResult
 import net.slimediamond.atom.api.command.platforms.discord.DiscordCommandNodeContext
 import net.slimediamond.atom.api.messaging.RichText
 import net.slimediamond.atom.commands.parameters.Parameters
+import net.slimediamond.atom.utils.getTargetMCOPlayer
 import net.slimediamond.atom.utils.infoEmbed
 
 class SeenCommand(private val firstseen: Boolean, description: String, vararg aliases: String) : CommandNode(description, *aliases) {
@@ -15,7 +16,7 @@ class SeenCommand(private val firstseen: Boolean, description: String, vararg al
     }
 
     override suspend fun execute(context: CommandNodeContext): CommandResult {
-        val player = context.requireOne(Parameters.MCO_PLAYER)
+        val player = context.getTargetMCOPlayer()
         val date = if (firstseen) {
             player.firstseen
         } else {
