@@ -1,13 +1,62 @@
 package net.slimediamond.atom.api.command
 
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.slimediamond.atom.api.command.platforms.CommandPlatform
 import net.slimediamond.atom.api.messaging.Audience
+import net.slimediamond.atom.api.messaging.Color
+import net.slimediamond.atom.api.messaging.RichText
+import org.apache.logging.log4j.LogManager
 
-interface CommandManager {
+/**
+ * The global command registrar, which acts as a place for
+ * storing command aliases and dispatching command execution.
+ *
+ * @see register
+ */
+class CommandManager {
+
+    private val logger = LogManager.getLogger("command manager")
+    private val commands = HashMap<String, Command>()
+
+    /**
+     * Register a command with the command handler
+     *
+     * @param alias The alias to associate with the command
+     * @param command The command which is executed
+     */
+    fun register(alias: String, command: Command) {
+        commands[alias] = command
+    }
 
     /**
      * Handle a command execution
+     *
+     * @param sender The command sender
+     * @param command The alias for the command
+     * @param platform The platform which the command execution
+     * originates from
+     * @param audience The audience to callback to
      */
-    fun handle(sender: CommandSender, command: String, input: String, platform: CommandPlatform, audience: Audience)
+    @OptIn(DelicateCoroutinesApi::class)
+    fun handle(sender: CommandSender, command: String, args: String, platform: CommandPlatform, audience: Audience) {
+        GlobalScope.launch {
+            try {
+                val cmd = commands[command]
+                if (cmd != null) {
+                    val result = cmd.execute(sender, args, platform, audience)
+                    if (!result.success && result.message != null) {
+                        audience.sendMessage(result.message!!.color(Color.RED))
+                        logger.error("Unable to execute command '$command' for user '${sender.name}'\n" +
+                                result.message!!.content)
+                    }
+                }
+            } catch (e: Throwable) {
+                logger.error(e)
+                audience.sendMessage(RichText.of("${e.javaClass.name}: ${e.message}").color(Color.RED))
+            }
+        }
+    }
 
 }

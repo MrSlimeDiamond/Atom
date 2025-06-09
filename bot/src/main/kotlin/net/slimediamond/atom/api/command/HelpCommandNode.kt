@@ -12,7 +12,7 @@ class HelpCommandNode : CommandNode("Help subcommand", "help", "?") {
         // construct a map
         if (parent == null) {
             // Instead of doing a specific subcommand, show *all* subcommands in general
-            parents.addAll(Atom.bot.commandNodeManager.getCommands())
+            parents.addAll(Atom.bot.commandNodeManager.commands)
         } else {
             parents.add(parent!!)
         }

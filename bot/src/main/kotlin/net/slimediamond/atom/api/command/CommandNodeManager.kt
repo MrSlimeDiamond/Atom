@@ -1,52 +1,26 @@
 package net.slimediamond.atom.api.command
 
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import net.slimediamond.atom.api.command.platforms.CommandPlatform
-import net.slimediamond.atom.api.messaging.Audience
-import net.slimediamond.atom.api.messaging.Color
-import net.slimediamond.atom.api.messaging.RichText
-import org.apache.logging.log4j.LogManager
-import java.util.concurrent.Executors
+import net.slimediamond.atom.Atom
+import okhttp3.internal.toImmutableList
+import java.util.LinkedList
 
-class CommandNodeManager : CommandManager {
+/**
+ * The [CommandNode] manager
+ */
+class CommandNodeManager {
 
-    private val commands: MutableMap<String, CommandNode> = HashMap()
-    private val logger = LogManager.getLogger("command node manager")
-    private val executor = Executors.newFixedThreadPool(2)
+    private val _commands = LinkedList<CommandNode>()
+    val commands
+        get() = _commands.toImmutableList()
 
-    @OptIn(DelicateCoroutinesApi::class)
-    override fun handle(sender: CommandSender, command: String, input: String, platform: CommandPlatform, audience: Audience) {
-        executor.submit {
-            GlobalScope.launch {
-                try {
-                    val cmd = commands[command]
-                    if (cmd != null) {
-                        if (cmd.platforms.isEmpty() || cmd.platforms.contains(platform)) {
-                            val result = cmd.execute(sender, input, platform, audience)
-                            if (!result.success && result.message != null) {
-                                audience.sendMessage(result.message!!.color(Color.RED))
-                                logger.error("Command error for {}: {}", sender.name, result.message!!.content)
-                            }
-                        }
-                    }
-                } catch (e: Throwable) {
-                    logger.error(e)
-                    audience.sendMessage(RichText.of("${e.javaClass.name}: ${e.message}").color(Color.RED))
-                }
-            }
-        }
-    }
-
+    /**
+     * Register a command node with the global command manager
+     */
     fun register(command: CommandNode) {
-        command.aliases.forEach {
-            commands[it] = command
+        _commands.add(command)
+        command.aliases.forEach { alias ->
+            Atom.bot.commandManager.register(alias, command)
         }
-    }
-
-    fun getCommands(): List<CommandNode> {
-        return commands.values.toList()
     }
 
 }

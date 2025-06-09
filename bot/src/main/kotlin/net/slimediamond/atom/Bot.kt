@@ -1,5 +1,6 @@
 package net.slimediamond.atom
 
+import net.slimediamond.atom.api.command.CommandManager
 import net.slimediamond.atom.api.command.CommandNodeManager
 import net.slimediamond.atom.api.command.HelpCommandNode
 import net.slimediamond.atom.api.event.EventManager
@@ -28,6 +29,8 @@ class Bot {
     lateinit var eventManager: EventManager
     @Volatile
     lateinit var factoryProvider: FactoryProvider
+    @Volatile
+    lateinit var commandManager: CommandManager
     @Volatile
     lateinit var commandNodeManager: CommandNodeManager
 
@@ -71,6 +74,7 @@ class Bot {
         serviceManager.addService(DiscordBot())
 
         logger.info("Registering commands")
+        commandManager = CommandManager()
         commandNodeManager = CommandNodeManager()
         commandNodeManager.register(HelpCommandNode())
         commandNodeManager.register(PingCommand())
