@@ -12,6 +12,7 @@ class TestCommand : CommandNode("Debug/test commands", "test") {
         addChild(ErrorCommand())
         addChild(NumberCommand())
         addChild(PermissionTestCommand())
+        addChild(DoubleParameterTestCommand())
 
         parameters.add(Parameters.OPTIONAL_MESSAGE)
     }
@@ -77,6 +78,21 @@ class TestCommand : CommandNode("Debug/test commands", "test") {
 
         override suspend fun execute(context: CommandNodeContext): CommandResult {
             context.sendMessage("you have permission")
+            return CommandResult.success
+        }
+
+    }
+
+    class DoubleParameterTestCommand : CommandNode("Test using two parameters in a command", "two") {
+
+        init {
+            parameters.add(Parameters.BOOLEAN)
+            parameters.add(Parameters.NUMBER)
+        }
+
+        override suspend fun execute(context: CommandNodeContext): CommandResult {
+            context.sendMessage("Boolean: ${context.requireOne(Parameters.BOOLEAN)}, " +
+                    "number: ${context.requireOne(Parameters.NUMBER)}")
             return CommandResult.success
         }
 

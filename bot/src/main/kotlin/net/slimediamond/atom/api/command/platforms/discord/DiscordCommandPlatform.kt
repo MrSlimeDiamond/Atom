@@ -14,12 +14,15 @@ import net.slimediamond.atom.api.messaging.RichText
 class DiscordCommandPlatform : CommandPlatform {
 
     override fun renderTooManyArguments(command: CommandNode, index: Int, input: String): RichText {
-        val pointer = " ".repeat(index.coerceAtMost(input.length)) + "^"
-        var limited = input
+        val args = input.trim().split("\\s+".toRegex())
+        val charOffset = input.indexOf(args.getOrNull(index) ?: "")
 
-        if (input.length > 50) {
-            limited = input.substring(0, 50) + "..."
-        }
+        val maxLen = 50
+        val truncated = input.length > maxLen
+        val limited = if (truncated) input.take(maxLen) + "..." else input
+
+        val pointerPos = charOffset.coerceAtMost(limited.length)
+        val pointer = " ".repeat(pointerPos) + "^"
 
         return RichText.of().color(Color.RED)
             .append(RichText.of("Too many arguments!"))
