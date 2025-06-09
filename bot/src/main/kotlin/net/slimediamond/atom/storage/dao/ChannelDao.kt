@@ -10,7 +10,7 @@ class ChannelDao(private val id: Int, val name: String) {
          * Get an IRC channel DAO by its name, otherwise make one
          */
         fun getByName(name: String): ChannelDao {
-            val existing = Atom.instance.sql.first("SELECT id, channel FROM irc_channels WHERE channel = ?", {
+            val existing = Atom.sql.first("SELECT id, channel FROM irc_channels WHERE channel = ?", {
                 val id = it.getInt("id")
                 return@first ChannelDao(id, name)
             }, name)
@@ -19,7 +19,7 @@ class ChannelDao(private val id: Int, val name: String) {
                 return existing.get()
             } else {
                 // make a new one, since we can easily
-                val id = Atom.instance.sql.updateReturning("INSERT INTO irc_channels (channel, auto_join) VALUES (?, ?)", { it.getInt(1) }, name, false)
+                val id = Atom.sql.updateReturning("INSERT INTO irc_channels (channel, auto_join) VALUES (?, ?)", { it.getInt(1) }, name, false)
                 return ChannelDao(id, name)
             }
         }
@@ -27,11 +27,11 @@ class ChannelDao(private val id: Int, val name: String) {
 
     var autoJoin: Boolean
         get() {
-            return Atom.instance.sql.first("SELECT auto_join FROM irc_channels WHERE id = ?", { it.getBoolean("auto_join") }, this.id)
+            return Atom.sql.first("SELECT auto_join FROM irc_channels WHERE id = ?", { it.getBoolean("auto_join") }, this.id)
                 .orElse(false)
         }
         set(value) {
-            Atom.instance.sql.execute("UPDATE irc_channels SET auto_join = ? WHERE id = ?")
+            Atom.sql.execute("UPDATE irc_channels SET auto_join = ? WHERE id = ?")
                 .with(value, this.id)
                 .execute()
         }

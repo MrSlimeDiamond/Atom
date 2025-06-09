@@ -20,7 +20,7 @@ class PermissionService {
 
         val placeholders = candidates.joinToString(", ") { "?" }
         val sql = "SELECT node FROM permissions WHERE user_id = ? AND node IN ($placeholders)"
-        val results = Atom.instance.sql.first(
+        val results = Atom.sql.first(
             sql,
             PermissionService::getPermissionNode,
             user.id, *candidates.toTypedArray()
@@ -29,7 +29,7 @@ class PermissionService {
     }
 
     fun hasDirectPermission(user: UserDao, permission: String): Boolean {
-        return Atom.instance.sql.first("SELECT node FROM permissions WHERE user_id = ? AND node = ?",
+        return Atom.sql.first("SELECT node FROM permissions WHERE user_id = ? AND node = ?",
             PermissionService::getPermissionNode,
             user.id, permission).isPresent
     }

@@ -28,9 +28,9 @@ class MessageLineHandler : LineHandler {
                 // (or omit it maybe?)
                 val channel = Channel(connection, target, listOf())
                 cause.push(channel)
-                Atom.instance.eventManager.post(IrcChannelMessageEvent(cause, connection, line, content, user, channel))
+                Atom.bot.eventManager.post(IrcChannelMessageEvent(cause, connection, line, content, user, channel))
             } else {
-                Atom.instance.eventManager.post(IrcUserMessageEvent(cause, connection, line, content, user))
+                Atom.bot.eventManager.post(IrcUserMessageEvent(cause, connection, line, content, user))
             }
         }
     }

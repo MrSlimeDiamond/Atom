@@ -7,7 +7,7 @@ plugins {
 group = 'net.slimediamond.atom'
 version = 'unspecified'
 
-var main = 'net.slimediamond.atom.Atom'
+var main = 'net.slimediamond.atom.Bot'
 var runDir = file("./run/")
 runDir.mkdirs()
 

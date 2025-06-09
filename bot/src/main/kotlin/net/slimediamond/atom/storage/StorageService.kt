@@ -22,7 +22,7 @@ class StorageService {
 
         logger.info("Starting storage service (database)")
 
-        val jdbc = Atom.instance.configuration.storageConfiguration.jdbcString
+        val jdbc = Atom.configuration.storageConfiguration.jdbcString
         if (jdbc.isEmpty()) {
             logger.error("Storage jdbc url is not configured")
             return
@@ -37,7 +37,7 @@ class StorageService {
             }
 
         sql = SqlStream.connect(dataSource)
-        Atom.instance.sql = sql
+        Atom.sql = sql
     }
 
     fun getAutoJoinChannels(): List<String> {

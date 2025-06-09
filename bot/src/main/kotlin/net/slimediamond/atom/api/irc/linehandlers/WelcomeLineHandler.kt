@@ -14,7 +14,7 @@ class WelcomeLineHandler : LineHandler {
         // This is very silly
         if (line.contains("welcome", true) && !done) {
             val cause = Cause.of(connection)
-            Atom.instance.eventManager.post(IrcReceivedWelcomeEvent(cause, connection, line))
+            Atom.bot.eventManager.post(IrcReceivedWelcomeEvent(cause, connection, line))
             done = true
         }
     }

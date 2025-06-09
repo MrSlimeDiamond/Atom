@@ -27,12 +27,12 @@ class IrcBot {
         // TODO: injection for this logger, or similar
         this.logger = event.container.logger
         logger.info("Starting IRC bot")
-        Atom.instance.factoryProvider.offer(ConnectionFactory())
+        Atom.bot.factoryProvider.offer(ConnectionFactory())
         client = IrcClient()
 
-        Atom.instance.eventManager.registerListener(IrcMessageListener())
+        Atom.bot.eventManager.registerListener(IrcMessageListener())
 
-        val ircConfiguration = Atom.instance.configuration.ircConfiguration
+        val ircConfiguration = Atom.configuration.ircConfiguration
         val serverConfig = ircConfiguration.serverConfiguration
         val userConfig = ircConfiguration.userConfiguration
 
@@ -63,7 +63,7 @@ class IrcBot {
     fun onIrcWelcome(event: IrcReceivedWelcomeEvent) {
         logger.info("IRC bot connected")
 
-        Atom.instance.serviceManager.provide(StorageService::class).getAutoJoinChannels().forEach { channel ->
+        Atom.bot.serviceManager.provide(StorageService::class).getAutoJoinChannels().forEach { channel ->
             event.connection.joinChannel(channel)
         }
     }

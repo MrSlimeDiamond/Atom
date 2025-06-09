@@ -28,7 +28,7 @@ class IrcClient {
      * Add a server to the IRC client
      */
     fun connect(metadata: ConnectionInfo): Connection {
-        val connection: Connection = Atom.instance.factoryProvider.provide(ConnectionFactory::class)
+        val connection: Connection = Atom.bot.factoryProvider.provide(ConnectionFactory::class)
             .create(metadata.nickname, metadata.realName, metadata.username, metadata.server)
         connection.connect(this)
         connections.add(connection)

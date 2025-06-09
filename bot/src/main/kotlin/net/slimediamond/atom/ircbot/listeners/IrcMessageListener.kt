@@ -10,13 +10,13 @@ class IrcMessageListener {
 
     @Listener
     fun onMessage(event: IrcMessageEvent) {
-        val prefix = Atom.instance.configuration.commandConfiguration.prefix
+        val prefix = Atom.configuration.commandConfiguration.prefix
         if (event.message.lowercase().startsWith(prefix)) {
             // a command!
             val command = event.message.split(prefix)[1].split(" ")[0]
             val sender = IrcCommandSender(event.user)
             val input = event.message.split(" ").toList().drop(2).joinToString(" ")
-            Atom.instance.commandNodeManager.handle(sender, command, input, CommandPlatforms.IRC, event.audience)
+            Atom.bot.commandNodeManager.handle(sender, command, input, CommandPlatforms.IRC, event.audience)
         }
     }
 

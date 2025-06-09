@@ -21,7 +21,7 @@ class DiscordBot {
     @Listener
     fun onServiceStart(event: ServiceStartEvent) {
         event.container.logger.info("Starting Discord bot")
-        val token = Atom.instance.configuration.discordConfiguration.token
+        val token = Atom.configuration.discordConfiguration.token
         if (token.isEmpty()) {
             event.container.logger.error("No token provided - Discord bot will not start")
             return
@@ -32,7 +32,7 @@ class DiscordBot {
             client.login()
         }
 
-        Atom.instance.eventManager.registerListener(DiscordMessageListener())
+        Atom.bot.eventManager.registerListener(DiscordMessageListener())
     }
 
     @OptIn(DelicateCoroutinesApi::class)

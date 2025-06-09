@@ -26,7 +26,7 @@ class ServicesCommand : RootOnlyCommandNode("Manage services", "services") {
     class ListCommand : CommandNode("List services", "list") {
 
         override suspend fun execute(context: CommandNodeContext): CommandResult {
-            val services = Atom.instance.serviceManager.services
+            val services = Atom.bot.serviceManager.services
             if (context is DiscordCommandNodeContext) {
                 context.sendEmbed {
                     color = Embeds.THEME_COLOR

@@ -35,10 +35,10 @@ class KordDiscordClient(private val token: String) : DiscordClient {
                 val channel = KordMessageChannel(kordChannel)
                 cause.push(guild)
                 cause.push(channel)
-                Atom.instance.eventManager.post(DiscordGuildMessageEvent(cause, this@KordDiscordClient, user, message.content, channel, guild))
+                Atom.bot.eventManager.post(DiscordGuildMessageEvent(cause, this@KordDiscordClient, user, message.content, channel, guild))
             } else {
                 // user message
-                Atom.instance.eventManager.post(DiscordUserMessageEvent(cause, this@KordDiscordClient, user, message.content))
+                Atom.bot.eventManager.post(DiscordUserMessageEvent(cause, this@KordDiscordClient, user, message.content))
             }
         }
 

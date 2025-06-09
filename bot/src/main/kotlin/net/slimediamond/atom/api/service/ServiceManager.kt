@@ -20,15 +20,15 @@ class ServiceManager {
         val logger: Logger = LogManager.getLogger(name)
         val container = ServiceContainer(name, instance, logger)
         services[instance::class] = container
-        Atom.instance.eventManager.registerListener(instance)
+        Atom.bot.eventManager.registerListener(instance)
         this.logger.info("Service '{}' registered", container.name)
     }
 
     fun startAll() {
-        val cause: Cause = Cause.of(this, Atom.instance)
+        val cause: Cause = Cause.of(this, Atom.bot)
         services.values.forEach { container ->
             val event = ServiceStartEvent(cause, container, container.instance.javaClass)
-            Atom.instance.eventManager.post(event, container.instance)
+            Atom.bot.eventManager.post(event, container.instance)
         }
     }
 

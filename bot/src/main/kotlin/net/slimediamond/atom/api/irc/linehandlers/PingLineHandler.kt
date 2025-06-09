@@ -13,7 +13,7 @@ class PingLineHandler : LineHandler {
             val event = IrcPingEvent(cause, connection, line)
             // respond to the ping
             connection.sendRaw("PONG :${event.message}")
-            Atom.instance.eventManager.post(event)
+            Atom.bot.eventManager.post(event)
         }
     }
 

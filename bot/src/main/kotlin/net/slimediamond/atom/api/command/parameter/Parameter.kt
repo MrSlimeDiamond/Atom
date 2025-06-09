@@ -56,7 +56,7 @@ interface Parameter {
         fun service(config: Value.Builder<ServiceContainer>.() -> Unit): Value<ServiceContainer> {
             return builder<ServiceContainer> {
                 parser {
-                    Atom.instance.serviceManager.getByName(it)?: throw ArgumentParseException(it, 0, RichText.of("Could not find service '$it'"))
+                    Atom.bot.serviceManager.getByName(it)?: throw ArgumentParseException(it, 0, RichText.of("Could not find service '$it'"))
                 }
             }.apply(config).build()
         }

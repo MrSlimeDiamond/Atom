@@ -8,7 +8,7 @@ import net.slimediamond.atom.api.event.Listener
 
 class DiscordMessageListener {
 
-    private val prefix = Atom.instance.configuration.commandConfiguration.prefix
+    private val prefix = Atom.configuration.commandConfiguration.prefix
 
     @Listener
     fun onDiscordMessage(event: DiscordMessageEvent) {
@@ -16,7 +16,7 @@ class DiscordMessageListener {
             val command = event.message.split(prefix)[1].split(" ")[0]
             val sender = DiscordCommandSender(event.user)
             val input = event.message.split(" ").toList().drop(2).joinToString(" ")
-            Atom.instance.commandNodeManager.handle(sender, command, input, CommandPlatforms.DISCORD, event.audience)
+            Atom.bot.commandNodeManager.handle(sender, command, input, CommandPlatforms.DISCORD, event.audience)
         }
     }
 
