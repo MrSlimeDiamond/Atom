@@ -1,6 +1,8 @@
 package net.slimediamond.atom.discord.abstraction
 
 import dev.kord.core.Kord
+import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
+import dev.kord.core.event.interaction.GuildChatInputCommandInteractionCreateEvent
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
 import dev.kord.gateway.Intent
@@ -11,8 +13,10 @@ import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.discord.DiscordClient
 import net.slimediamond.atom.api.discord.entities.Guild
 import net.slimediamond.atom.api.discord.event.DiscordGuildMessageEvent
+import net.slimediamond.atom.api.discord.event.DiscordSlashCommandEvent
 import net.slimediamond.atom.api.discord.event.DiscordUserMessageEvent
 import net.slimediamond.atom.api.event.Cause
+import net.slimediamond.atom.api.messaging.SlashCommandAudience
 import net.slimediamond.atom.discord.abstraction.entities.KordGuild
 import net.slimediamond.atom.discord.abstraction.entities.KordMessageChannel
 import net.slimediamond.atom.discord.abstraction.entities.KordUser
@@ -40,6 +44,18 @@ class KordDiscordClient(private val token: String) : DiscordClient {
                 // user message
                 Atom.bot.eventManager.post(DiscordUserMessageEvent(cause, this@KordDiscordClient, user, message.content))
             }
+        }
+
+        kord.on<ChatInputCommandInteractionCreateEvent> {
+            val user = KordUser(interaction.user)
+            val cause = Cause.of(user)
+            val audience = SlashCommandAudience(interaction)
+            // long name!
+            if (this is GuildChatInputCommandInteractionCreateEvent) {
+                val guild = KordGuild(interaction.getGuild())
+                cause.push(guild)
+            }
+            Atom.bot.eventManager.post(DiscordSlashCommandEvent(cause, this@KordDiscordClient, audience, user))
         }
 
         kord.login {
