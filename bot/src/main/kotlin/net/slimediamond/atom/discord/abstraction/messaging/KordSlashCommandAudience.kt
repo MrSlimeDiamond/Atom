@@ -1,11 +1,13 @@
-package net.slimediamond.atom.api.messaging
+package net.slimediamond.atom.discord.abstraction.messaging
 
 import dev.kord.core.behavior.interaction.response.respond
 import dev.kord.core.entity.interaction.ChatInputCommandInteraction
 import dev.kord.rest.builder.message.EmbedBuilder
+import net.slimediamond.atom.api.messaging.DiscordAudience
+import net.slimediamond.atom.api.messaging.RichText
 import net.slimediamond.atom.api.messaging.renderer.DiscordRichMessageRenderer
 
-class SlashCommandAudience(private val interaction: ChatInputCommandInteraction) : DiscordAudience {
+class KordSlashCommandAudience(private val interaction: ChatInputCommandInteraction) : DiscordAudience {
 
     override suspend fun sendEmbeds(vararg embeds: EmbedBuilder) {
         interaction.deferPublicResponse().respond {
