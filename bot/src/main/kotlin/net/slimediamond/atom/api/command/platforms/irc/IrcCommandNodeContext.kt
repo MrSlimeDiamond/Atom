@@ -17,6 +17,14 @@ class IrcCommandNodeContext(
     parameterKeyMap: Map<String, String>,
     private val audience: Audience
 ) : CommandNodeContext(commandNode, cause, sender, input, platform, parameterKeyMap) {
+    override suspend fun replySuccess(message: String) {
+        sendMessage(message)
+    }
+
+    override suspend fun replySuccess(message: String, ephemeral: Boolean) {
+        // IRC doesn't support ephemeral responses like Discord, so just send normally
+        replySuccess(message)
+    }
 
     override suspend fun sendMessage(message: String) {
         audience.sendMessage(message)

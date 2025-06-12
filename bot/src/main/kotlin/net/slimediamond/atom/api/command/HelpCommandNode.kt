@@ -44,7 +44,7 @@ class HelpCommandNode : CommandNode("Help subcommand", "help", "?") {
 
         // below is slightly bad, seems to work
         if (context.cause.any { it.instanceOf(Guild::class) || it.instanceOf(Channel::class) }) {
-            context.replySuccess("Help sent in DMs")
+            context.replySuccess("Help sent in DMs", ephemeral = true)
         }
         // Send it to the command sender and not into the actual channel
         context.sender.sendMessage(result)

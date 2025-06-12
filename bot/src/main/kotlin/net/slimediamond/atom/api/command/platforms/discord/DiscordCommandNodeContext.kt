@@ -8,6 +8,8 @@ import net.slimediamond.atom.api.command.platforms.CommandPlatform
 import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.api.messaging.DiscordAudience
 import net.slimediamond.atom.api.messaging.RichText
+import net.slimediamond.atom.api.messaging.SlashCommandAudience
+import net.slimediamond.atom.utils.Embeds
 
 class DiscordCommandNodeContext(
     commandNode: CommandNode,
@@ -18,6 +20,19 @@ class DiscordCommandNodeContext(
     parameterKeyMap: Map<String, String>,
     private val audience: DiscordAudience
 ) : CommandNodeContext(commandNode, cause, sender, input, platform, parameterKeyMap) {
+    override suspend fun replySuccess(message: String) {
+        sendEmbeds(Embeds.success(message))
+    }
+
+    override suspend fun replySuccess(message: String, ephemeral: Boolean) {
+        if (!ephemeral) {
+            replySuccess(message)
+        } else {
+            if (audience is SlashCommandAudience) {
+                audience.sendEmbeds(Embeds.success(message), ephemeral = true)
+            }
+        }
+    }
 
     override suspend fun sendMessage(message: String) {
         audience.sendMessage(message)

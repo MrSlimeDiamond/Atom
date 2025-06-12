@@ -8,6 +8,7 @@ import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.api.messaging.Audience
 import net.slimediamond.atom.api.messaging.Color
 import net.slimediamond.atom.api.messaging.RichText
+import net.slimediamond.atom.api.messaging.SlashCommandAudience
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -48,7 +49,11 @@ class CommandManager {
                 if (cmd != null) {
                     val result = cmd.execute(sender, args, platform, audience, cause)
                     if (!result.success && result.message != null) {
-                        audience.sendMessage(result.message!!.color(Color.RED))
+                        if (audience is SlashCommandAudience) {
+                            audience.sendMessage(result.message!!.color(Color.RED), ephemeral = true)
+                        } else {
+                            audience.sendMessage(result.message!!.color(Color.RED))
+                        }
                         logger.error("Unable to execute command '$command' for user '${sender.name}'\n" +
                                 result.message!!.content)
                     }

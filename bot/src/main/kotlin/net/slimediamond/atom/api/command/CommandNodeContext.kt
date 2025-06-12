@@ -4,10 +4,8 @@ import net.slimediamond.atom.api.command.exceptions.ArgumentParseException
 import net.slimediamond.atom.api.command.exceptions.CommandException
 import net.slimediamond.atom.api.command.parameter.Parameter
 import net.slimediamond.atom.api.command.platforms.CommandPlatform
-import net.slimediamond.atom.api.command.platforms.discord.DiscordCommandNodeContext
 import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.api.messaging.Audience
-import net.slimediamond.atom.utils.Embeds
 
 abstract class CommandNodeContext(
     private val commandNode: CommandNode,
@@ -39,12 +37,8 @@ abstract class CommandNodeContext(
         return parameter.parse(parameterInput)
     }
 
-    suspend fun replySuccess(message: String) {
-        if (this is DiscordCommandNodeContext) {
-            sendEmbeds(Embeds.success(message))
-        } else {
-            sendMessage(message)
-        }
-    }
+    abstract suspend fun replySuccess(message: String)
+
+    abstract suspend fun replySuccess(message: String, ephemeral: Boolean = false)
 
 }
