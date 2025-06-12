@@ -4,7 +4,7 @@ import net.slimediamond.atom.Atom
 import net.slimediamond.atom.services.PermissionService
 import net.slimediamond.atom.storage.StorageService
 import java.sql.ResultSet
-import java.util.Optional
+import java.util.*
 
 class UserDao(val id: Int) {
 

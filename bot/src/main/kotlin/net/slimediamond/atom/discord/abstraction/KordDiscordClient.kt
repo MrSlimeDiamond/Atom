@@ -19,10 +19,10 @@ import net.slimediamond.atom.api.discord.event.DiscordGuildMessageEvent
 import net.slimediamond.atom.api.discord.event.DiscordSlashCommandEvent
 import net.slimediamond.atom.api.discord.event.DiscordUserMessageEvent
 import net.slimediamond.atom.api.event.Cause
-import net.slimediamond.atom.discord.abstraction.messaging.KordSlashCommandAudience
 import net.slimediamond.atom.discord.abstraction.entities.KordGuild
 import net.slimediamond.atom.discord.abstraction.entities.KordMessageChannel
 import net.slimediamond.atom.discord.abstraction.entities.KordUser
+import net.slimediamond.atom.discord.abstraction.messaging.KordSlashCommandAudience
 
 class KordDiscordClient(private val token: String) : DiscordClient {
 

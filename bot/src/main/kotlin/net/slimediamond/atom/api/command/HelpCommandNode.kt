@@ -2,12 +2,11 @@ package net.slimediamond.atom.api.command
 
 import io.ktor.util.reflect.*
 import net.slimediamond.atom.Atom
-import net.slimediamond.atom.api.command.platforms.discord.DiscordCommandNodeContext
 import net.slimediamond.atom.api.discord.entities.Guild
 import net.slimediamond.atom.api.irc.entities.Channel
 import net.slimediamond.atom.api.messaging.Color
 import net.slimediamond.atom.api.messaging.RichText
-import java.util.LinkedList
+import java.util.*
 
 class HelpCommandNode : CommandNode("Help subcommand", "help", "?") {
 

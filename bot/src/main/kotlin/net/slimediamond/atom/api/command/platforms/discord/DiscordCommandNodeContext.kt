@@ -1,6 +1,5 @@
 package net.slimediamond.atom.api.command.platforms.discord
 
-import dev.kord.core.entity.Embed
 import dev.kord.rest.builder.message.EmbedBuilder
 import net.slimediamond.atom.api.command.CommandNode
 import net.slimediamond.atom.api.command.CommandNodeContext

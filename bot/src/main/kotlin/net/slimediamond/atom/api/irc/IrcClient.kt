@@ -6,7 +6,7 @@ import net.slimediamond.atom.api.irc.linehandlers.LineHandler
 import net.slimediamond.atom.api.irc.linehandlers.MessageLineHandler
 import net.slimediamond.atom.api.irc.linehandlers.PingLineHandler
 import net.slimediamond.atom.api.irc.linehandlers.WelcomeLineHandler
-import java.util.LinkedList
+import java.util.*
 import java.util.function.Consumer
 
 /**

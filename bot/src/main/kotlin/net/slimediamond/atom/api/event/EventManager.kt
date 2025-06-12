@@ -1,6 +1,6 @@
 package net.slimediamond.atom.api.event
 
-import java.util.LinkedList
+import java.util.*
 
 class EventManager {
 

@@ -6,7 +6,7 @@ import kotlinx.coroutines.launch
 import net.slimediamond.atom.Atom
 import net.slimediamond.atom.discord.DiscordBot
 import okhttp3.internal.toImmutableList
-import java.util.LinkedList
+import java.util.*
 
 /**
  * The [CommandNode] manager

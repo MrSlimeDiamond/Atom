@@ -2,7 +2,7 @@ package net.slimediamond.atom.api.command.platforms.discord
 
 import net.slimediamond.atom.api.command.Command
 import net.slimediamond.atom.api.command.CommandNode
-import java.util.WeakHashMap
+import java.util.*
 
 private val slashCommands = WeakHashMap<Command, Boolean>()
 

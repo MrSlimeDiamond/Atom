@@ -1,11 +1,9 @@
 package net.slimediamond.atom.api.messaging
 
 import org.apache.commons.lang3.time.DurationFormatUtils
-import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.Instant
-import java.util.Date
-import java.util.LinkedList
+import java.util.*
 
 /**
  * A "rich message", supporting colours, appending elements, etc

@@ -8,10 +8,10 @@ import net.slimediamond.atom.api.irc.IrcClient
 import net.slimediamond.atom.api.irc.Server
 import net.slimediamond.atom.api.irc.events.IrcReceivedWelcomeEvent
 import net.slimediamond.atom.api.irc.factory.ConnectionFactory
-import net.slimediamond.atom.ircbot.listeners.IrcMessageListener
 import net.slimediamond.atom.api.service.Service
 import net.slimediamond.atom.api.service.events.ServiceStartEvent
 import net.slimediamond.atom.api.service.events.ServiceStopEvent
+import net.slimediamond.atom.ircbot.listeners.IrcMessageListener
 import net.slimediamond.atom.storage.StorageService
 import org.apache.logging.log4j.Logger
 

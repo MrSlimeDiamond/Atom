@@ -7,8 +7,7 @@ import net.slimediamond.atom.api.command.platforms.CommandPlatform
 import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.api.messaging.Audience
 import org.apache.logging.log4j.LogManager
-import java.util.HashMap
-import java.util.LinkedList
+import java.util.*
 
 abstract class CommandNode(val description: String, val aliases: List<String>) : Command {
 
