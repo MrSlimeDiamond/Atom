@@ -4,6 +4,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.slimediamond.atom.api.command.platforms.CommandPlatform
+import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.api.messaging.Audience
 import net.slimediamond.atom.api.messaging.Color
 import net.slimediamond.atom.api.messaging.RichText
@@ -40,12 +41,12 @@ class CommandManager {
      * @param audience The audience to callback to
      */
     @OptIn(DelicateCoroutinesApi::class)
-    fun handle(sender: CommandSender, command: String, args: String, platform: CommandPlatform, audience: Audience) {
+    fun handle(sender: CommandSender, command: String, args: String, platform: CommandPlatform, audience: Audience, cause: Cause) {
         GlobalScope.launch {
             try {
                 val cmd = commands[command]
                 if (cmd != null) {
-                    val result = cmd.execute(sender, args, platform, audience)
+                    val result = cmd.execute(sender, args, platform, audience, cause)
                     if (!result.success && result.message != null) {
                         audience.sendMessage(result.message!!.color(Color.RED))
                         logger.error("Unable to execute command '$command' for user '${sender.name}'\n" +

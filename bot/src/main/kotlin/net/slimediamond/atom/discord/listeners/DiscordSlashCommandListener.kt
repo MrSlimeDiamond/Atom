@@ -22,7 +22,7 @@ class DiscordSlashCommandListener {
                 return@launch
             }
             val sender = DiscordCommandSender(event.user)
-            Atom.bot.commandManager.handle(sender, command, "", CommandPlatforms.DISCORD, event.audience)
+            Atom.bot.commandManager.handle(sender, command, "", CommandPlatforms.DISCORD, event.audience, event.cause)
         }
     }
 

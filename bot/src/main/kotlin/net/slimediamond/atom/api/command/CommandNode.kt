@@ -48,7 +48,7 @@ abstract class CommandNode(val description: String, val aliases: List<String>) :
     @Throws(CommandException::class)
     abstract suspend fun execute(context: CommandNodeContext): CommandResult
 
-    override suspend fun execute(sender: CommandSender, input: String, platform: CommandPlatform, audience: Audience): CommandResult {
+    override suspend fun execute(sender: CommandSender, input: String, platform: CommandPlatform, audience: Audience, cause: Cause): CommandResult {
         var actualInput = input
         var command = this
 
@@ -106,8 +106,12 @@ abstract class CommandNode(val description: String, val aliases: List<String>) :
         }
 
         return try {
-            val cause = Cause.of(sender, command, this, platform)
-            val context = platform.createContext(command, cause, sender, actualInput, audience, parameterKeyMap)
+            val c = cause.toMutable()
+            c.push(sender)
+            c.push(command)
+            c.push(this)
+            c.push(platform)
+            val context = platform.createContext(command, c, sender, actualInput, audience, parameterKeyMap)
             command.execute(context)
         } catch (e: ArgumentParseException) {
             logger.error(e)

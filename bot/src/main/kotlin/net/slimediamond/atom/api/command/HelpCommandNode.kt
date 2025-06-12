@@ -1,6 +1,10 @@
 package net.slimediamond.atom.api.command
 
+import io.ktor.util.reflect.*
 import net.slimediamond.atom.Atom
+import net.slimediamond.atom.api.command.platforms.discord.DiscordCommandNodeContext
+import net.slimediamond.atom.api.discord.entities.Guild
+import net.slimediamond.atom.api.irc.entities.Channel
 import net.slimediamond.atom.api.messaging.Color
 import net.slimediamond.atom.api.messaging.RichText
 import java.util.LinkedList
@@ -39,6 +43,10 @@ class HelpCommandNode : CommandNode("Help subcommand", "help", "?") {
                         .map { command(it) }, true))
         }
 
+        // below is slightly bad, seems to work
+        if (context.cause.any { it.instanceOf(Guild::class) || it.instanceOf(Channel::class) }) {
+            context.replySuccess("Help sent in DMs")
+        }
         // Send it to the command sender and not into the actual channel
         context.sender.sendMessage(result)
 

@@ -42,6 +42,10 @@ open class Cause(val root: Any, open val causes: List<Any>) : Iterable<Any> {
 
     }
 
+    fun toMutable(): Mutable {
+        return Mutable(root, causes.toMutableList())
+    }
+
     /**
      * A mutable cause, which things can be added to
      */

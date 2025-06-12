@@ -16,7 +16,7 @@ class DiscordMessageListener {
             val command = event.message.split(prefix)[1].split(" ")[0]
             val sender = DiscordCommandSender(event.user)
             val input = event.message.split(" ").toList().drop(2).joinToString(" ")
-            Atom.bot.commandManager.handle(sender, command, input, CommandPlatforms.DISCORD, event.audience)
+            Atom.bot.commandManager.handle(sender, command, input, CommandPlatforms.DISCORD, event.audience, event.cause)
         }
     }
 
