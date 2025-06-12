@@ -7,7 +7,11 @@ import net.slimediamond.atom.api.event.EventManager
 import net.slimediamond.atom.api.factory.DefaultFactoryProvider
 import net.slimediamond.atom.api.factory.FactoryProvider
 import net.slimediamond.atom.api.service.ServiceManager
-import net.slimediamond.atom.commands.*
+import net.slimediamond.atom.commands.ColorsCommand
+import net.slimediamond.atom.commands.PingCommand
+import net.slimediamond.atom.commands.ServicesCommand
+import net.slimediamond.atom.commands.TestCommand
+import net.slimediamond.atom.commands.WhoamiCommand
 import net.slimediamond.atom.commands.ircbot.IrcBotRootCommand
 import net.slimediamond.atom.commands.minecraftonline.SeenCommand
 import net.slimediamond.atom.commands.minecraftonline.TimeplayedCommand
