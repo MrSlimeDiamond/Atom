@@ -1,17 +1,12 @@
 package net.slimediamond.atom.commands
 
-import dev.kord.rest.builder.message.EmbedBuilder
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.command.CommandNode
 import net.slimediamond.atom.api.command.CommandNodeContext
 import net.slimediamond.atom.api.command.CommandResult
 import net.slimediamond.atom.api.command.RootOnlyCommandNode
 import net.slimediamond.atom.api.command.platforms.discord.DiscordCommandNodeContext
-import net.slimediamond.atom.api.event.Listener
-import net.slimediamond.atom.api.service.events.ServiceStopEvent
+import net.slimediamond.atom.api.command.platforms.discord.slashCommand
 import net.slimediamond.atom.commands.parameters.Parameters
 import net.slimediamond.atom.utils.Embeds
 
@@ -21,6 +16,7 @@ class ServicesCommand : RootOnlyCommandNode("Manage services", "services") {
         addChild(ListCommand())
         addChild(InfoCommand())
         addChild(RestartCommand())
+        slashCommand = false
     }
 
     class ListCommand : CommandNode("List services", "list") {

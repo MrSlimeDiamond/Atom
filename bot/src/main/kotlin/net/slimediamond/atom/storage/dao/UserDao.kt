@@ -9,7 +9,7 @@ import java.util.Optional
 class UserDao(val id: Int) {
 
     companion object {
-        private val sql = Atom.bot.serviceManager.provide(StorageService::class).sql
+        private val sql = Atom.bot.serviceManager.provide(StorageService::class)!!.sql
         private val permissionService = Atom.bot.serviceManager.provide(PermissionService::class)
 
         fun getFromIrc(user: net.slimediamond.atom.api.irc.entities.User): Optional<UserDao> {
@@ -26,7 +26,7 @@ class UserDao(val id: Int) {
     }
 
     fun hasPermission(permission: String): Boolean {
-        return permissionService.hasPermission(this, permission)
+        return permissionService!!.hasPermission(this, permission)
     }
 
     var discordId: Long?

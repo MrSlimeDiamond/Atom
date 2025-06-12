@@ -24,6 +24,13 @@ object Embeds {
         }
     }
 
+    fun fail(message: String): EmbedBuilder {
+        return EmbedBuilder().apply {
+            color = Color(255, 0, 0)
+            description = message
+        }
+    }
+
 }
 
 fun MCOPlayer.infoEmbed(description: RichText): EmbedBuilder {

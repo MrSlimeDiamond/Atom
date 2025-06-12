@@ -5,6 +5,17 @@ import net.slimediamond.atom.api.discord.entities.Guild
 interface DiscordClient {
 
     /**
+     * The [SlashCommandNodeManager] for registering
+     * [net.slimediamond.atom.api.command.CommandNode]s with slashes
+     */
+    var slashCommandNodeManager: SlashCommandNodeManager
+
+    /**
+     * Whether the client is currently logged in
+     */
+    var loggedIn: Boolean
+
+    /**
      * Login to the Discord API
      */
     suspend fun login()

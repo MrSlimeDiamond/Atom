@@ -11,6 +11,7 @@ import net.slimediamond.atom.api.service.events.ServiceStartEvent
 import net.slimediamond.atom.api.service.events.ServiceStopEvent
 import net.slimediamond.atom.discord.abstraction.KordDiscordClient
 import net.slimediamond.atom.discord.listeners.DiscordMessageListener
+import net.slimediamond.atom.discord.listeners.DiscordSlashCommandListener
 
 @Service("discord")
 class DiscordBot {
@@ -33,6 +34,7 @@ class DiscordBot {
         }
 
         Atom.bot.eventManager.registerListener(DiscordMessageListener())
+        Atom.bot.eventManager.registerListener(DiscordSlashCommandListener())
     }
 
     @OptIn(DelicateCoroutinesApi::class)

@@ -9,9 +9,12 @@ import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.isActive
 import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.discord.DiscordClient
+import net.slimediamond.atom.api.discord.SlashCommandNodeManager
 import net.slimediamond.atom.api.discord.entities.Guild
+import net.slimediamond.atom.api.discord.entities.SlashCommandInteraction
 import net.slimediamond.atom.api.discord.event.DiscordGuildMessageEvent
 import net.slimediamond.atom.api.discord.event.DiscordSlashCommandEvent
 import net.slimediamond.atom.api.discord.event.DiscordUserMessageEvent
@@ -25,8 +28,26 @@ class KordDiscordClient(private val token: String) : DiscordClient {
 
     lateinit var kord: Kord
 
+    @Volatile
+    private lateinit var _slashCommandNodeManager: SlashCommandNodeManager
+
+    override var loggedIn: Boolean
+        get() {
+            if (!::kord.isInitialized) {
+                return false
+            }
+            return kord.isActive
+        }
+        set(_) {}
+
+    override var slashCommandNodeManager: SlashCommandNodeManager
+        get() = _slashCommandNodeManager
+        set(_) {}
+
     override suspend fun login() {
         kord = Kord(token)
+
+        _slashCommandNodeManager = KordSlashCommandManager(kord)
 
         kord.on<MessageCreateEvent> {
             val kordUser = message.author ?: return@on
@@ -55,7 +76,8 @@ class KordDiscordClient(private val token: String) : DiscordClient {
                 val guild = KordGuild(interaction.getGuild())
                 cause.push(guild)
             }
-            Atom.bot.eventManager.post(DiscordSlashCommandEvent(cause, this@KordDiscordClient, audience, user))
+            val inter = SlashCommandInteraction(interaction.invokedCommandName)
+            Atom.bot.eventManager.post(DiscordSlashCommandEvent(cause, this@KordDiscordClient, audience, user, inter))
         }
 
         kord.login {

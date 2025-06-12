@@ -68,10 +68,21 @@ class Bot {
         factoryProvider = DefaultFactoryProvider()
 
 
+        val discordBot = DiscordBot()
         serviceManager.addService(StorageService())
         serviceManager.addService(PermissionService())
         serviceManager.addService(IrcBot())
-        serviceManager.addService(DiscordBot())
+        serviceManager.addService(discordBot)
+
+        logger.info("Starting all services")
+        serviceManager.startAll()
+
+        // This is silly but seems to work?
+        // TODO: Make await logic for DiscordClient's login
+        while (true) {
+            if (discordBot.client.loggedIn) break
+            Thread.sleep(10)
+        }
 
         logger.info("Registering commands")
         commandManager = CommandManager()
@@ -86,9 +97,6 @@ class Bot {
         commandNodeManager.register(TimeplayedCommand())
         commandNodeManager.register(SeenCommand(true, "Get the first seen date of a player", "firstseen", "fs"))
         commandNodeManager.register(SeenCommand(false, "Get the last seen date of a player", "lastseen", "ls"))
-
-        logger.info("Starting all services")
-        serviceManager.startAll()
     }
 
 }

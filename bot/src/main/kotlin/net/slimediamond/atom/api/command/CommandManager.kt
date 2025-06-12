@@ -18,7 +18,7 @@ import org.apache.logging.log4j.LogManager
 class CommandManager {
 
     private val logger = LogManager.getLogger("command manager")
-    private val commands = HashMap<String, Command>()
+    val commands = HashMap<String, Command>()
 
     /**
      * Register a command with the command handler

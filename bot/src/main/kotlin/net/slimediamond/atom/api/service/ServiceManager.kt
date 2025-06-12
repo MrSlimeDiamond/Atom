@@ -33,7 +33,8 @@ class ServiceManager {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> provide(clazz: KClass<T>): T {
+    fun <T : Any> provide(clazz: KClass<T>): T? {
+        if (!services.containsKey(clazz)) return null
         return services[clazz]?.instance as T
     }
 
