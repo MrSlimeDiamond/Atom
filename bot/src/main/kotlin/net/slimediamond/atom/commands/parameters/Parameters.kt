@@ -11,26 +11,26 @@ import net.slimediamond.atom.api.messaging.RichText
 object Parameters {
 
     val MESSAGE = Parameter.string {
-        key("message")
-        greedy()
+        key = "message"
+        greedy = true
     }
 
     val OPTIONAL_MESSAGE = Parameter.string {
-        key("message")
-        greedy()
-        optional()
+        key = "message"
+        greedy = true
+        optional = true
     }
 
     val NUMBER = Parameter.int {
-        key("number")
+        key = "number"
     }
 
     val BOOLEAN = Parameter.boolean {
-        key("status")
+        key = "status"
     }
 
     val IRC_CHANNEL = Parameter.string {
-        key("channel")
+        key = "channel"
         parser { input ->
             if (!input.startsWith("#")) {
                 throw ArgumentParseException(input, 0, RichText.of("IRC channel names must start with '#'"))
@@ -43,16 +43,16 @@ object Parameters {
     }
 
     val SERVICE = Parameter.service {
-        key("service")
+        key = "service"
     }
 
     val MCO_PLAYER = parameter<MCOPlayer> {
-        key("player")
+        key = "player"
         parser { input ->
             return@parser WebMCODataService().getPlayerByName(input)
                 .orElseThrow { PlayerNotFoundException(input) }
         }
-        optional()
+        optional = true
     }
 
 }

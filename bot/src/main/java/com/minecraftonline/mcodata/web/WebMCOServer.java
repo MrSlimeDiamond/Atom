@@ -1,5 +1,6 @@
 package com.minecraftonline.mcodata.web;
 
+import com.minecraftonline.mcodata.api.exceptions.DataNotFoundException;
 import com.minecraftonline.mcodata.api.model.MCOPlayer;
 import com.minecraftonline.mcodata.api.model.MCOServer;
 
@@ -17,6 +18,15 @@ public class WebMCOServer implements MCOServer {
         } catch (IOException e) {
             // MCO is likely down or empty
             return List.of();
+        }
+    }
+
+    @Override
+    public int getBanCount() {
+        try {
+            return WebAPI.getBanCount().orElse(0);
+        } catch (IOException e) {
+            throw new DataNotFoundException(e);
         }
     }
 

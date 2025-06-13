@@ -12,4 +12,8 @@ interface Audience {
      */
     suspend fun sendMessage(message: RichText)
 
+    suspend fun sendMessage(config: RichText.() -> Unit) {
+        sendMessage(RichText.of().apply(config))
+    }
+
 }

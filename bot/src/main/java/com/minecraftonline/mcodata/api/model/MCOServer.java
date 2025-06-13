@@ -11,4 +11,11 @@ public interface MCOServer {
      */
     List<MCOPlayer> getOnlinePlayers();
 
+    /**
+     * Get the amount of bans on MinecraftOnline
+     *
+     * @return Ban count
+     */
+    int getBanCount();
+
 }

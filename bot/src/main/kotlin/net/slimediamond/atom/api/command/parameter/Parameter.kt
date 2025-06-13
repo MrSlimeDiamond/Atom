@@ -72,16 +72,11 @@ interface Parameter {
 
         class Builder<T> {
 
-            private var key: String = ""
-            private var greedy: Boolean = false
-            private var optional: Boolean = false
-            private lateinit var parser: (String) -> T
+            var key: String = ""
+            var greedy: Boolean = false
+            var optional: Boolean = false
+            lateinit var parser: (String) -> T
 
-            fun key(key: String) = apply { this.key = key }
-            fun greedy(greedy: Boolean) = apply { this.greedy = greedy }
-            fun greedy() = apply { this.greedy = true }
-            fun optional(optional: Boolean) = apply { this.optional = optional }
-            fun optional() = apply { this.optional = true }
             fun parser(parser: (String) -> T) = apply { this.parser = parser }
 
             fun build(): Value<T> {

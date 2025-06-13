@@ -71,16 +71,20 @@ public final class WebAPI {
         }
     }
 
+    public static Optional<Integer> getBanCount() throws IOException {
+        return queryMCO("getbancount.sh").map(Integer::parseInt);
+    }
+
     public static Optional<Note> getBanReason(MCOPlayer player) {
         try {
-            Optional<String> data = queryMCO("getplayerinfo?" + player.getName());
+            Optional<String> data = HTTPUtil.getDataFromURL(MCO_API + "getplayerinfo?" + player.getName());
             if (data.isPresent()) {
-                String[] info = data.get().split("\n")[3].split(";");
                 if (data.get().contains("NOTFOUND")) {
                     throw new PlayerNotFoundException(player.getName());
                 } else if (data.get().contains("NOTBANNED")) {
                     return Optional.empty();
                 }
+                String[] info = data.get().split("\n")[3].split(";");
                 String authorName = info[0];
                 MCOPlayer author = new WebMCODataService().getPlayerByName(authorName)
                         .orElseThrow(() -> new DataNotFoundException("Ban author \"" + authorName + "\" not found on MCO"));
