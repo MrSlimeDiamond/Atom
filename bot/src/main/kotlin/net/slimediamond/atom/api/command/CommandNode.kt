@@ -139,4 +139,35 @@ abstract class CommandNode(val description: String, val aliases: List<String>) :
         // println("Add child: ${child.aliases.first()} parent: ${child.parent?.aliases?.first()}")
     }
 
+    protected fun addChild(config: Builder.() -> Unit) {
+        addChild(Builder().apply(config).build())
+    }
+
+    class Builder {
+        var aliases: List<String>? = null
+        var description: String? = null
+        private var executor: (suspend (CommandNodeContext) -> CommandResult)? = null
+
+        fun executor(executor: suspend (CommandNodeContext) -> CommandResult) {
+            this.executor = executor
+        }
+
+        fun build(): CommandNode {
+            if (aliases == null) {
+                throw IllegalStateException("Command aliases must not be null")
+            }
+            if (description == null) {
+                throw IllegalStateException("Command description must not be null")
+            }
+            if (executor == null) {
+                throw IllegalStateException("Command executor must not be null")
+            }
+            return object : CommandNode(description!!, aliases!!) {
+                override suspend fun execute(context: CommandNodeContext): CommandResult {
+                    return executor!!.invoke(context)
+                }
+            }
+        }
+    }
+
 }
