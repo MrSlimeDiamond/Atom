@@ -7,8 +7,10 @@ import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.discord.DiscordClient
@@ -30,6 +32,9 @@ class KordDiscordClient(private val token: String) : DiscordClient {
 
     @Volatile
     private lateinit var _slashCommandNodeManager: SlashCommandNodeManager
+
+    override val guilds: Flow<Guild>
+        get() = kord.guilds.map { KordGuild(it) }
 
     override var loggedIn: Boolean
         get() {

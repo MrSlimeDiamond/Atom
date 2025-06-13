@@ -1,5 +1,7 @@
 package net.slimediamond.atom.api.irc
 
+import net.slimediamond.atom.api.irc.entities.Channel
+
 /**
  * A client's connection to a [Server]
  *
@@ -32,6 +34,11 @@ interface Connection {
      * The server that this connection is using
      */
     val server: Server
+
+    /**
+     * The amount of channels the connection is in
+     */
+    val channels: List<Channel>
 
     /**
      * Connect to the server

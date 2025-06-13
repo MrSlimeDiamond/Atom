@@ -1,10 +1,13 @@
 package net.slimediamond.atom.api.irc
 
+import net.slimediamond.atom.api.irc.entities.Channel
+import okhttp3.internal.toImmutableList
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.net.Socket
+import java.util.*
 
 class DefaultConnection(
     override var nickname: String,
@@ -17,9 +20,14 @@ class DefaultConnection(
     private lateinit var writer: BufferedWriter
     private lateinit var thread: Thread
 
+    private val _channels = LinkedList<Channel>()
+
     override var isConnected: Boolean
         get() = ::socket.isInitialized && !socket.isConnected
         set(_) {}
+
+    override val channels: List<Channel>
+        get() = _channels.toImmutableList()
 
     override fun connect(client: IrcClient) {
         // FIXME
@@ -57,6 +65,7 @@ class DefaultConnection(
     }
 
     override fun joinChannel(target: String) {
+        _channels.add(Channel(this, target, Collections.emptyList())) // TODO Users (probs query???)
         sendRaw("JOIN $target")
     }
 

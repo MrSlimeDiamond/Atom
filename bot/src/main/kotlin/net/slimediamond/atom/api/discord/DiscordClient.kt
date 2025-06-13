@@ -1,5 +1,6 @@
 package net.slimediamond.atom.api.discord
 
+import kotlinx.coroutines.flow.Flow
 import net.slimediamond.atom.api.discord.entities.Guild
 
 interface DiscordClient {
@@ -14,6 +15,11 @@ interface DiscordClient {
      * Whether the client is currently logged in
      */
     var loggedIn: Boolean
+
+    /**
+     * The guilds that the bot is in
+     */
+    val guilds: Flow<Guild>
 
     /**
      * Login to the Discord API
