@@ -106,3 +106,9 @@ fun relativeDate(date: Date): String {
     val duration = Duration.between(date.toInstant(), Instant.now())
     return DurationFormatUtils.formatDurationWords(duration.toMillis(), true, true) + " ago"
 }
+
+inline fun richText(build: RichText.() -> Unit): RichText = RichText.of().apply(build)
+
+inline fun richText(text: String, build: RichText.() -> Unit): RichText = RichText.of(text).apply(build)
+
+fun richText(text: String): RichText = RichText.of(text)

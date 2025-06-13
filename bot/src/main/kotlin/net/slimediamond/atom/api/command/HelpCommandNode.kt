@@ -6,6 +6,7 @@ import net.slimediamond.atom.api.discord.entities.Guild
 import net.slimediamond.atom.api.irc.entities.Channel
 import net.slimediamond.atom.api.messaging.Color
 import net.slimediamond.atom.api.messaging.RichText
+import net.slimediamond.atom.api.messaging.richText
 import java.util.*
 
 class HelpCommandNode : CommandNode("Help subcommand", "help", "?") {
@@ -53,11 +54,12 @@ class HelpCommandNode : CommandNode("Help subcommand", "help", "?") {
     }
 
     private fun command(command: CommandNode): RichText {
-        return RichText.of()
-            .append(RichText.of("> ").color(Color.PINK))
-            .append(RichText.of(command.aliases.first()).color(Color.BLUE))
-            .append(RichText.of(" - ").color(Color.GRAY))
-            .append(RichText.of(command.description).color(Color.WHITE))
+        return richText {
+            append(richText("> ").color(Color.PINK))
+            append(richText(command.aliases.first()).color(Color.BLUE))
+            append(richText(" - ").color(Color.GRAY))
+            append(richText(command.description).color(Color.WHITE))
+        }
     }
 
 }
