@@ -1,8 +1,8 @@
 package net.slimediamond.atom.commands.parameters
 
-import com.minecraftonline.mcodata.api.MCODataServiceProvider
 import com.minecraftonline.mcodata.api.exceptions.PlayerNotFoundException
 import com.minecraftonline.mcodata.api.model.MCOPlayer
+import com.minecraftonline.mcodata.web.WebMCODataService
 import net.slimediamond.atom.api.command.exceptions.ArgumentParseException
 import net.slimediamond.atom.api.command.parameter.Parameter
 import net.slimediamond.atom.api.command.parameter.parameter
@@ -49,7 +49,7 @@ object Parameters {
     val MCO_PLAYER = parameter<MCOPlayer> {
         key("player")
         parser { input ->
-            return@parser MCODataServiceProvider.web().getPlayerByName(input)
+            return@parser WebMCODataService().getPlayerByName(input)
                 .orElseThrow { PlayerNotFoundException(input) }
         }
         optional()
