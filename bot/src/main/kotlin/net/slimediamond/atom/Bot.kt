@@ -2,6 +2,7 @@ package net.slimediamond.atom
 
 import net.slimediamond.atom.api.command.CommandManager
 import net.slimediamond.atom.api.command.CommandNodeManager
+import net.slimediamond.atom.api.command.CommandResult
 import net.slimediamond.atom.api.command.HelpCommandNode
 import net.slimediamond.atom.api.event.EventManager
 import net.slimediamond.atom.api.factory.DefaultFactoryProvider
