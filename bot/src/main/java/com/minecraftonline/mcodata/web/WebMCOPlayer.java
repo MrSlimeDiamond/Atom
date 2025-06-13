@@ -3,10 +3,14 @@ package com.minecraftonline.mcodata.web;
 import com.minecraftonline.mcodata.api.exceptions.DataNotFoundException;
 import com.minecraftonline.mcodata.api.exceptions.PlayerNotFoundException;
 import com.minecraftonline.mcodata.api.model.MCOPlayer;
+import com.minecraftonline.mcodata.api.model.Note;
 import net.slimediamond.util.minecraft.MinecraftUtils;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 public class WebMCOPlayer implements MCOPlayer {
 
@@ -14,11 +18,6 @@ public class WebMCOPlayer implements MCOPlayer {
 
     public WebMCOPlayer(String name) {
         this.name = name;
-    }
-
-    @Override
-    public int getId() {
-        throw new UnsupportedOperationException("Web API does not expose internal IDs");
     }
 
     @Override
@@ -52,11 +51,6 @@ public class WebMCOPlayer implements MCOPlayer {
     }
 
     @Override
-    public int getNameId() {
-        throw new UnsupportedOperationException("Web API does not expose name IDs");
-    }
-
-    @Override
     public boolean isOnline() {
         return MCOWebDataProvider.web().getServer().getOnlinePlayers().contains(this);
     }
@@ -67,8 +61,8 @@ public class WebMCOPlayer implements MCOPlayer {
     }
 
     @Override
-    public Optional<String> getBanReason() {
-        return WebAPI.getBanReason(name);
+    public Optional<Note> getBanReason() {
+        return WebAPI.getBanReason(this);
     }
 
     @Override

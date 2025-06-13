@@ -5,14 +5,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface MCOPlayer {
-
-    /**
-     * Get the ID internally cataloguing this player
-     *
-     * @return Player ID
-     */
-    int getId();
-
     /**
      * Get the name of the player
      *
@@ -49,13 +41,6 @@ public interface MCOPlayer {
     int getTimeOnline();
 
     /**
-     * Get the "name id" of the player, this is largely for internal use
-     *
-     * @return Player name ID
-     */
-    int getNameId();
-
-    /**
      * Get whether the player is online currently
      *
      * @return Whether the player is online
@@ -74,7 +59,7 @@ public interface MCOPlayer {
      *
      * @return Player ban reason
      */
-    Optional<String> getBanReason();
+    Optional<Note> getBanReason();
 
     /**
      * Get this player's avatar URL, showing their skin

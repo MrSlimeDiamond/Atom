@@ -1,6 +1,9 @@
 package com.minecraftonline.mcodata.web;
 
 import com.minecraftonline.mcodata.api.exceptions.DataNotFoundException;
+import com.minecraftonline.mcodata.api.exceptions.PlayerNotFoundException;
+import com.minecraftonline.mcodata.api.model.MCOPlayer;
+import com.minecraftonline.mcodata.api.model.Note;
 import com.minecraftonline.mcodata.util.HTTPUtil;
 
 import java.io.IOException;
@@ -68,25 +71,28 @@ public final class WebAPI {
         }
     }
 
-    public static Optional<String> getBanReason(String username) {
-        AtomicReference<String> temp = new AtomicReference<>();
+    public static Optional<Note> getBanReason(MCOPlayer player) {
         try {
-            queryMCO("getplayerinfo?" + username).ifPresent(info -> {
-                String[] data = info.split(";");
-                if (data.length == 0 || data.length == 1) {
-                    temp.set(null);
-                } else {
-                    temp.set(data[2]);
+            Optional<String> data = queryMCO("getplayerinfo?" + player.getName());
+            if (data.isPresent()) {
+                String[] info = data.get().split("\n")[3].split(";");
+                if (data.get().contains("NOTFOUND")) {
+                    throw new PlayerNotFoundException(player.getName());
+                } else if (data.get().contains("NOTBANNED")) {
+                    return Optional.empty();
                 }
-            });
-            if (temp.get() == null) {
-                return Optional.empty();
-            } else {
-                return Optional.of(temp.get());
+                String authorName = info[0];
+                MCOPlayer author = new WebMCODataService().getPlayerByName(authorName)
+                        .orElseThrow(() -> new DataNotFoundException("Ban author \"" + authorName + "\" not found on MCO"));
+                Date date = new Date(Long.parseLong(info[1]) * 1000);
+                String reason = info[2];
+
+                return Optional.of(new Note(reason, player, author, date));
             }
         } catch (IOException e) {
             throw new DataNotFoundException(e);
         }
+        return Optional.empty();
     }
 
     public static Optional<String> getCorrectName(String username) throws IOException {
