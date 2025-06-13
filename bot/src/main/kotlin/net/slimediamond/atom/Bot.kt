@@ -8,6 +8,7 @@ import net.slimediamond.atom.api.factory.DefaultFactoryProvider
 import net.slimediamond.atom.api.factory.FactoryProvider
 import net.slimediamond.atom.api.service.ServiceManager
 import net.slimediamond.atom.commands.ColorsCommand
+import net.slimediamond.atom.commands.HostInfoCommand
 import net.slimediamond.atom.commands.PingCommand
 import net.slimediamond.atom.commands.ServicesCommand
 import net.slimediamond.atom.commands.TestCommand
@@ -101,6 +102,7 @@ class Bot {
         commandNodeManager.register(TimeplayedCommand())
         commandNodeManager.register(SeenCommand(true, "Get the first seen date of a player", "firstseen", "fs"))
         commandNodeManager.register(SeenCommand(false, "Get the last seen date of a player", "lastseen", "ls"))
+        commandNodeManager.register(HostInfoCommand())
     }
 
 }
