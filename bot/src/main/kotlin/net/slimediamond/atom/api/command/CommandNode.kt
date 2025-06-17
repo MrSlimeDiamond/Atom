@@ -44,6 +44,16 @@ abstract class CommandNode(val description: String, val aliases: List<String>) :
             }
         }
 
+    companion object {
+        fun tokenizeInput(input: String): List<String> {
+            val regex = Regex("""("([^"]*)"|\S+)""")
+            return regex.findAll(input).map {
+                val match = it.groupValues[2]
+                match.ifEmpty { it.value.trim('"') }
+            }.toList()
+        }
+    }
+
     @Throws(CommandException::class)
     abstract suspend fun execute(context: CommandNodeContext): CommandResult
 
@@ -123,14 +133,6 @@ abstract class CommandNode(val description: String, val aliases: List<String>) :
             logger.error(e)
             CommandResult.error(e.javaClass.name + ": " + (e.message ?: "An error occurred when executing this command"))
         }
-    }
-
-    private fun tokenizeInput(input: String): List<String> {
-        val regex = Regex("""("([^"]*)"|\S+)""")
-        return regex.findAll(input).map {
-            val match = it.groupValues[2]
-            match.ifEmpty { it.value.trim('"') }
-        }.toList()
     }
 
     protected fun addChild(child: CommandNode) {

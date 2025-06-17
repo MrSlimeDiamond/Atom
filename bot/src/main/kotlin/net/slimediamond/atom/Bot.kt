@@ -13,6 +13,7 @@ import net.slimediamond.atom.commands.HostInfoCommand
 import net.slimediamond.atom.commands.PingCommand
 import net.slimediamond.atom.commands.ServicesCommand
 import net.slimediamond.atom.commands.TestCommand
+import net.slimediamond.atom.commands.TestInputCommand
 import net.slimediamond.atom.commands.WhoamiCommand
 import net.slimediamond.atom.commands.ircbot.IrcBotRootCommand
 import net.slimediamond.atom.commands.minecraftonline.MCOCommandInstances
@@ -92,6 +93,7 @@ class Bot {
 
         logger.info("Registering commands")
         commandManager = CommandManager()
+        commandManager.register("testinput", TestInputCommand())
         commandNodeManager = CommandNodeManager()
         commandNodeManager.register(HelpCommandNode())
         commandNodeManager.register(PingCommand())
