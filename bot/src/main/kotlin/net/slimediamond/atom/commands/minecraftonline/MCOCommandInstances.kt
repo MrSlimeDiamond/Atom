@@ -18,4 +18,6 @@ object MCOCommandInstances {
 
     val lastseenCommand = SeenCommand(false, "See the last seen date of a player", "lastseen", "ls")
 
+    val randomPlayerCommand = RandomPlayerCommand()
+
 }

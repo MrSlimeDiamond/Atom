@@ -108,6 +108,7 @@ class Bot {
         commandNodeManager.register(MCOCommandInstances.banCountCommand)
         commandNodeManager.register(MCOCommandInstances.firstseenCommand)
         commandNodeManager.register(MCOCommandInstances.lastseenCommand)
+        commandNodeManager.register(MCOCommandInstances.randomPlayerCommand)
         commandNodeManager.register(HostInfoCommand())
         commandNodeManager.register(BotInfoCommand())
     }

@@ -13,6 +13,7 @@ class MCORootCommand : RootOnlyCommandNode("MinecraftOnline commands", "mco", "m
         addChild(MCOCommandInstances.firstseenCommand)
         addChild(MCOCommandInstances.banWhyCommand)
         addChild(MCOCommandInstances.banCountCommand)
+        addChild(MCOCommandInstances.randomPlayerCommand)
     }
 
 }
