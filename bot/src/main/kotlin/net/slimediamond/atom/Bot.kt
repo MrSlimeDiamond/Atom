@@ -15,10 +15,8 @@ import net.slimediamond.atom.commands.ServicesCommand
 import net.slimediamond.atom.commands.TestCommand
 import net.slimediamond.atom.commands.WhoamiCommand
 import net.slimediamond.atom.commands.ircbot.IrcBotRootCommand
-import net.slimediamond.atom.commands.minecraftonline.BanCountCommand
-import net.slimediamond.atom.commands.minecraftonline.BanWhyCommand
-import net.slimediamond.atom.commands.minecraftonline.SeenCommand
-import net.slimediamond.atom.commands.minecraftonline.TimeplayedCommand
+import net.slimediamond.atom.commands.minecraftonline.MCOCommandInstances
+import net.slimediamond.atom.commands.minecraftonline.MCORootCommand
 import net.slimediamond.atom.configuration.Configuration
 import net.slimediamond.atom.discord.DiscordBot
 import net.slimediamond.atom.ircbot.IrcBot
@@ -102,11 +100,12 @@ class Bot {
         commandNodeManager.register(TestCommand())
         commandNodeManager.register(IrcBotRootCommand())
         commandNodeManager.register(ServicesCommand())
-        commandNodeManager.register(TimeplayedCommand())
-        commandNodeManager.register(BanWhyCommand())
-        commandNodeManager.register(BanCountCommand())
-        commandNodeManager.register(SeenCommand(true, "Get the first seen date of a player", "firstseen", "fs"))
-        commandNodeManager.register(SeenCommand(false, "Get the last seen date of a player", "lastseen", "ls"))
+        commandNodeManager.register(MCORootCommand())
+        commandNodeManager.register(MCOCommandInstances.timeplayedCommand)
+        commandNodeManager.register(MCOCommandInstances.banWhyCommand)
+        commandNodeManager.register(MCOCommandInstances.banCountCommand)
+        commandNodeManager.register(MCOCommandInstances.firstseenCommand)
+        commandNodeManager.register(MCOCommandInstances.lastseenCommand)
         commandNodeManager.register(HostInfoCommand())
         commandNodeManager.register(BotInfoCommand())
     }
