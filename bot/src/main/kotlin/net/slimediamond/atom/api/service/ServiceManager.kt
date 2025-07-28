@@ -17,6 +17,12 @@ class ServiceManager {
             throw IllegalArgumentException("Service class is not annotated with @Service");
         }
         val name: String = instance.javaClass.getAnnotation(Service::class.java).value
+
+        if (Atom.configuration.serviceConfiguration.disabled.contains(name)) {
+            this.logger.info("Service {} is disabled and won't be registered", name)
+            return
+        }
+
         val logger: Logger = LogManager.getLogger(name)
         val container = ServiceContainer(name, instance, logger)
         services[instance::class] = container

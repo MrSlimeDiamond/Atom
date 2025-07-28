@@ -18,4 +18,7 @@ class Configuration {
     @Setting("discord")
     val discordConfiguration = DiscordConfiguration()
 
+    @Setting("services")
+    val serviceConfiguration = ServiceConfiguration()
+
 }
