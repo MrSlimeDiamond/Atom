@@ -57,7 +57,18 @@ abstract class CommandNode(val description: String, val aliases: List<String>) :
     @Throws(CommandException::class)
     abstract suspend fun execute(context: CommandNodeContext): CommandResult
 
-    override suspend fun execute(sender: CommandSender, input: String, platform: CommandPlatform, audience: Audience, cause: Cause): CommandResult {
+    override suspend fun execute(
+        sender: CommandSender,
+        input: String,
+        platform: CommandPlatform,
+        audience: Audience,
+        cause: Cause
+    ): CommandResult {
+        return this.execute(sender, input, platform, audience, cause, HashMap<String, String>())
+    }
+
+    suspend fun execute(sender: CommandSender, input: String, platform: CommandPlatform, audience: Audience, cause: Cause,
+                        parameterKeyMap: HashMap<String, String>): CommandResult {
         var actualInput = input
         var command = this
 
@@ -82,36 +93,36 @@ abstract class CommandNode(val description: String, val aliases: List<String>) :
         val parsed = tokenizeInput(actualInput)
         var index = 0
 
-        val parameterKeyMap = HashMap<String, String>()
-
-        if (command.parameters.isNotEmpty()) {
-            command.parameters.forEachIndexed { i, parameter ->
-                if (parameter.greedy) {
-                    val remaining = actualInput.split("\\s+".toRegex(), limit = i + 1).getOrNull(i) ?: ""
-                    parameterKeyMap[parameter.key] = remaining
-                    return@forEachIndexed
-                }
-
-                if (index >= parsed.size) {
-                    if (!parameter.optional) {
-                        return CommandResult.error(platform.renderNotEnoughArguments(command, i))
+        parameterKeyMap.ifEmpty {
+            if (command.parameters.isNotEmpty()) {
+                command.parameters.forEachIndexed { i, parameter ->
+                    if (parameter.greedy) {
+                        val remaining = actualInput.split("\\s+".toRegex(), limit = i + 1).getOrNull(i) ?: ""
+                        parameterKeyMap[parameter.key] = remaining
+                        return@forEachIndexed
                     }
-                } else {
-                    parameterKeyMap[parameter.key] = parsed[index]
-                    index++
+
+                    if (index >= parsed.size) {
+                        if (!parameter.optional) {
+                            return CommandResult.error(platform.renderNotEnoughArguments(command, i))
+                        }
+                    } else {
+                        parameterKeyMap[parameter.key] = parsed[index]
+                        index++
+                    }
                 }
-            }
 
-            val totalInputArgs = actualInput.trim().split("\\s+".toRegex())
-            val nonGreedyParams = command.parameters.filter { !it.greedy }
-            val requiredCount = nonGreedyParams.count { !it.optional }
-            val maxCount = nonGreedyParams.size
+                val totalInputArgs = actualInput.trim().split("\\s+".toRegex())
+                val nonGreedyParams = command.parameters.filter { !it.greedy }
+                val requiredCount = nonGreedyParams.count { !it.optional }
+                val maxCount = nonGreedyParams.size
 
-            if (totalInputArgs.size < requiredCount || totalInputArgs.size > maxCount) {
+                if (totalInputArgs.size < requiredCount || totalInputArgs.size > maxCount) {
+                    return CommandResult.error(platform.renderTooManyArguments(command, index, actualInput))
+                }
+            } else if (actualInput.isNotEmpty()) {
                 return CommandResult.error(platform.renderTooManyArguments(command, index, actualInput))
             }
-        } else if (actualInput.isNotEmpty()) {
-            return CommandResult.error(platform.renderTooManyArguments(command, index, actualInput))
         }
 
         return try {

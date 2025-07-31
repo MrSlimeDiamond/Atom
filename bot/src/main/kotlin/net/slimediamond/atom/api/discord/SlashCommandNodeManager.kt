@@ -17,4 +17,14 @@ interface SlashCommandNodeManager {
      */
     suspend fun register(command: CommandNode)
 
+    /**
+     * Remove/unregister all slash commands
+     */
+    suspend fun removeAll(): Int
+
+    /**
+     * Reload all slash commands
+     */
+    suspend fun reload()
+
 }

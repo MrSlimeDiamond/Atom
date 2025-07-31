@@ -7,10 +7,12 @@ import net.slimediamond.atom.api.event.EventManager
 import net.slimediamond.atom.api.factory.DefaultFactoryProvider
 import net.slimediamond.atom.api.factory.FactoryProvider
 import net.slimediamond.atom.api.service.ServiceManager
+import net.slimediamond.atom.commands.AnotherTestCommand
 import net.slimediamond.atom.commands.BotInfoCommand
 import net.slimediamond.atom.commands.ColorsCommand
 import net.slimediamond.atom.commands.HostInfoCommand
 import net.slimediamond.atom.commands.PingCommand
+import net.slimediamond.atom.commands.ReloadSlashCommands
 import net.slimediamond.atom.commands.ServicesCommand
 import net.slimediamond.atom.commands.TestCommand
 import net.slimediamond.atom.commands.TestInputCommand
@@ -111,6 +113,8 @@ class Bot {
         commandNodeManager.register(MCOCommandInstances.randomPlayerCommand)
         commandNodeManager.register(HostInfoCommand())
         commandNodeManager.register(BotInfoCommand())
+        commandNodeManager.register(AnotherTestCommand())
+        commandNodeManager.register(ReloadSlashCommands())
     }
 
 }

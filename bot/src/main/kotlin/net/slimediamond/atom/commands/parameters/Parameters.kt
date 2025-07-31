@@ -31,6 +31,7 @@ object Parameters {
 
     val IRC_CHANNEL = Parameter.string {
         key = "channel"
+        description = "The name of the IRC channel (prefixed with #)"
         parser { input ->
             if (!input.startsWith("#")) {
                 throw ArgumentParseException(input, 0, RichText.of("IRC channel names must start with '#'"))
@@ -44,10 +45,12 @@ object Parameters {
 
     val SERVICE = Parameter.service {
         key = "service"
+        description = "The name of the service"
     }
 
     val MCO_PLAYER = parameter<MCOPlayer> {
         key = "player"
+        description = "The username of the player"
         parser { input ->
             return@parser WebMCODataService().getPlayerByName(input)
                 .orElseThrow { PlayerNotFoundException(input) }

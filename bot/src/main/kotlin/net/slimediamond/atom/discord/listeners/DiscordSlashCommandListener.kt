@@ -4,6 +4,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.slimediamond.atom.Atom
+import net.slimediamond.atom.api.command.CommandNode
 import net.slimediamond.atom.api.command.platforms.CommandPlatforms
 import net.slimediamond.atom.api.command.platforms.discord.DiscordCommandSender
 import net.slimediamond.atom.api.discord.event.DiscordSlashCommandEvent
@@ -22,7 +23,24 @@ class DiscordSlashCommandListener {
                 return@launch
             }
             val sender = DiscordCommandSender(event.user)
-            Atom.bot.commandManager.handle(sender, command, "", CommandPlatforms.DISCORD, event.audience, event.cause)
+            val parameterKeyMap = HashMap<String, String>()
+
+            val cmd = Atom.bot.commandManager.commands.get(event.interaction.name)
+
+            if (cmd !is CommandNode) {
+                event.audience.sendEmbeds(Embeds.fail("This command does not support slash commands because " +
+                        "it is not an instance of `CommandNode`"))
+                return@launch
+            }
+
+            cmd.execute(
+                sender,
+                event.interaction.subcommand.orEmpty(),
+                CommandPlatforms.DISCORD,
+                event.audience,
+                event.cause,
+                parameterKeyMap
+            )
         }
     }
 
