@@ -55,7 +55,7 @@ public class MinecraftOnlineAPI {
         Optional<String> correctname = HTTPUtil.getDataFromURL("http://minecraftonline.com/cgi-bin/getcorrectname?" + username);
         if (correctname.isPresent()) {
             String data = correctname.get().replaceAll("\\s+","");
-            if (data.equals("NOTFOUND")) {
+            if (data.equals("NOTFOUND") || data.equals("INVALID")) {
                 return Optional.empty();
             } else {
                 return Optional.of(data);
