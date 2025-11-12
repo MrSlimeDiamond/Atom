@@ -59,6 +59,7 @@ public class DiscordBot {
 
     @Service.Start
     public void startService() throws IOException, InterruptedException, SQLException {
+        System.out.println("start");
         jda.awaitReady();
 
         DiscordCommandListener commandListener = new DiscordCommandListener(commandManager);
@@ -570,6 +571,16 @@ public class DiscordBot {
                 )
                 .then().build();
 
+        System.out.println("sdfsfds");
+        CommandMetadata vote = new CommandBuilder()
+                .addAliases("vote")
+                .setDescription("Show voting sites for MinecraftOnline")
+                .setUsage("mco vote")
+                .discord()
+                .setSlashCommand(true)
+                .setExecutor(new VoteCommand())
+                .then().build();
+
         CommandMetadata bancount = new CommandBuilder()
                 .addAliases("bans")
                 .setDescription("Get the amount of bans on MCO")
@@ -611,6 +622,7 @@ public class DiscordBot {
                 .addChild(playtime)
                 .addChild(bancount)
                 .addChild(banwhy)
+                .addChild(vote)
                 .build()
         );
         // MCO COMMAND ENDS
@@ -621,6 +633,7 @@ public class DiscordBot {
         commandManager.register(playtime.toBuilder().discord().setSlashCommand(false).then().build());
         commandManager.register(bancount.toBuilder().discord().setSlashCommand(false).then().build());
         commandManager.register(banwhy.toBuilder().discord().setSlashCommand(false).then().build());
+        commandManager.register(vote.toBuilder().discord().setSlashCommand(false).then().build());
 
         // TODO: Automatically add guilds to the database
         jda.getGuilds().forEach(guild -> {
