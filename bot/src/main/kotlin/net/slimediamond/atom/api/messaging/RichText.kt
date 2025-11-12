@@ -109,7 +109,7 @@ fun relativeDate(date: Date): String {
 
 inline fun richText(build: RichText.() -> Unit): RichText = RichText.of().apply(build)
 
-fun richText(date: Date): RichText = RichText.timestamp(date)
+fun richText(date: Date, relative: Boolean = true): RichText = RichText.timestamp(date)
 
 inline fun richText(date: Date, build: RichText.() -> Unit): RichText = RichText.timestamp(date)
 

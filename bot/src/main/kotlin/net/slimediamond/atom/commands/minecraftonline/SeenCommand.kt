@@ -4,7 +4,7 @@ import net.slimediamond.atom.api.command.CommandNode
 import net.slimediamond.atom.api.command.CommandNodeContext
 import net.slimediamond.atom.api.command.CommandResult
 import net.slimediamond.atom.api.command.platforms.discord.DiscordCommandNodeContext
-import net.slimediamond.atom.api.messaging.RichText
+import net.slimediamond.atom.api.messaging.richText
 import net.slimediamond.atom.commands.parameters.Parameters
 import net.slimediamond.atom.utils.getTargetMCOPlayer
 import net.slimediamond.atom.utils.infoEmbed
@@ -17,25 +17,31 @@ class SeenCommand(private val firstseen: Boolean, description: String, vararg al
 
     override suspend fun execute(context: CommandNodeContext): CommandResult {
         val player = context.getTargetMCOPlayer()
+
+        context.defer()
+
         val date = if (firstseen) {
             player.firstseen
         } else {
             player.lastseen
         }
-        val message = RichText.of()
-            .append(RichText.of(player.name).bold())
-            .appendSpace()
-            .append(RichText.of(if (firstseen) "first" else "last"))
-            .append(RichText.of(" visited Freedonia on "))
-            .append(RichText.timestamp(date).bold())
-            .append(RichText.of(" ("))
-            .append(RichText.timestamp(date, relative = true).bold())
-            .append(RichText.of(")"))
+        val message = richText {
+            append(richText(player.name).bold())
+            appendSpace()
+            append(richText(if (firstseen) "first" else "last"))
+            append(richText(" visited Freedonia on "))
+            append(richText(date).bold())
+            append(richText("("))
+            append(richText(date, relative = true).bold())
+            append(richText(")"))
+        }
+
         if (context is DiscordCommandNodeContext) {
             context.sendEmbeds(player.infoEmbed(message))
         } else {
             context.sendMessage(message)
         }
+
         return CommandResult.success
     }
 

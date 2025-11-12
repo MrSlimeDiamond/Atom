@@ -1,5 +1,6 @@
 package net.slimediamond.atom.discord.abstraction
 
+import dev.kord.common.entity.SubCommand
 import dev.kord.common.entity.optional.optional
 import dev.kord.core.Kord
 import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
@@ -85,9 +86,10 @@ class KordDiscordClient(private val token: String) : DiscordClient {
             }
             val parameterKeyMap = HashMap<String, String>()
             interaction.command.options.forEach { option ->
-                parameterKeyMap.put(option.key, option.value.value.toString())
+                parameterKeyMap[option.key] = option.value.value.toString()
             }
-            val inter = SlashCommandInteraction(interaction.invokedCommandName, null, parameterKeyMap)
+            val subcommandName = interaction.data.data.options.value?.firstOrNull()?.name
+            val inter = SlashCommandInteraction(interaction.invokedCommandName, subcommandName, parameterKeyMap)
             Atom.bot.eventManager.post(DiscordSlashCommandEvent(cause, this@KordDiscordClient, audience, user, inter))
         }
 

@@ -37,6 +37,10 @@ abstract class CommandNodeContext(
         return parameter.parse(parameterInput)
     }
 
+    open suspend fun defer(ephemeral: Boolean = false) {
+        // only do so if relevant
+    }
+
     abstract suspend fun replySuccess(message: String)
 
     abstract suspend fun replySuccess(message: String, ephemeral: Boolean = false)

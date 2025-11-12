@@ -25,7 +25,7 @@ class DiscordSlashCommandListener {
             val sender = DiscordCommandSender(event.user)
             val parameterKeyMap = HashMap<String, String>()
 
-            val cmd = Atom.bot.commandManager.commands.get(event.interaction.name)
+            val cmd = Atom.bot.commandManager.commands[event.interaction.name]
 
             if (cmd !is CommandNode) {
                 event.audience.sendEmbeds(Embeds.fail("This command does not support slash commands because " +
@@ -33,7 +33,7 @@ class DiscordSlashCommandListener {
                 return@launch
             }
 
-            cmd.execute(
+            val result = cmd.execute(
                 sender,
                 event.interaction.subcommand.orEmpty(),
                 CommandPlatforms.DISCORD,
@@ -41,6 +41,11 @@ class DiscordSlashCommandListener {
                 event.cause,
                 parameterKeyMap
             )
+
+            if (!result.success) {
+                // send a response
+                event.audience.sendMessage(result.message!!)
+            }
         }
     }
 

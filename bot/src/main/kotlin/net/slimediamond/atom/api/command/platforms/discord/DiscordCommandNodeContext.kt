@@ -20,6 +20,13 @@ class DiscordCommandNodeContext(
     parameterKeyMap: Map<String, String>,
     private val audience: DiscordAudience
 ) : CommandNodeContext(commandNode, cause, sender, input, platform, parameterKeyMap) {
+
+    override suspend fun defer(ephemeral: Boolean) {
+        if (audience is SlashCommandAudience) {
+            audience.defer(ephemeral)
+        }
+    }
+
     override suspend fun replySuccess(message: String) {
         sendEmbeds(Embeds.success(message))
     }
