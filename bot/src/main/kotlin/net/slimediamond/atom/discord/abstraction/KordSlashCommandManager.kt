@@ -33,7 +33,6 @@ class KordSlashCommandManager(val kord: Kord) : SlashCommandNodeManager {
                 }
             }
         }
-        logger.info("Registered slash command ${command.aliases.first()}")
     }
 
     override suspend fun removeAll(): Int {

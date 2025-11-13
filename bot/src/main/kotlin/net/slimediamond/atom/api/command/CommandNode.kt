@@ -30,7 +30,9 @@ abstract class CommandNode(val description: String, val aliases: List<String>) :
             addChild(HelpCommandNode())
         }
 
-        if (parent?.parent != null || !this.platforms.contains(CommandPlatforms.DISCORD)) {
+        if (parent?.parent != null
+            || !this.platforms.contains(CommandPlatforms.DISCORD)
+            && this.platforms.isNotEmpty()) {
             // can not register double subcommands as slash commands
             // TODO: Use those group subcommand things
             this.slashCommand = false

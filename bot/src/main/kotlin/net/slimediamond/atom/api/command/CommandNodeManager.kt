@@ -28,7 +28,7 @@ class CommandNodeManager {
         }
         val discordBot = Atom.bot.serviceManager.provide(DiscordBot::class)?: return
         GlobalScope.launch {
-            discordBot.client.slashCommandNodeManager.register(command)
+//            discordBot.client.slashCommandNodeManager.register(command)
         }
     }
 

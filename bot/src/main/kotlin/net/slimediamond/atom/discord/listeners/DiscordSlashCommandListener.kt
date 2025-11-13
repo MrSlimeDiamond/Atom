@@ -9,6 +9,8 @@ import net.slimediamond.atom.api.command.platforms.CommandPlatforms
 import net.slimediamond.atom.api.command.platforms.discord.DiscordCommandSender
 import net.slimediamond.atom.api.discord.event.DiscordSlashCommandEvent
 import net.slimediamond.atom.api.event.Listener
+import net.slimediamond.atom.api.messaging.Color
+import net.slimediamond.atom.api.messaging.richText
 import net.slimediamond.atom.utils.Embeds
 
 class DiscordSlashCommandListener {
@@ -33,18 +35,24 @@ class DiscordSlashCommandListener {
                 return@launch
             }
 
-            val result = cmd.execute(
-                sender,
-                event.interaction.subcommand.orEmpty(),
-                CommandPlatforms.DISCORD,
-                event.audience,
-                event.cause,
-                parameterKeyMap
-            )
+            try {
+                val result = cmd.execute(
+                    sender,
+                    event.interaction.subcommand.orEmpty(),
+                    CommandPlatforms.DISCORD,
+                    event.audience,
+                    event.cause,
+                    parameterKeyMap
+                )
 
-            if (!result.success) {
-                // send a response
-                event.audience.sendMessage(result.message!!)
+                if (!result.success) {
+                    // send a response
+                    event.audience.sendMessage(result.message!!.color(Color.RED))
+                }
+            } catch (e: Error) {
+                event.audience.sendMessage {
+                    richText(e.message?: "An error occurred").color(Color.RED)
+                }
             }
         }
     }
