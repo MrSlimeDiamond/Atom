@@ -14,7 +14,6 @@ class WhoamiCommand : CommandNode("Check who the bot thinks you are", "whoami") 
         val messages = mutableListOf(
             richText("Sender name: ").bold().append(richText(context.sender.name)),
             richText("Sender type: ").bold().append(richText(context.sender.javaClass.simpleName)),
-            richText("Given input: ").bold().append(richText(context.input)),
             richText("Platform: ").bold().append(richText(context.platform.javaClass.simpleName))
         )
 
