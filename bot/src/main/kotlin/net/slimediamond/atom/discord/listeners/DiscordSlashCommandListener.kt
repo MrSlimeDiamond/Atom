@@ -23,7 +23,7 @@ class DiscordSlashCommandListener {
                 return@launch
             }
             val sender = DiscordCommandSender(event.user)
-            val parameterKeyMap = HashMap<String, String>()
+            val parameterKeyMap = event.interaction.parameterKeyMap.toMutableMap()
 
             val cmd = Atom.bot.commandManager.commands[event.interaction.name]
 

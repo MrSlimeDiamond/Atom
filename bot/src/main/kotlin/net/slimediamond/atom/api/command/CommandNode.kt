@@ -4,6 +4,8 @@ import net.slimediamond.atom.api.command.exceptions.ArgumentParseException
 import net.slimediamond.atom.api.command.exceptions.CommandException
 import net.slimediamond.atom.api.command.parameter.Parameter
 import net.slimediamond.atom.api.command.platforms.CommandPlatform
+import net.slimediamond.atom.api.command.platforms.CommandPlatforms
+import net.slimediamond.atom.api.command.platforms.discord.slashCommand
 import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.api.messaging.Audience
 import org.apache.logging.log4j.LogManager
@@ -26,6 +28,12 @@ abstract class CommandNode(val description: String, val aliases: List<String>) :
     init {
         if (this !is HelpCommandNode) {
             addChild(HelpCommandNode())
+        }
+
+        if (parent?.parent != null || !this.platforms.contains(CommandPlatforms.DISCORD)) {
+            // can not register double subcommands as slash commands
+            // TODO: Use those group subcommand things
+            this.slashCommand = false
         }
     }
 
@@ -68,7 +76,7 @@ abstract class CommandNode(val description: String, val aliases: List<String>) :
     }
 
     suspend fun execute(sender: CommandSender, input: String, platform: CommandPlatform, audience: Audience, cause: Cause,
-                        parameterKeyMap: HashMap<String, String>): CommandResult {
+                        parameterKeyMap: MutableMap<String, String>): CommandResult {
         var actualInput = input
         var command = this
 

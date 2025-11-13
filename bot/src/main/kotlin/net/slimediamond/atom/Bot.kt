@@ -3,6 +3,7 @@ package net.slimediamond.atom
 import net.slimediamond.atom.api.command.CommandManager
 import net.slimediamond.atom.api.command.CommandNodeManager
 import net.slimediamond.atom.api.command.HelpCommandNode
+import net.slimediamond.atom.api.command.platforms.discord.slashCommand
 import net.slimediamond.atom.api.event.EventManager
 import net.slimediamond.atom.api.factory.DefaultFactoryProvider
 import net.slimediamond.atom.api.factory.FactoryProvider
@@ -18,8 +19,7 @@ import net.slimediamond.atom.commands.TestCommand
 import net.slimediamond.atom.commands.TestInputCommand
 import net.slimediamond.atom.commands.WhoamiCommand
 import net.slimediamond.atom.commands.ircbot.IrcBotRootCommand
-import net.slimediamond.atom.commands.minecraftonline.MCOCommandInstances
-import net.slimediamond.atom.commands.minecraftonline.MCORootCommand
+import net.slimediamond.atom.commands.minecraftonline.*
 import net.slimediamond.atom.configuration.Configuration
 import net.slimediamond.atom.discord.DiscordBot
 import net.slimediamond.atom.ircbot.IrcBot
@@ -105,12 +105,15 @@ class Bot {
         commandNodeManager.register(IrcBotRootCommand())
         commandNodeManager.register(ServicesCommand())
         commandNodeManager.register(MCORootCommand())
-        commandNodeManager.register(MCOCommandInstances.timeplayedCommand)
-        commandNodeManager.register(MCOCommandInstances.banWhyCommand)
-        commandNodeManager.register(MCOCommandInstances.banCountCommand)
-        commandNodeManager.register(MCOCommandInstances.firstseenCommand)
-        commandNodeManager.register(MCOCommandInstances.lastseenCommand)
-        commandNodeManager.register(MCOCommandInstances.randomPlayerCommand)
+
+        // HACKHACK: Register MCO command stuff as base commands
+        commandNodeManager.register(TimeplayedCommand().apply { slashCommand = false })
+        commandNodeManager.register(BanWhyCommand().apply { slashCommand = false })
+        commandNodeManager.register(BanCountCommand().apply { slashCommand = false })
+        commandNodeManager.register(SeenCommands.firstSeenCommand().apply { slashCommand = false })
+        commandNodeManager.register(SeenCommands.lastSeenCommand().apply { slashCommand = false })
+        commandNodeManager.register(RandomPlayerCommand().apply { slashCommand = false })
+
         commandNodeManager.register(HostInfoCommand())
         commandNodeManager.register(BotInfoCommand())
         commandNodeManager.register(AnotherTestCommand())

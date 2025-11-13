@@ -8,12 +8,12 @@ import net.slimediamond.atom.api.command.RootOnlyCommandNode
 class MCORootCommand : RootOnlyCommandNode("MinecraftOnline commands", "mco", "minecraftonline") {
 
     init {
-        addChild(MCOCommandInstances.timeplayedCommand)
-        addChild(MCOCommandInstances.lastseenCommand)
-        addChild(MCOCommandInstances.firstseenCommand)
-        addChild(MCOCommandInstances.banWhyCommand)
-        addChild(MCOCommandInstances.banCountCommand)
-        addChild(MCOCommandInstances.randomPlayerCommand)
+        addChild(TimeplayedCommand())
+        addChild(SeenCommands.lastSeenCommand())
+        addChild(SeenCommands.firstSeenCommand())
+        addChild(BanWhyCommand())
+        addChild(BanCountCommand())
+        addChild(RandomPlayerCommand())
     }
 
 }

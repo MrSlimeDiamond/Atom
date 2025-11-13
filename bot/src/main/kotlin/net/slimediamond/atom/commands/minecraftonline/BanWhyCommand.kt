@@ -22,6 +22,8 @@ class BanWhyCommand : CommandNode("Get the ban reason of a player", "banwhy", "w
     }
 
     override suspend fun execute(context: CommandNodeContext): CommandResult {
+        println(context.parameterKeyMap)
+        context.defer()
         val target = context.getTargetMCOPlayer()
         val ban = target.banReason.orElse(null)
         if (ban != null) {

@@ -17,9 +17,10 @@ import org.apache.logging.log4j.LogManager
 
 class KordSlashCommandManager(val kord: Kord) : SlashCommandNodeManager {
 
+    private val logger = LogManager.getLogger();
+
     override suspend fun register(command: CommandNode) {
         if (!command.slashCommand) {
-            LogManager.getLogger().debug("Ignoring slash command registration for ${command.aliases.first()}")
             return
         }
         kord.createGlobalChatInputCommand(command.aliases.first(), command.description) {
@@ -32,6 +33,7 @@ class KordSlashCommandManager(val kord: Kord) : SlashCommandNodeManager {
                 }
             }
         }
+        logger.info("Registered slash command ${command.aliases.first()}")
     }
 
     override suspend fun removeAll(): Int {

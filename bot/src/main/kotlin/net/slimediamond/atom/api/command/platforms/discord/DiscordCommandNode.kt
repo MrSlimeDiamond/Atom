@@ -7,7 +7,7 @@ import java.util.*
 private val slashCommands = WeakHashMap<Command, Boolean>()
 
 var CommandNode.slashCommand: Boolean
-    get() = slashCommands[this] ?: false
+    get() = slashCommands[this] ?: true
     set(value) {
         slashCommands[this] = value
     }
