@@ -115,4 +115,8 @@ inline fun richText(date: Date, build: RichText.() -> Unit): RichText = RichText
 
 inline fun richText(text: String, build: RichText.() -> Unit): RichText = RichText.of(text).apply(build)
 
+fun richText(int: Int): RichText = RichText.of(int.toString())
+
+fun richText(long: Long): RichText = RichText.of(long.toString())
+
 fun richText(text: String): RichText = RichText.of(text)
