@@ -6,10 +6,12 @@ import net.slimediamond.atom.api.discord.entities.User
 import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.api.messaging.Audience
 
-open class DiscordGuildMessageEvent(cause: Cause, client: DiscordClient, user: User, message: String, audience: Audience, val guild: Guild) :
-    DiscordMessageEvent(
-        cause, client,
-        user,
-        message,
-        audience
-    )
+class DiscordGuildMessageEditEvent(
+    cause: Cause,
+    client: DiscordClient,
+    user: User,
+    val original: String,
+    val replacement: String,
+    audience: Audience,
+    val guild: Guild
+) : DiscordMessageEditEvent(cause, client, user, original, replacement, audience)

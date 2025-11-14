@@ -11,7 +11,7 @@ class DiscordMessageListener {
     private val prefix = Atom.configuration.commandConfiguration.prefix
 
     @Listener
-    fun onDiscordMessage(event: DiscordMessageEvent) {
+    fun onMessage(event: DiscordMessageEvent) {
         if (event.message.lowercase().startsWith(prefix)) {
             val command = event.message.split(prefix)[1].split(" ")[0]
             val sender = DiscordCommandSender(event.user)

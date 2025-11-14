@@ -1,11 +1,14 @@
 package net.slimediamond.atom.discord.abstraction
 
+import dev.kord.cache.map.MapLikeCollection
+import dev.kord.cache.map.internal.MapEntryCache
 import dev.kord.common.entity.SubCommand
 import dev.kord.common.entity.optional.optional
 import dev.kord.core.Kord
 import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.event.interaction.GuildChatInputCommandInteractionCreateEvent
 import dev.kord.core.event.message.MessageCreateEvent
+import dev.kord.core.event.message.MessageUpdateEvent
 import dev.kord.core.on
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
@@ -19,9 +22,7 @@ import net.slimediamond.atom.api.discord.DiscordClient
 import net.slimediamond.atom.api.discord.SlashCommandNodeManager
 import net.slimediamond.atom.api.discord.entities.Guild
 import net.slimediamond.atom.api.discord.entities.SlashCommandInteraction
-import net.slimediamond.atom.api.discord.event.DiscordGuildMessageEvent
-import net.slimediamond.atom.api.discord.event.DiscordSlashCommandEvent
-import net.slimediamond.atom.api.discord.event.DiscordUserMessageEvent
+import net.slimediamond.atom.api.discord.event.*
 import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.discord.abstraction.entities.KordGuild
 import net.slimediamond.atom.discord.abstraction.entities.KordMessageChannel
@@ -53,7 +54,13 @@ class KordDiscordClient(private val token: String) : DiscordClient {
         set(_) {}
 
     override suspend fun login() {
-        kord = Kord(token)
+        this.kord = Kord(token) {
+            cache {
+                messages { cache, description ->
+                    MapEntryCache(cache, description, MapLikeCollection.concurrentHashMap())
+                }
+            }
+        }
 
         _slashCommandNodeManager = KordSlashCommandManager(kord)
 
@@ -72,6 +79,29 @@ class KordDiscordClient(private val token: String) : DiscordClient {
             } else {
                 // user message
                 Atom.bot.eventManager.post(DiscordUserMessageEvent(cause, this@KordDiscordClient, user, message.content))
+            }
+        }
+
+        kord.on<MessageUpdateEvent> {
+            if (old != null && new.content.value != null) {
+                val original = old!!.content
+                val replacement = new.content.value!!
+
+                val kordUser = old!!.author ?: return@on
+                val user = KordUser(kordUser)
+                val kordGuild = old!!.getGuildOrNull()
+                val kordChannel = message.getChannel()
+                val cause = Cause.of(user, kordChannel)
+                if (kordGuild != null) {
+                    val guild = KordGuild(kordGuild)
+                    val channel = KordMessageChannel(kordChannel)
+                    cause.push(guild)
+                    cause.push(channel)
+                    Atom.bot.eventManager.post(DiscordGuildMessageEditEvent(cause, this@KordDiscordClient, user, original, replacement, channel, guild))
+                } else {
+                    // user message
+                    Atom.bot.eventManager.post(DiscordUserMessageEditEvent(cause, this@KordDiscordClient, user, original, replacement, user))
+                }
             }
         }
 
