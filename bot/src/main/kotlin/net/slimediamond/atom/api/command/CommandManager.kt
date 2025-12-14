@@ -3,6 +3,7 @@ package net.slimediamond.atom.api.command
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.command.platforms.CommandPlatform
 import net.slimediamond.atom.api.event.Cause
 import net.slimediamond.atom.api.messaging.Audience
@@ -10,6 +11,7 @@ import net.slimediamond.atom.api.messaging.Color
 import net.slimediamond.atom.api.messaging.RichText
 import net.slimediamond.atom.api.messaging.SlashCommandAudience
 import org.apache.logging.log4j.LogManager
+import java.util.concurrent.Executors
 
 /**
  * The global command registrar, which acts as a place for
@@ -20,6 +22,7 @@ import org.apache.logging.log4j.LogManager
 class CommandManager {
 
     private val logger = LogManager.getLogger("command manager")
+    private val workerPool = Executors.newFixedThreadPool(Atom.configuration.commandConfiguration.workerPoolSize)
     val commands = HashMap<String, Command>()
 
     /**
@@ -43,24 +46,28 @@ class CommandManager {
      */
     @OptIn(DelicateCoroutinesApi::class)
     fun handle(sender: CommandSender, command: String, args: String, platform: CommandPlatform, audience: Audience, cause: Cause) {
-        GlobalScope.launch {
-            try {
-                val cmd = commands[command]
-                if (cmd != null) {
-                    val result = cmd.execute(sender, args, platform, audience, cause)
-                    if (!result.success && result.message != null) {
-                        if (audience is SlashCommandAudience) {
-                            audience.sendMessage(result.message!!.color(Color.RED), ephemeral = true)
-                        } else {
-                            audience.sendMessage(result.message!!.color(Color.RED))
+        workerPool.execute {
+            GlobalScope.launch {
+                try {
+                    val cmd = commands[command]
+                    if (cmd != null) {
+                        val result = cmd.execute(sender, args, platform, audience, cause)
+                        if (!result.success && result.message != null) {
+                            if (audience is SlashCommandAudience) {
+                                audience.sendMessage(result.message!!.color(Color.RED), ephemeral = true)
+                            } else {
+                                audience.sendMessage(result.message!!.color(Color.RED))
+                            }
+                            logger.error(
+                                "Unable to execute command '$command' for user '${sender.name}'\n" +
+                                        result.message!!.content
+                            )
                         }
-                        logger.error("Unable to execute command '$command' for user '${sender.name}'\n" +
-                                result.message!!.content)
                     }
+                } catch (e: Throwable) {
+                    logger.error(e)
+                    audience.sendMessage(RichText.of("${e.javaClass.name}: ${e.message}").color(Color.RED))
                 }
-            } catch (e: Throwable) {
-                logger.error(e)
-                audience.sendMessage(RichText.of("${e.javaClass.name}: ${e.message}").color(Color.RED))
             }
         }
     }
