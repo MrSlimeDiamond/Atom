@@ -1,6 +1,7 @@
 package net.slimediamond.atom.api.irc
 
 import net.slimediamond.atom.api.irc.entities.Channel
+import java.util.concurrent.CompletableFuture
 
 /**
  * A client's connection to a [Server]
@@ -24,6 +25,16 @@ interface Connection {
      * The username of the client
      */
     val username: String
+
+    /**
+     * The whois tracker for the connection
+     */
+    val whoisTracker: WhoisTracker
+
+    /**
+     * The user tracker for the connection
+     */
+    val userTracker: UserTracker
 
     /**
      * Whether the client is connected to the server
@@ -68,5 +79,10 @@ interface Connection {
      * Sends a raw message to the server
      */
     fun sendRaw(line: String)
+
+    /**
+     * Send a WHOIS request for a specific nickname
+     */
+    fun whois(nickname: String): CompletableFuture<WhoisResponse>
 
 }

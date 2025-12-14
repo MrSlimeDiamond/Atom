@@ -7,6 +7,7 @@ import net.slimediamond.atom.api.irc.entities.Channel
 import net.slimediamond.atom.api.irc.entities.UserImpl
 import net.slimediamond.atom.api.irc.events.IrcChannelMessageEvent
 import net.slimediamond.atom.api.irc.events.IrcUserMessageEvent
+import net.slimediamond.atom.ircbot.IrcBot
 
 class MessageLineHandler : LineHandler {
 
@@ -20,7 +21,13 @@ class MessageLineHandler : LineHandler {
             val target = privmsgMatch.groupValues[4]
             val content = privmsgMatch.groupValues[5]
 
-            val user = UserImpl(connection, nickname, ident, hostname)
+            val user = UserImpl(
+                connection,
+                nickname,
+                ident,
+                hostname,
+                connection.userTracker.getRealName(nickname)
+            )
             val cause = Cause.of(user, connection)
 
             if (target.startsWith("#")) {

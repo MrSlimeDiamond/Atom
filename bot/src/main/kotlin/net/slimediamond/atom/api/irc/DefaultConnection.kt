@@ -8,6 +8,8 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.net.Socket
 import java.util.*
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeoutException
 
 class DefaultConnection(
     override var nickname: String,
@@ -28,6 +30,9 @@ class DefaultConnection(
 
     override val channels: List<Channel>
         get() = _channels.toImmutableList()
+
+    override val whoisTracker = WhoisTracker()
+    override val userTracker = UserTracker()
 
     override fun connect(client: IrcClient) {
         // FIXME
@@ -72,6 +77,14 @@ class DefaultConnection(
     override fun sendRaw(line: String) {
         writer.write(line + "\r\n")
         writer.flush()
+    }
+
+    override fun whois(nickname: String): CompletableFuture<WhoisResponse> {
+        val future = CompletableFuture<WhoisResponse>()
+        whoisTracker.pending[nickname] = future
+        whoisTracker.currentName = nickname
+        this.sendRaw("WHOIS $nickname")
+        return future
     }
 
     private fun handleLine(line: String, client: IrcClient) {

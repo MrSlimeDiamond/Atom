@@ -1,9 +1,11 @@
 package net.slimediamond.atom.commands
 
+import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.command.CommandNode
 import net.slimediamond.atom.api.command.CommandNodeContext
 import net.slimediamond.atom.api.command.CommandResult
 import net.slimediamond.atom.commands.parameters.Parameters
+import net.slimediamond.atom.ircbot.IrcBot
 
 class TestCommand : CommandNode("Debug/test commands", "test") {
 
@@ -13,6 +15,7 @@ class TestCommand : CommandNode("Debug/test commands", "test") {
         addChild(NumberCommand())
         addChild(PermissionTestCommand())
         addChild(DoubleParameterTestCommand())
+        addChild(IRCWhoisCommand())
 
         parameters.add(Parameters.OPTIONAL_MESSAGE)
     }
@@ -93,6 +96,23 @@ class TestCommand : CommandNode("Debug/test commands", "test") {
         override suspend fun execute(context: CommandNodeContext): CommandResult {
             context.sendMessage("Boolean: ${context.requireOne(Parameters.BOOLEAN)}, " +
                     "number: ${context.requireOne(Parameters.NUMBER)}")
+            return CommandResult.success
+        }
+
+    }
+
+    class IRCWhoisCommand : CommandNode("Get the information of a user connected to IRC", "whois") {
+
+        init {
+            parameters.add(Parameters.IRC_USER_NICKNAME_NOT_VALIDATED)
+        }
+
+        override suspend fun execute(context: CommandNodeContext): CommandResult {
+            val nickname = context.requireOne(Parameters.IRC_USER_NICKNAME_NOT_VALIDATED)
+            Atom.bot.serviceManager.provide(IrcBot::class)!!.connection.whois(nickname).thenAccept { response ->
+                println(response)
+            }
+            context.sendMessage("Request sent. See console for output!")
             return CommandResult.success
         }
 

@@ -2,10 +2,7 @@ package net.slimediamond.atom.api.irc
 
 import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.irc.factory.ConnectionFactory
-import net.slimediamond.atom.api.irc.linehandlers.LineHandler
-import net.slimediamond.atom.api.irc.linehandlers.MessageLineHandler
-import net.slimediamond.atom.api.irc.linehandlers.PingLineHandler
-import net.slimediamond.atom.api.irc.linehandlers.WelcomeLineHandler
+import net.slimediamond.atom.api.irc.linehandlers.*
 import java.util.*
 import java.util.function.Consumer
 
@@ -56,6 +53,7 @@ class IrcClient {
         addLineHandler(PingLineHandler())
         addLineHandler(MessageLineHandler())
         addLineHandler(WelcomeLineHandler())
+        addLineHandler(WhoisLineHandler())
     }
 
 }

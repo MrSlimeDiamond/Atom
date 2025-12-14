@@ -39,7 +39,7 @@ object Parameters {
                 throw ArgumentParseException(input, input.indexOf(" "),
                     RichText.of("IRC channel names must not contain spaces"))
             }
-            return@parser input
+            input
         }
     }
 
@@ -52,10 +52,15 @@ object Parameters {
         key = "player"
         description = "The username of the player"
         parser { input ->
-            return@parser WebMCODataService().getPlayerByName(input)
+            WebMCODataService().getPlayerByName(input)
                 .orElseThrow { PlayerNotFoundException(input) }
         }
         optional = true
+    }
+
+    val IRC_USER_NICKNAME_NOT_VALIDATED = Parameter.string {
+        key = "user"
+        description = "The nickname of the user on IRC"
     }
 
 }
