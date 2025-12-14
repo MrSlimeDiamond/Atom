@@ -7,3 +7,7 @@ import net.slimediamond.atom.api.messaging.renderer.DiscordRichMessageRenderer
 fun EmbedBuilder.description(text: RichText) {
     description = DiscordRichMessageRenderer.render(text)
 }
+
+fun EmbedBuilder.description(config: RichText.() -> Unit) {
+    description = DiscordRichMessageRenderer.render(RichText.of().apply(config))
+}

@@ -18,6 +18,7 @@ import net.slimediamond.atom.commands.ServicesCommand
 import net.slimediamond.atom.commands.TestCommand
 import net.slimediamond.atom.commands.TestInputCommand
 import net.slimediamond.atom.commands.WhoamiCommand
+import net.slimediamond.atom.commands.irc.IrcCommand
 import net.slimediamond.atom.commands.ircbot.IrcBotRootCommand
 import net.slimediamond.atom.commands.minecraftonline.*
 import net.slimediamond.atom.configuration.Configuration
@@ -103,6 +104,7 @@ class Bot {
         commandNodeManager.register(ColorsCommand())
         commandNodeManager.register(TestCommand())
         commandNodeManager.register(IrcBotRootCommand())
+        commandNodeManager.register(IrcCommand())
         commandNodeManager.register(ServicesCommand())
         commandNodeManager.register(MCORootCommand())
 
