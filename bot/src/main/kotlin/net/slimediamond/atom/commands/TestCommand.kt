@@ -1,5 +1,6 @@
 package net.slimediamond.atom.commands
 
+import kotlinx.coroutines.future.await
 import net.slimediamond.atom.Atom
 import net.slimediamond.atom.api.command.CommandNode
 import net.slimediamond.atom.api.command.CommandNodeContext
@@ -109,10 +110,8 @@ class TestCommand : CommandNode("Debug/test commands", "test") {
 
         override suspend fun execute(context: CommandNodeContext): CommandResult {
             val nickname = context.requireOne(Parameters.IRC_USER_NICKNAME_NOT_VALIDATED)
-            Atom.bot.serviceManager.provide(IrcBot::class)!!.connection.whois(nickname).thenAccept { response ->
-                println(response)
-            }
-            context.sendMessage("Request sent. See console for output!")
+            val response = Atom.bot.serviceManager.provide(IrcBot::class)!!.connection.whois(nickname).await()
+            context.sendMessage("Response: $response")
             return CommandResult.success
         }
 

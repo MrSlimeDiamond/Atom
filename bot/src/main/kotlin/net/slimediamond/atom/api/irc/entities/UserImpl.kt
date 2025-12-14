@@ -24,7 +24,7 @@ class UserImpl(
         IrcRichMessageRenderer.sendMessage(connection, username, message)
     }
 
-    override fun whois(): CompletableFuture<WhoisResponse> {
+    override fun whois(): CompletableFuture<WhoisResponse?> {
         return Atom.bot.serviceManager.provide(IrcBot::class)!!.connection.whois(this.nickname)
     }
 

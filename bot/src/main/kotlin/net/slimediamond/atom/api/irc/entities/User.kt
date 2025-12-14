@@ -32,6 +32,6 @@ interface User : Audience {
     /**
      * Get a whois response for this user
      */
-    fun whois(): CompletableFuture<WhoisResponse>
+    fun whois(): CompletableFuture<WhoisResponse?>
 
 }

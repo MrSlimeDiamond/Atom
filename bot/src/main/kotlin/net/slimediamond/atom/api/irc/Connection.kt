@@ -83,6 +83,6 @@ interface Connection {
     /**
      * Send a WHOIS request for a specific nickname
      */
-    fun whois(nickname: String): CompletableFuture<WhoisResponse>
+    fun whois(nickname: String): CompletableFuture<WhoisResponse?>
 
 }

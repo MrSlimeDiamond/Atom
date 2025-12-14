@@ -79,10 +79,9 @@ class DefaultConnection(
         writer.flush()
     }
 
-    override fun whois(nickname: String): CompletableFuture<WhoisResponse> {
-        val future = CompletableFuture<WhoisResponse>()
+    override fun whois(nickname: String): CompletableFuture<WhoisResponse?> {
+        val future = CompletableFuture<WhoisResponse?>()
         whoisTracker.pending[nickname] = future
-        whoisTracker.currentName = nickname
         this.sendRaw("WHOIS $nickname")
         return future
     }

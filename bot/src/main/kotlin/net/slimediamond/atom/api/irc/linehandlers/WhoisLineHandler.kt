@@ -6,73 +6,85 @@ import net.slimediamond.atom.api.irc.NetworkedServer
 import net.slimediamond.atom.api.irc.WhoisResponseBuilder
 import net.slimediamond.atom.api.irc.entities.UserImpl
 import net.slimediamond.atom.ircbot.IrcBot
-import org.apache.logging.log4j.LogManager
 
 class WhoisLineHandler : LineHandler {
 
-    private val pattern = Regex("^:[^ ]+ ([0-9]{3}) [^ ]+ [^ ]+ (.*)")
-    private val logger = LogManager.getLogger()
+    private val pattern = Regex("^:[^ ]+ ([0-9]{3}) [^ ]+ ([^ ]+) (.*)")
+    private val builders = HashMap<String, WhoisResponseBuilder>()
     private val whoisTracker
         get() = Atom.bot.serviceManager.provide(IrcBot::class)!!.connection.whoisTracker
-    private val currentName: String?
-        get() = whoisTracker.currentName
-    private var currentBuilder = WhoisResponseBuilder()
     private val subHandlers = mapOf(
-        311 to SubHandler { line, connection ->
+        311 to SubHandler { builder, nickname, line, connection ->
             // ident    host         real name
             // findlayr 127.0.0.1 * :Findlay Richardson
             val parts = line.split(" ")
             val ident = parts[0]
             val host = parts[1]
             val realName = parts[3].substring(1)
-            connection.userTracker.put(currentName!!, realName)
-            currentBuilder.user = UserImpl(connection, currentName!!, ident, host, realName)
-            currentBuilder.realName = realName
-            currentBuilder.hostname = host
+            connection.userTracker.put(nickname, realName)
+            builder.user = UserImpl(connection, nickname, ident, host, realName)
+            builder.realName = realName
+            builder.hostname = host
         },
-        319 to SubHandler { line, _ ->
+        319 to SubHandler { builder, _, line, _ ->
             // space-separated list of channels
             val channels = line.substring(1).split(" ")
-            currentBuilder.channels = channels
+            builder.channels = channels
         },
-        312 to SubHandler { line, _ ->
+        312 to SubHandler { builder, _, line, _ ->
             // server
             // anarchy.esper.net :Destroy All White Permanents (Gravelines, France)
             val (name, description) = line.split(":", limit = 2)
-            currentBuilder.server = NetworkedServer(name, description)
+            builder.server = NetworkedServer(name, description)
         },
-        330 to SubHandler { line, _ ->
+        330 to SubHandler { builder, _, line, _ ->
             val (account, _) = line.split(":", limit = 2)
-            currentBuilder.account = account
+            builder.account = account
         },
-        318 to SubHandler { _, _ ->
-            whoisTracker.pending[currentName!!]?.complete(currentBuilder.build())
-
-            whoisTracker.currentName = null
-            currentBuilder = WhoisResponseBuilder()
+        318 to SubHandler { builder, nickname, _, _ ->
+            val future = whoisTracker.pending[nickname]!!
+            future.complete(builder.build())
+            whoisTracker.pending.remove(nickname)
+        },
+        401 to SubHandler { _, nickname, _, _ ->
+            val future = whoisTracker.pending[nickname]!!
+            future.complete(null)
+            whoisTracker.pending.remove(nickname)
         }
     )
 
     override fun handle(line: String, connection: Connection) {
         val match = pattern.matchEntire(line)
         if (match != null) {
-            val type = match.groupValues[1].toInt()
-            val content = match.groupValues[2]
+            val type = match.groupValues[1].toIntOrNull()
+            val nickname = match.groupValues[2]
+            val content = match.groupValues[3]
+
+            if (!whoisTracker.pending.containsKey(nickname)) {
+                return
+            }
+
+            if (type == null) {
+                // just in case I guess
+                return
+            }
+
+            if (builders[nickname] == null) {
+                builders[nickname] = WhoisResponseBuilder()
+            }
+
+            val builder = builders[nickname]!!
 
             if (subHandlers.containsKey(type)) {
-                if (currentName == null) {
-                    logger.warn("Whois line received, but currentName is null")
-                    return
-                }
                 // handle the line
-                subHandlers[type]?.handle(content, connection)
+                subHandlers[type]?.handle(builder, nickname, content, connection)
             }
         }
     }
 
     fun interface SubHandler {
 
-        fun handle(line: String, connection: Connection)
+        fun handle(builder: WhoisResponseBuilder, nickname: String, line: String, connection: Connection)
 
     }
 
