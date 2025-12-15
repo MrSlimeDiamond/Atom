@@ -42,14 +42,11 @@ class WhoisLineHandler : LineHandler {
             builder.account = account
         },
         318 to SubHandler { builder, nickname, _, _ ->
-            val future = whoisTracker.pending[nickname]!!
-            future.complete(builder.build())
-            whoisTracker.pending.remove(nickname)
+            whoisTracker.complete(nickname, builder.build())
         },
         401 to SubHandler { _, nickname, _, _ ->
-            val future = whoisTracker.pending[nickname]!!
-            future.complete(null)
-            whoisTracker.pending.remove(nickname)
+            whoisTracker.complete(nickname, null)
+            whoisTracker.remove(nickname)
         }
     )
 
@@ -60,7 +57,7 @@ class WhoisLineHandler : LineHandler {
             val nickname = match.groupValues[2]
             val content = match.groupValues[3]
 
-            if (!whoisTracker.pending.containsKey(nickname)) {
+            if (!whoisTracker.isTracking(nickname)) {
                 return
             }
 

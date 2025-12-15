@@ -81,7 +81,7 @@ class DefaultConnection(
 
     override fun whois(nickname: String): CompletableFuture<WhoisResponse?> {
         val future = CompletableFuture<WhoisResponse?>()
-        whoisTracker.pending[nickname] = future
+        whoisTracker.submit(nickname, future)
         this.sendRaw("WHOIS $nickname")
         return future
     }
