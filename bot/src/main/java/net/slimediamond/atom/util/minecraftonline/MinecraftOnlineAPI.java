@@ -122,7 +122,7 @@ public class MinecraftOnlineAPI {
                 Date date = new Date(Long.parseLong(info[1]) * 1000);
                 String reason = info[2];
 
-                return Optional.of(new MCOBanImpl(player, new MCOPlayer(banner), date, reason));
+                return Optional.of(new MCOBanImpl(player, new MCOPlayer(banner), date, reason, reason.equals("You have been permanently banned! (legacy)")));
             }
         } else {
             return Optional.empty();

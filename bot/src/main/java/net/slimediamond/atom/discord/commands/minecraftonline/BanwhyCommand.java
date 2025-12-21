@@ -20,16 +20,21 @@ public class BanwhyCommand implements DiscordCommandExecutor {
         context.getArguments().get("username").ifPresentOrElse(arg -> username.set(arg.getAsString()), () -> username.set(context.getSender().getName()));
 
         MinecraftOnlineAPI.getBan(username.get()).ifPresentOrElse(ban -> {
-            context.replyEmbeds(new EmbedBuilder()
+            EmbedBuilder builder = new EmbedBuilder()
                     .setColor(0x00BEBE)
                     .setAuthor(ban.getPlayer().getName(), null, "https://minecraftonline.com/cgi-bin/getplayerhead.sh?" + ban.getPlayer().getName())
                     .setTitle(ban.getPlayer().getName() + " is banned!")
-                    .setDescription(ban.getReason())
-                    .addField(new MessageEmbed.Field("Date", "<t:" + ban.getDate().toInstant().getEpochSecond() + ":f> [<t:" + ban.getDate().toInstant().getEpochSecond() + ":R>]", true))
-                    .addField(new MessageEmbed.Field("Banned by", ban.getBanner().getName(), true))
                     .setFooter(EmbedReference.mcoFooter, EmbedReference.mcoIcon)
-                    .build()
-            );
+                    .addField(new MessageEmbed.Field("Date", "<t:" + ban.getDate().toInstant().getEpochSecond() + ":f> [<t:" + ban.getDate().toInstant().getEpochSecond() + ":R>]", true));
+
+            if (!ban.isLegacy()) {
+                builder.setDescription(ban.getReason());
+                builder.addField(new MessageEmbed.Field("Banned by", ban.getBanner().getName(), true));
+            } else {
+                builder.setDescription("**Legacy ban** - reason & author not available.");
+            }
+
+            context.replyEmbeds(builder.build());
         }, () -> {
             MCOPlayer player;
             try {

@@ -7,8 +7,9 @@ public class MCOBanImpl implements MCOBan {
     private MCOPlayer banner;
     private Date date;
     private String reason;
+    private boolean isLegacy;
 
-    public MCOBanImpl(MCOPlayer player, MCOPlayer banner, Date date, String reason) {
+    public MCOBanImpl(MCOPlayer player, MCOPlayer banner, Date date, String reason, boolean islegacy) {
         this.player = player;
         this.banner = banner;
         this.date = date;
@@ -33,5 +34,10 @@ public class MCOBanImpl implements MCOBan {
     @Override
     public String getReason() {
         return reason;
+    }
+
+    @Override
+    public boolean isLegacy() {
+        return isLegacy;
     }
 }

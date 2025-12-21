@@ -7,4 +7,5 @@ public interface MCOBan {
     MCOPlayer getBanner();
     Date getDate();
     String getReason();
+    boolean isLegacy();
 }
