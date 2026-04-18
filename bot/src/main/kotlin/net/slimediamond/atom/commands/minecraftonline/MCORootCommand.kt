@@ -14,6 +14,7 @@ class MCORootCommand : RootOnlyCommandNode("MinecraftOnline commands", "mco", "m
         addChild(BanWhyCommand())
         addChild(BanCountCommand())
         addChild(RandomPlayerCommand())
+        addChild(VoteCommand())
     }
 
 }
